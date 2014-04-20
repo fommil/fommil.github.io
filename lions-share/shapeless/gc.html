@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="gc.js"></script>
+    <style>
+        html {
+            font-family: sans-serif;
+        }
+    </style>
+    <script type="text/javascript">
+        google.load('visualization', '1.0', {'packages': ['corechart']});
+        google.load('visualization', '1.0', {'packages': ['table']});
+
+        google.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            function el(id) {
+                return document.getElementById(id);
+            }
+
+            drawGcAllocationRate(el('gcAllocationRate'), gcAllocationRateData);
+            drawGcPauses(el('gcPauses'), gcPausesData);
+            drawGcThroughput(el('gcThroughput'), gcThroughputData);
+            drawGcMemory(el('gcMemory'), gcMemoryData);
+        }
+
+        function drawGcAllocationRate(el, data) {
+            var table = new google.visualization.DataTable(data);
+            var options = {
+                hAxis: {title: 'Time (seconds)'},
+                vAxis: {title: 'Allocation rate (GB/second)', viewWindow: {min: 0}},
+                legend: {position: 'none'},
+                width: 2048, height: 600,
+                intervals: {style: 'area'},
+                chartArea: {top: 20, left: 100, right: 0, height: 500},
+                pointSize: 2
+            };
+            new google.visualization.LineChart(el).draw(table, options);
+        }
+
+        function drawGcPauses(el, data) {
+            var table = new google.visualization.DataTable(data);
+            var options = {
+                hAxis: {title: 'Time (seconds)'},
+                vAxis: {title: 'Pauses (second)', viewWindow: {min: 0}, logScale: true},
+                legend: {position: 'none'},
+                width: 2048, height: 600,
+                chartArea: {top: 20, left: 100, right: 0, height: 500},
+                interval: {
+                    // ideally we'd do a scatter plot of the full GCs, but Google Charts doesn't support area
+                    // with scatter so we make it look like a scatter plot by drawing the error bar limits as points.
+                    i1: { color: 'red', 'style': 'bars', lineWidth: 0, barWidth: 10, pointSize: 10, fillOpacity: 1},
+                    i0: { style: 'area'}
+                },
+                curveType: 'function',
+                pointSize: 2
+            };
+            new google.visualization.LineChart(el).draw(table, options);
+        }
+
+        function drawGcThroughput(el, data) {
+            var table = new google.visualization.DataTable(data);
+            var options = {
+                hAxis: {title: 'Throughput (%)'},
+                legend: {position: 'top'},
+                bar: {groupWidth: '100%'}
+            };
+            new google.visualization.Histogram(el).draw(table, options);
+        }
+
+        function drawGcMemory(el, data) {
+            var table = new google.visualization.DataTable(data);
+            var options = {
+                hAxis: {title: 'Time (seconds)'},
+                vAxis: {title: 'Usage (GB)', viewWindow: {min: 0}},
+                legend: {position: 'top'},
+                width: 2048, height: 600,
+                chartArea: {top: 100, left: 100, right: 0, height: 400},
+                interval: {
+                    oa1: { color: 'red', style: 'area'},
+                    oa2: { color: 'pink', style: 'sticks', pointSize: 0},
+                    na1: { color: '#3366cc', style: 'area'},
+                    na2: { color: '#3366cc', style: 'sticks', pointSize: 0},
+                    nb1: { color: '#98b2e5', style: 'area'},
+                    nb2: { color: '#98b2e5', style: 'sticks', pointSize: 0}
+                },
+                colors: ['red', '#98b2e5', '#3366cc'],
+                pointSize: 2
+            };
+            new google.visualization.LineChart(el).draw(table, options);
+        }
+    </script>
+</head>
+
+<body>
+<div>
+    <h1>Lion's Share Garbage Collection Report</h1>
+
+    <h2>Throughput</h2>
+    The percentage of time doing work (not collecting garbage).
+    <div id="gcThroughput"></div>
+
+    <h2>Object Creation</h2>
+
+    <div>
+        Average allocation rates are shown as the solid line. 20% to 80% of results are within
+        the dark region, all results within the light region. If the application being studied
+        is incredibly predictable, you might just see a single line (that just means all the
+        runs had an identical garbage collection profile).
+        Remember that runs may have different lifetimes.
+    </div>
+    <div id="gcAllocationRate"></div>
+
+    <h2>Memory Usage</h2>
+
+    <div id="gcMemory"></div>
+
+    <h2>Garbage Pauses</h2>
+
+    <div>
+        Time spent paused doing garbage collection. <span style="color: red">Full GC</span> and
+        <span style="color: blue">New Generation only</span> shown separately (but note that new generation
+        collectors can still follow new objects into dead old gen roots).
+    </div>
+    <div id="gcPauses"></div>
+
+</div>
+</body>
+</html>

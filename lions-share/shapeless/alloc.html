@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script type="text/javascript" src="http://culmat.github.io/jsTreeTable/treeTable.js"></script>
+    <script type="text/javascript" src="http://simplemodal.googlecode.com/files/jquery.simplemodal.1.4.4.min.js"></script>
+    <script type="text/javascript" src="alloc.js"></script>
+    <style>
+        html {
+            font-family: sans-serif;
+        }
+
+        table.jsTT {
+            /* because awesome */
+            font-family: 'Comic Neue', 'Comic Sans', 'Inconsolata', monospace;
+            table-layout: fixed;
+        }
+
+        table.jsTT td {
+            max-width: 800px;
+            border: 1px solid #686a66;
+            border-top-width: 0;
+        }
+
+        #modal {
+            display: none;
+        }
+
+        #simplemodal-overlay {
+            background-color: #000;
+        }
+
+        #simplemodal-container {
+            width: 80%;
+            height: 80%;
+            background-color: #333;
+            padding: 12px;
+            color: white;
+            overflow: auto;
+        }
+
+        #simplemodal-container a.modalCloseImg {
+            background: url('http://www.ericmmartin.com/wordpress/wp-content/themes/emm-v3/demos/x.png') no-repeat;
+            width: 25px;
+            height: 29px;
+            position: absolute;
+            /*top: 15px;*/
+            /*left:6px;*/
+            cursor: pointer;
+        }
+    </style>
+    <script type="text/javascript">
+        google.load('visualization', '1.0', {'packages': ['corechart', 'table']});
+        google.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            function el(id) {
+                return document.getElementById(id);
+            }
+
+            drawAllocSizes(el('allocSizes'), allocSizes);
+
+            if (typeof allocLengths != "undefined")
+                drawAllocLengths(el('allocLengths'), allocLengths);
+
+        }
+
+        function drawAllocSizes(el, data) {
+            var table = new google.visualization.DataTable(data);
+            var options = {
+                hAxis: {title: 'Time (milliseconds)'},
+                vAxis: {title: 'Allocations (MB, per sample period)', logScale: true},
+                legend: {position: 'right'},
+                width: 2048, height: 600,
+                chartArea: {top: 100, left: 100, right: 0, height: 400},
+                pointSize: 2
+            };
+            var chart = new google.visualization.LineChart(el)
+            chart.draw(table, options);
+
+            function allocationSources(clazz, time) {
+                $('#popup_title').html("<code>" + clazz + "</code>");
+                $('#modal').modal({overlayClose: true});
+                if (typeof allocTraces == "undefined") {
+                    $('#popup').html("you must enable lion-share's allocation trace sampling for this feature.");
+                } else {
+                    if (typeof allocTraces[clazz] == "undefined") {
+                        $('#popup').html("data sampling has not been enabled for this class");
+                    } else if (typeof allocTraces[clazz][time] == "undefined") {
+                        $('#popup').html("no samples collected at this time (try nearby points)");
+                    } else {
+                        var attrs = {name: "Source", size: "Samples"};
+                        var options = {
+                            mountPoint: $('#popup'),
+                            initialExpandLevel: 1,
+                            renderedAttr: attrs
+                        };
+                        com_github_culmat_jsTreeTable.appendTreetable(
+                                allocTraces[clazz][time], options
+                        );
+                    }
+                }
+            }
+
+            function handler() {
+                var selection = chart.getSelection()[0];
+                if (!selection) return;
+
+                var clazz = table.getColumnLabel(selection.column);
+
+                if (selection.row == null) {
+                    // clicking the legend deletes the data
+                    // it is useful when multiple classes overlap
+                    table.removeColumn(selection.column);
+                    chart.draw(table, options);
+                    return;
+                }
+
+                var time = table.getValue(selection.row, 0);
+
+                allocationSources(clazz, time);
+            }
+
+            google.visualization.events.addListener(chart, 'select', handler);
+        }
+
+        function drawAllocLengths(el, data) {
+            var table = new google.visualization.DataTable(data);
+            var options = {
+                hAxis: {title: 'Array Length (elements)', logScale: true},
+                vAxis: {title: 'Instances', logScale: true},
+                width: 2048, height: 600,
+                chartArea: {top: 100, left: 100, right: 0, height: 400}
+            };
+            new google.visualization.ScatterChart(el).draw(table, options);
+        }
+    </script>
+</head>
+
+<body>
+<div>
+    <h1>Lion's Share Object Allocation Report</h1>
+
+    <div id="modal">
+        <div>
+            <h2 id="popup_title"></h2>
+            <div id="popup"></div>
+        </div>
+    </div>
+
+    <h2>Allocation Sizes</h2>
+    Total bytes allocated by object.
+    Clicking a datum will reveal stack trace samples (only for explicitly tracked objects).
+    Delete a line by clicking its legend entry (useful if it is obstructing clicking).
+    <div id="allocSizes"></div>
+
+    <h2>Array Lengths</h2>
+    Lengths of arrays, only for explicitly tracked objects.
+    <div id="allocLengths"></div>
+
+</div>
+</body>
+</html>
