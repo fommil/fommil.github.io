@@ -1,6 +1,3 @@
-[submodule "reveal.js"]
-	path = scalax14/reveal.js
-	url = https://github.com/hakimel/reveal.js
 [submodule "scalax14/reveal.js"]
 	path = scalax14/reveal.js
 	url = https://github.com/hakimel/reveal.js
