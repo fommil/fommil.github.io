@@ -1,0 +1,1634 @@
+<section class="slide level2">
+<h1>TL;DR</h1>
+<aside class="notes">
+<p>But Scala has not been around for four decades. I may as well be honest, I lied to you. You're not going to see an awful lot of inspiring Scala.</p>
+<p>When you're not looking at mathematics equations, you'll actually be pleased to recognise some Java after the hell of Fortran and C.</p>
+</aside>
+<ul>
+<li class="fragment"><strong>Four Decades</strong> of Free and Open Source Software, collaboration between industry and academia: high performance linear algebra (netlib), available in Scala (Breeze).</li>
+<li class="fragment"><strong>Not Invented Here</strong>: lukewarm performance, poor precision, dangerous results.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<aside class="notes">
+<p>But I don't want to force you all to leave the room, so I want you to see this programming language inferno that we'll be travelling through.</p>
+<p>We'll start with some Scala. But we'll fall and find ourselves in Fortran. After a failed attempt to shimmy back onto the JVM, we're going to splat onto the hardware.</p>
+<p>But we claw our way back to Scala eventually. This has is a happy ending.</p>
+</aside>
+<p><img src="images/outline.jpg" /></p>
+</section>
+<section><section class="titleslide slide level1"><h1>Linear Algebra</h1></section><section class="slide level2">
+<h1>Definition</h1>
+<aside class="notes">
+<p>Linear algebra is a concept from pure mathematics which has been incredibly successful in applied mathematics, science and engineering.</p>
+<p>Let's start from the abstract definitions to appreciate how large this field of research is.</p>
+<p>(read slides)</p>
+<p>Objects in a vector space do not need to be the vectors that you're probably thinking of: effectively an array of double numbers. They can be anything that meets these criteria and some of the rules of linearity imposed by Vector spaces. It is quite common for the &quot;vectors&quot; to be functions or polynomials.</p>
+<p>Linear algebra starts when we have a Vector Space and is the launchpad for a wide variety of research topics in mathematics, such as: module theory, multilinear algebra, functional analysis, representation theory and algebraic geometry. Each with their own areas of application.</p>
+<ul>
+<li><strong>Is this familiar or is it alien?</strong> (Gauge audience understanding of linear algebra)</li>
+</ul>
+<p>For anybody interested further in the theoretical side, I recommend Herstein's book &quot;Topics in Algebra&quot;.</p>
+</aside>
+<ul>
+<li>A <strong>Ring</strong> is a set with multiplication and addition.</li>
+<li>A <strong>Field</strong> is a ring where multiplication is commutative (<span class="math">\(a.b = b.a\)</span>) and nonzero elements have an inverse (<span class="math">\(a.a^{-1} = 1\)</span>).</li>
+<li>A <strong>Vector Space</strong> has elements from a Field (scalars) and a set (vectors) with vector addition (<span class="math">\(v + m\)</span>) and scaling (<span class="math">\(\alpha . b\)</span>)</li>
+<li>A <strong>Basis</strong> of vectors <span class="math">\({v_1, v_2, \ldots, v_n}\)</span> defines a <strong>coordinate system</strong> under which all other vectors can be represented: <span class="math">\(a_1 v_1 +
+ a_2 v_2 + \ldots + a_n v_n\)</span></li>
+<li>A <strong>Matrix</strong> encodes mappings between bases</li>
+</ul>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>Some people find it easier to think about mappings geometrically. Rotations are a mapping between bases so can be represented by a matrix.</p>
+<p>If a set of points define the GNU logo in some basis <span class="math">\(x, y\)</span> we can rotate the logo by applying a mapping (matrix) to all the coordinates.</p>
+</aside>
+<p><img src="images/rotate-gnu.png" /></p>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>The logo has exactly the same coordinates in the new (red, x y prime) basis as it did in the original basis but the basis vectors themselves are rotated.</p>
+<p>We can also apply the mapping to the coordinate vectors directly and get the coordinates of the points in the original system, but it is not needed to do that unless you want to do something with them (like draw them).</p>
+</aside>
+<p><img src="images/rotate-gnu2.png" /></p>
+</section><section class="slide level2">
+<h1>Diagonalisation</h1>
+<aside class="notes">
+<p>A square matrix <span class="math">\(A\)</span> is called diagonalisable if a matrix <span class="math">\(P\)</span> exists such that this equation holds.</p>
+<p>The diagonal entries of <span class="math">\(D\)</span> are known as the eigenvalues of the matrix and the columns of <span class="math">\(P\)</span> are known as the eigenvectors.</p>
+<p>The eigenvectors and eigenvalues of a matrix can be computed by solving the eigensystem, with exactly the number of solutions as there are rows or columns in the square matrix.</p>
+<p>Eigensolutions are very deep from a theoretical point of view and they tend to crop up all the time as part of the solution of various problems. They can be intuitively thought of as the vectors that are only scaled, but not rotated, when a matrix acts on them.</p>
+</aside>
+<ul>
+<li><span class="math">\(D = P^{-1} A P\)</span></li>
+<li><span class="math">\(D_{ij} = \delta_{ij}\lambda_i\)</span></li>
+<li><span class="math">\(AP = DP\)</span></li>
+<li><span class="math">\(A v_k = \lambda v_k\)</span></li>
+</ul>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>This is just to demonstrate what that might mean for 2D vectors.</p>
+<p>The matrix is performing a 45 degree shearing operation, and any vectors that point along 45 degrees or -45 degrees are only scaled instead of being twisted.</p>
+</aside>
+<p><img src="images/Eigenvectors-extended.gif" /></p>
+</section><section class="slide level2">
+<h1>Example: Kalman Filter</h1>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>A Kalman filter is an approach that is well known by electronic engineers because its applications include autopilots, radar tracking and weather forecasting. It's basically a general predictor for anything where a physical model can be written down in terms of a matrix and observations are coming back noisy.</p>
+<p>This is the general high level process that is employed.</p>
+</aside>
+<p><img src="images/Basic_concept_of_Kalman_filtering.svg" /></p>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>Mathematically speaking, this is what a system looks like in the Kalman formalisation. Here, bold capital letters are matrices and bold lowercase are vectors.</p>
+<p>(read points)</p>
+<p>From a practical point of view, there are a lot of linear algebra operations to be performed here. Every time we need to do a prediction update, there is a lot of work needs to be done in terms of multiplying matrices together, and depending on how complex the system is, we may even need to solve some subsystems to know what to use, such as solving for <span class="math">\(x\)</span> given <span class="math">\(z\)</span> and doing that many times with Monte Carlo values for the noise.</p>
+</aside>
+<p><span class="math">\[
+ \mathbf{x}_{k} = \mathbf{F}_{k} \mathbf{x}_{k-1} + \mathbf{B}_{k} \mathbf{u}_{k} + \mathbf{w}_{k} 
+\]</span></p>
+<ul>
+<li><span class="math">\(\mathbf{x}_k\)</span> is the state of the system at time slice <span class="math">\(k\)</span></li>
+<li><span class="math">\(\mathbf{F}_k\)</span> is the state transition model</li>
+<li><span class="math">\(\mathbf{B}_k\)</span> is the control-input model (applied to control vector <span class="math">\(\mathbf{u}_k\)</span>)</li>
+<li><span class="math">\(\mathbf{w}_k\)</span> is the process noise, covariance <span class="math">\(\mathbf{Q}_k\)</span></li>
+<li>observations <span class="math">\(\mathbf{z}_k\)</span> are made of the true state <span class="math">\(\mathbf{x}_k\)</span> according to
+<ul>
+<li><span class="math">\(\mathbf{z}_k = \mathbf{H}_{k} \mathbf{x}_k + \mathbf{v}_k\)</span></li>
+<li><span class="math">\(\mathbf{H}_k\)</span> is the observation model and <span class="math">\(\mathbf{v}_k\)</span> is the observation noise (covariance <span class="math">\(\mathbf{R}_k\)</span>)</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+<h1>Example: PCA</h1>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>Let's say we have a bunch of statistical data, like these 2D samples. It is often very useful to be able to find out what the &quot;natural&quot; basis is for that data set and furthermore which dimensions are the most important. These are areas of research known as principal components analysis (PCA) and dimensional reduction.</p>
+<p>In this example dataset, we'd probably want to find the two arrows as our basis vectors.</p>
+</aside>
+<p><img src="images/GaussianScatterPCA.png" /></p>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>Inspiration: <a href="http://arxiv.org/pdf/1404.1100.pdf" class="uri">http://arxiv.org/pdf/1404.1100.pdf</a></p>
+<p>Let's say we have two measurements, corresponding to the axis in the earlier graph, <span class="math">\(A\)</span> and <span class="math">\(B\)</span>. We can calculate the variance of each quantity with these formula.</p>
+<p>We can also calculate the covariance between <span class="math">\(A\)</span> and <span class="math">\(B\)</span>, which measures the degree of linear relationship between the variables (also written in vector dot product notation). It is zero if the variables are uncorrelated and it is equivalent to the variance if A and B are the same.</p>
+</aside>
+<ul>
+<li><span class="math">\(\sigma_A^2 = \frac 1 n \sum_i^n a_i^2\)</span></li>
+<li><span class="math">\(\sigma_B^2 = \frac 1 n \sum_i^n b_i^2\)</span></li>
+<li><span class="math">\(\sigma_{AB}^2 = \frac 1 n \sum_i^n a_i b_i = \frac 1 n a b^T\)</span></li>
+</ul>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>We can represent the data from any repeated experiment of these measures with a data matrix (read points).</p>
+<p>This allows us to define something called the covariance matrix <span class="math">\(C_x\)</span> for the data <span class="math">\(X\)</span>.</p>
+<p>Now, the job of principal components analysis can be rephrased as finding the change of basis - matrix <span class="math">\(P\)</span> - such that the variances (the diagonals in C) are maximised and the covariances (off-diagonals) are minimised. That'll give us a different <span class="math">\(C_y\)</span></p>
+</aside>
+<ul>
+<li>Data Matrix <span class="math">\(X\)</span>
+<ul>
+<li>all samples for one type of measurement per row</li>
+<li>different measure in each column</li>
+<li>all entries are diffs to the mean vector</li>
+</ul></li>
+<li><span class="math">\(C_x = \frac 1 n X X^T\)</span></li>
+<li><span class="math">\(Y = PX\)</span></li>
+<li><span class="math">\(C_y = P C_x P^T\)</span></li>
+<li>find <span class="math">\(P\)</span> such that:
+<ul>
+<li><span class="math">\(C_{ii}\)</span> is maximised</li>
+<li><span class="math">\(C_{ij}\)</span> is minimised <span class="math">\(i \neq j\)</span></li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>It turns out, through the magic of mathematics, that <span class="math">\(C_y\)</span> is actually the diagonal matrix that can be constructed by solving the eigensystem.</p>
+</aside>
+<p><span class="math">\[
+\begin{eqnarray*}
+C_y &amp;=&amp; P C_x P^T \\
+    &amp;=&amp; P P^{-1} D P P^T \\
+    &amp;=&amp; D
+\end{eqnarray*}
+\]</span></p>
+</section><section class="slide level2">
+<h1>SVD</h1>
+<aside class="notes">
+<p>There is a neat computational trick that avoids a lot of the work using something called the Singular Value Decomposition which is possible for all matrices.</p>
+<p>It turns out that the diagonal elements of <span class="math">\(\Sigma\)</span> are the squares of the eigenvalues and the <span class="math">\(U\)</span> matrix holds all the eigenvectors.</p>
+<p>Since it is a lot quicker to calculate the SVD, this is the preferred approach.</p>
+<p>This is an incredible result which is used as an atomic component in many systems, including classification and image recognition problems.</p>
+</aside>
+<ul>
+<li><span class="math">\(X = U \Sigma V^T\)</span>
+<ul>
+<li><span class="math">\(U\)</span> is orthogonal (rotation)</li>
+<li><span class="math">\(\Sigma\)</span> is diagonal (stretch)</li>
+<li><span class="math">\(V\)</span> is orthogonal (rotation)</li>
+</ul></li>
+<li><span class="math">\(XX^T = (U \Sigma V^T) (U \Sigma V^T)^T = U \Sigma^2 U^T\)</span></li>
+<li><span class="math">\(D^2 = C_y^2 = \Sigma\)</span></li>
+<li><span class="math">\(U = P\)</span> (recall <span class="math">\(Y = PX\)</span>)</li>
+</ul>
+</section></section>
+<section><section class="titleslide slide level1"><h1>Basic Implementation</h1></section><section class="slide level2">
+<h1>Multiplication</h1>
+<aside class="notes">
+<p>From a practical point of view, we need to solve linear algebraic equations using computers and that means listing the basic numerical operations that we need to perform and writing code to implement them.</p>
+<p>In practice, there are many operations that are needed. Let's just focus on the most widely applicable operation: matrix multiplication.</p>
+<p>Graphically, this is how to multiply two matrices.</p>
+</aside>
+<p><span class="math">\[
+A=\begin{pmatrix}
+ A_{11} &amp; A_{12} &amp; \cdots &amp; A_{1m} \\
+ A_{21} &amp; A_{22} &amp; \cdots &amp; A_{2m} \\
+ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+ A_{n1} &amp; A_{n2} &amp; \cdots &amp; A_{nm} \\
+\end{pmatrix}
+\qquad
+B=\begin{pmatrix}
+ B_{11} &amp; B_{12} &amp; \cdots &amp; B_{1p} \\
+ B_{21} &amp; B_{22} &amp; \cdots &amp; B_{2p} \\
+ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+ B_{m1} &amp; B_{m2} &amp; \cdots &amp; B_{mp} \\
+\end{pmatrix}
+\]</span></p>
+<p><span class="math">\[
+(A B)_{ij} = \sum_{k=1}^m A_{ik}B_{kj}
+\]</span></p>
+</section><section class="slide level2">
+
+<p><span class="math">\[
+\small
+\begin{pmatrix}
+ \boldsymbol a &amp; \boldsymbol b &amp; \boldsymbol c \\
+ . &amp; . &amp; . \\
+ . &amp; . &amp; . \\
+\end{pmatrix}
+\begin{pmatrix}
+ \boldsymbol r &amp; . &amp; . \\
+ \boldsymbol u &amp; . &amp; . \\
+ \boldsymbol x &amp; . &amp; . \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+ \boldsymbol \alpha &amp; . &amp; . \\
+ . &amp; . &amp; . \\
+ . &amp; . &amp; . \\
+\end{pmatrix} \\[25pt]
+\begin{pmatrix}
+ . &amp; . &amp; . \\
+ \boldsymbol d &amp; \boldsymbol e &amp; \boldsymbol f \\
+ . &amp; . &amp; . \\
+\end{pmatrix}
+\begin{pmatrix}
+ \boldsymbol r &amp; . &amp; . \\
+ \boldsymbol u &amp; . &amp; . \\
+ \boldsymbol x &amp; . &amp; . \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+ . &amp; . &amp; . \\
+ \boldsymbol \delta &amp; . &amp; . \\
+ . &amp; . &amp; . \\
+\end{pmatrix} \\[25pt]
+\begin{pmatrix}
+ . &amp; . &amp; . \\
+ \boldsymbol d &amp; \boldsymbol e &amp; \boldsymbol f \\
+ . &amp; . &amp; . \\
+\end{pmatrix}
+\begin{pmatrix}
+ . &amp; \boldsymbol s &amp; . \\
+ . &amp; \boldsymbol v &amp; . \\
+ . &amp; \boldsymbol y &amp; . \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+ . &amp; . &amp; . \\
+ . &amp; \boldsymbol \epsilon &amp; . \\
+ . &amp; . &amp; . \\
+\end{pmatrix}
+\]</span></p>
+</section><section class="slide level2">
+<h1>Immutable</h1>
+<aside class="notes">
+<p>We're going to create a few implementations that are going to get increasingly further away from canonical Scala. In the remainder of this talk I hope to convince you why you should never ever ever <strong>*ever*</strong> think that writing your own linear algebra library is a good idea.</p>
+<p>Immutable. This was mostly because I wanted to see how bad it was. Although this makes perfect sense from a functional programming point of view, it is ridiculous to consider writing anything like this in a numerical programming world.</p>
+<p>We at least have the sense to use a 2D mutable array internally when performing the multiplication.</p>
+</aside>
+<pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">case</span> <span class="kw">class</span> <span class="fu">ImmutableMatrix</span>(
+    numRows: Int,
+    numCols: Int,
+    data: Vector[Vector[Double]]
+  ) {
+    <span class="kw">def</span> <span class="fu">mult</span>(that: ImmutableMatrix): ImmutableMatrix = {
+      <span class="fu">require</span>(numCols == that.<span class="fu">numRows</span>)
+      <span class="kw">val</span> res = Array.<span class="fu">fill</span>(numRows, that.<span class="fu">numCols</span>)(<span class="fl">0.0</span>)
+      <span class="kw">for</span> {
+        i &lt;- <span class="dv">0</span> until numRows
+        j &lt;- <span class="dv">0</span> until that.<span class="fu">numCols</span>
+        k &lt;- <span class="dv">0</span> until numCols
+      } {
+        <span class="fu">res</span>(i)(j) = <span class="fu">data</span>(i)(k) * that.<span class="fu">data</span>(k)(j)
+      }
+      <span class="fu">ImmutableMatrix</span>(numRows, numCols, ImmutableMatrix.<span class="fu">arrayToVec</span>(res))
+    }
+  }</code></pre>
+</section><section class="slide level2">
+<h1>Naive</h1>
+<aside class="notes">
+<p>And we can trivially convert this into <strong>*naive*</strong> Scala.</p>
+</aside>
+<pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">trait</span> Matrix {
+    <span class="kw">def</span> numRows: Int
+    <span class="kw">def</span> numCols: Int
+    <span class="kw">def</span> <span class="fu">set</span>(row: Int, col: Int, value: Double): Unit
+    <span class="kw">def</span> <span class="fu">get</span>(row: Int, col: Int): Double
+    <span class="kw">def</span> <span class="fu">mult</span>(that: Matrix): Matrix
+  }
+
+  <span class="kw">class</span> <span class="fu">NaiveMatrix</span> (
+    <span class="kw">val</span> numRows: Int,
+    <span class="kw">val</span> numCols: Int,
+    <span class="kw">val</span> values: Array[Array[Double]]
+  ) <span class="kw">extends</span> Matrix {
+
+    <span class="kw">def</span> <span class="fu">set</span>(row: Int, col: Int, value: Double): Unit =
+      <span class="fu">values</span>(row)(col) = value
+
+    <span class="kw">def</span> <span class="fu">get</span>(row: Int, col: Int): Double = <span class="fu">values</span>(row)(col)</code></pre>
+</section><section class="slide level2">
+
+<pre class="sourceCode scala"><code class="sourceCode scala">    <span class="kw">def</span> <span class="fu">mult</span>(that: Matrix): Matrix = {
+      <span class="kw">val</span> res = <span class="fu">NaiveMatrix</span>(numRows, that.<span class="fu">numCols</span>)
+      <span class="kw">for</span> {
+        i &lt;- <span class="dv">0</span> until numRows
+        j &lt;- <span class="dv">0</span> until that.<span class="fu">numCols</span>
+        k &lt;- <span class="dv">0</span> until numCols
+      } {
+        <span class="kw">val</span> update = <span class="kw">this</span>.<span class="fu">get</span>(i, k) * that.<span class="fu">get</span>(k, j)
+        res.<span class="fu">set</span>(i, j, res.<span class="fu">get</span>(i, j) + update)
+      }
+      res
+    }
+  }</code></pre>
+</section><section class="slide level2">
+<h1>Naive Parallel</h1>
+<aside class="notes">
+<p>We can even see the obvious possibility for parallelisation.</p>
+<p>I've even seen people do this with Akka Actors, believe it or not.</p>
+</aside>
+<pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">trait</span> NaiveParallelMatrix {
+    <span class="kw">this</span>: NaiveMatrix =&gt;
+    <span class="kw">override</span> <span class="kw">def</span> <span class="fu">mult</span>(that: Matrix): Matrix = {
+      <span class="kw">val</span> res = <span class="fu">NaiveMatrix</span>(numRows, that.<span class="fu">numCols</span>)
+      <span class="kw">for</span> {
+        i &lt;- (<span class="dv">0</span> until numRows).<span class="fu">par</span>
+        j &lt;- (<span class="dv">0</span> until that.<span class="fu">numCols</span>).<span class="fu">par</span>
+        k &lt;- <span class="dv">0</span> until numCols
+      } {
+        <span class="kw">val</span> update = <span class="kw">this</span>.<span class="fu">get</span>(i, k) * that.<span class="fu">get</span>(k, j)
+        res.<span class="fu">set</span>(i, j, res.<span class="fu">get</span>(i, j) + update)
+      }
+      res
+    }
+  }</code></pre>
+</section><section class="slide level2">
+<h1>Allocation</h1>
+<aside class="notes">
+<p>But this is still <strong>*very*</strong> naive. One problem is that we're creating a load of objects and the garbage collector is doing a lot of work, causing context switches in the CPU and generally slowing things down.</p>
+<p>How do we know that there are loads of objects being created? We can use Lion's Share to see that.</p>
+</aside>
+<p><img src="images/lions-share-naive.png" /></p>
+<p><a href="http://github.com/fommil/lions-share" class="uri">http://github.com/fommil/lions-share</a></p>
+</section><section class="slide level2">
+<h1>While Loops</h1>
+<aside class="notes">
+<p>We can avoid all of that memory allocation by falling back to a basic while loop with mutable counters.</p>
+<p>You can even get a slight difference in performance by introducing a <code>sum</code> counter.</p>
+</aside>
+<pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">trait</span> NaiveWhileMatrix {
+    <span class="kw">this</span>: NaiveMatrix =&gt;
+    <span class="kw">override</span> <span class="kw">def</span> <span class="fu">mult</span>(that: Matrix): Matrix = {
+      <span class="kw">val</span> res = <span class="fu">NaiveMatrix</span>(numRows, that.<span class="fu">numCols</span>)
+      <span class="kw">var</span> i, j, k = <span class="dv">0</span>
+      <span class="kw">while</span> (i &lt; numRows) {
+        j = <span class="dv">0</span>
+        <span class="kw">while</span> (j &lt; that.<span class="fu">numCols</span>) {
+          k = <span class="dv">0</span>
+          <span class="kw">var</span> sum = <span class="fl">0.0</span>
+          <span class="kw">while</span> (k &lt; numCols) {
+            sum += <span class="kw">this</span>.<span class="fu">get</span>(i, k) * that.<span class="fu">get</span>(k, j)
+            k += <span class="dv">1</span>
+          }
+          res.<span class="fu">set</span>(i, j, sum)
+          j += <span class="dv">1</span>
+        }
+        i += <span class="dv">1</span>
+      }
+      res
+    }
+  }</code></pre>
+</section><section class="slide level2">
+<h1>Comparison</h1>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>These are performance results for all the implementations we've seen so far. The <code>x</code> axis is the number of rows or columns for a square matrix and the <code>y</code> axis is time. This is a logarithmic graph, so every major tick is an order of magnitude difference in performance.</p>
+<p>The point here is to demonstrate the chasm in numerical performance between primitive data structures and higher level concepts that we, as Scala developers, have perhaps become used to.</p>
+<p>The while loop is not dissimilar to Java matrix libraries that you may have heard of, such as COLT, which was developed at CERN over 10 years ago.</p>
+<p>But this is what I consider to be lukewarm performance.</p>
+</aside>
+<p><img src="images/naive-all.png" /></p>
+</section></section>
+<section><section class="titleslide slide level1"><h1>NETLIB</h1></section><section class="slide level2">
+<h1>netlib.org</h1>
+<p><img src="images/netlib.jpg" /></p>
+</section><section class="slide level2">
+<h1>BLAS</h1>
+<aside class="notes">
+<p>Source: <a href="http://www.netlib.org/blas/blasqr.pdf" class="uri">http://www.netlib.org/blas/blasqr.pdf</a></p>
+<p>BLAS, short for &quot;Basic Linear Algebra Subprograms&quot; is a Fortran API split into three levels.</p>
+<p>Level 1 contains vector operations on arrays: dot products, vector norms, a generalized vector addition of this form.</p>
+<p>Level 2 was started in 1984 and published in 1988, containing matrix-vector operations including a generalized matrix-vector multiplication (GEMV), as well as a solver for <span class="math">\(x\)</span> when <span class="math">\(T\)</span> is triangular. The Level 2 subroutines are especially intended to improve performance of programs using BLAS on vector processors, where Level 1 BLAS are suboptimal because they hide the matrix-vector nature of the operations from the compiler.</p>
+<p>Level 3 was formally published in 1990 and contains matrix-matrix operations, including a &quot;general matrix multiplication&quot; (GEMM), where A and B can optionally be transposed inside the routine. Also included are routines for solving B for triangular matrices T.</p>
+<p>At least we now know the extent of our naivety: we tried to re-implement <code>DGEMM</code>.</p>
+</aside>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Level</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Operation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><code>xAXPY</code></td>
+<td style="text-align: left;"><span class="math">\(y \leftarrow \alpha x + y\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><code>xDOT</code></td>
+<td style="text-align: left;"><span class="math">\(dot \leftarrow x^T y\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">...</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;"><code>xGEMV</code></td>
+<td style="text-align: left;"><span class="math">\(y \leftarrow \alpha A x + \beta y\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;"><code>xTRSV</code></td>
+<td style="text-align: left;"><span class="math">\(T \boldsymbol x = y\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">...</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;"><code>xGEMM</code></td>
+<td style="text-align: left;"><span class="math">\(C \leftarrow \alpha A B + \beta C\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;"><code>xTRSM</code></td>
+<td style="text-align: left;"><span class="math">\(T \boldsymbol B = \alpha \boldsymbol B\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">...</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</section><section class="slide level2">
+<h1>Reference DGEMM</h1>
+<aside class="notes">
+<p>BLAS is only an API, but there is a reference implementation which is maintained to this day and is probably installed on your Linux boxen.</p>
+<p>This is a snippet from one of the four branches of the reference implementation of <code>DGEMM</code>, after input parameter checks.</p>
+<p>It turns out that we weren't so naive afterall. It's basically doing the same thing that we were doing, except `DGEMM` needs to take these extra `ALPHA` and `BETA` parameters to be more general.</p>
+<p>But it's close to the metal, and the compiler will be able to do magic with this, right? We'll see about that later.</p>
+</aside>
+<pre class="sourceCode fortran"><code class="sourceCode fortran">   <span class="kw">*</span>         Form  C :<span class="kw">=</span> alpha<span class="kw">*</span>A<span class="kw">*</span>B <span class="kw">+</span> beta<span class="kw">*</span>C
+             <span class="kw">DO</span> <span class="dv">90</span> J <span class="kw">=</span> <span class="dv">1</span>,N
+                  <span class="kw">IF</span> (BETA<span class="kw">.EQ.</span>ZERO) <span class="kw">THEN</span>
+                      <span class="kw">DO</span> <span class="dv">50</span> I <span class="kw">=</span> <span class="dv">1</span>,M
+                          C(I,J) <span class="kw">=</span> ZERO
+   <span class="dv">50</span>                 <span class="kw">CONTINUE</span>
+                  <span class="kw">ELSE IF</span> (BETA<span class="kw">.NE.</span>ONE) <span class="kw">THEN</span>
+                      <span class="kw">DO</span> <span class="dv">60</span> I <span class="kw">=</span> <span class="dv">1</span>,M
+                          C(I,J) <span class="kw">=</span> BETA<span class="kw">*</span>C(I,J)
+   <span class="dv">60</span>                 <span class="kw">CONTINUE</span>
+                  <span class="kw">END IF</span>
+                  <span class="kw">DO</span> <span class="dv">80</span> L <span class="kw">=</span> <span class="dv">1</span>,K
+                      <span class="kw">IF</span> (B(L,J)<span class="kw">.NE.</span>ZERO) <span class="kw">THEN</span>
+                          TEMP <span class="kw">=</span> ALPHA<span class="kw">*</span>B(L,J)
+                          <span class="kw">DO</span> <span class="dv">70</span> I <span class="kw">=</span> <span class="dv">1</span>,M
+                              C(I,J) <span class="kw">=</span> C(I,J) <span class="kw">+</span> TEMP<span class="kw">*</span>A(I,L)
+   <span class="dv">70</span>                     <span class="kw">CONTINUE</span>
+                      <span class="kw">END IF</span>
+   <span class="dv">80</span>             <span class="kw">CONTINUE</span>
+   <span class="dv">90</span>         <span class="kw">CONTINUE</span></code></pre>
+</section><section class="slide level2">
+<h1>LAPACK</h1>
+<aside class="notes">
+<p>Short for Linear Algebra PACKage. It is basically a big collection of canonical implementations of mathematical algorithms for solving linear algebra systems.</p>
+<p>LAPACK is still under active development and version 3.5.0 was released a year ago.</p>
+<p>LAPACK primarily provides solvers and specialist multiplication routines for 28 different types of matrices: that is matrices with different a-priori structure or properties.</p>
+<p>It's far too big for any kind of short summary to make any sense, so I'm just intimidating you with the list of routines available for double precision calculations.</p>
+</aside>
+<pre><code>dbdsdc dbdsqr ddisna dgbbrd dgbcon dgbequ dgbequb dgbrfs dgbrfsx dgbsv
+dgbsvx dgbsvxx dgbtrf dgbtrs dgebak dgebal dgebrd dgecon dgeequ
+dgeequb dgees dgeesx dgeev dgeevx dgehrd dgejsv dgelqf dgels dgelsd
+dgelss dgelsy dgeqlf dgeqp3 dgeqpf dgeqrf dgeqrfp dgerfs dgerfsx
+dgerqf dgesdd dgesv dgesvd dgesvj dgesvx dgesvxx dgetrf dgetri dgetrs
+dggbak dggbal dgges dggesx dggev dggevx dggglm dgghrd dgglse dggqrf
+dggrqf dggsvd dggsvp dgtcon dgtrfs dgtsv dgtsvx dgttrf dgttrs dhgeqz
+dhsein dhseqr dopgtr dopmtr dorgbr dorghr dorglq dorgql dorgqr dorgrq
+dorgtr dormbr dormhr dormlq dormql dormqr dormrq dormrz dormtr dpbcon
+dpbequ dpbrfs dpbstf dpbsv dpbsvx dpbtrf dpbtrs dpftrf dpftri dpftrs
+dpocon dpoequ dpoequb dporfs dporfsx dposv dposvx dposvxx dpotrf
+dpotri dpotrs dppcon dppequ dpprfs dppsv dppsvx dpptrf dpptri dpptrs
+dpstrf dptcon dpteqr dptrfs dptsv dptsvx dpttrf dpttrs dsbev dsbevd
+dsbevx dsbgst dsbgv dsbgvd dsbgvx dsbtrd dsfrk dspcon dspev dspevd
+dspevx dspgst dspgv dspgvd dspgvx dsprfs dspsv dspsvx dsptrd dsptrf
+dsptri dsptrs dstebz dstedc dstegr dstein dstemr dsteqr dsterf dstev
+dstevd dstevr dstevx dsycon dsyequb dsyev dsyevd dsyevr dsyevx dsygst
+dsygv dsygvd dsygvx dsyrfs dsyrfsx dsysv dsysvx dsysvxx dsytrd dsytrf
+dsytri dsytrs dtbcon dtbrfs dtbtrs dtfsm dtftri dtfttp dtfttr dtgevc
+dtgexc dtgsen dtgsja dtgsna dtgsyl dtpcon dtprfs dtptri dtptrs dtpttf
+dtpttr dtrcon dtrevc dtrexc dtrrfs dtrsen dtrsna dtrsyl dtrtri dtrtrs
+dtrttf dtrttp dtzrzf dsgesv dsposv
+</code></pre>
+</section><section class="slide level2">
+<h1>DGETRF</h1>
+<aside class="notes">
+<p>Let's just look at one of those methods, as an example of the amount of thought that has gone into this library. Take <code>DGETRF</code>, it computes the LU Decomposition of a matrix.</p>
+<p>The LU Decomposition breaks a matrix into three, simpler, matrices. The Lower, the Upper and a diagonal matrix The theory behind why this is possible is absolutely beautiful and if you're interested further I strongly recommend Topics in Algebra by Herstein.</p>
+<p>This is a graphical representation of the LU decomposition of a Walsh matrix, which has some applications in error correcting codes. So, <code>DGETRF</code> is able to produce L, U and P given an A.</p>
+<p>Matrices of this L, U or P form are known as structured sparse, because their structure is known. From a practical point of view, the memory requirements are much lower than storing a full matrix. From a problem solver's point of view, some equations are known to be solvable when the matrices have particular forms.</p>
+</aside>
+<p><span class="math">\[
+LP^{-1}U = A
+\]</span></p>
+<p><img src="images/LDU_decomposition_of_Walsh_16.svg" /></p>
+</section><section class="slide level2">
+<h1>Optional: Solving with LU</h1>
+<aside class="notes">
+<p>OPTIONAL: This is an optional mathematics slide, with an example of where LU decomposition can be used to solve a problem. Is there any interest in seeing this, or do you all know it already?</p>
+<p>If we have a linear system <span class="math">\(Ax = b\)</span> where <span class="math">\(A\)</span> is a matrix, and <span class="math">\(x,b\)</span> are vectors, we'd like to calculate <span class="math">\(x\)</span> given <span class="math">\(A\)</span> and <span class="math">\(b\)</span>.</p>
+<p>We can calculate the LU Decomposition of <span class="math">\(A\)</span>, remembering that <span class="math">\(P\)</span> is a diagonal matrix, and rearrange like so.</p>
+<p>Then we solve for an intermediate vector <span class="math">\(y\)</span>, before solving for <span class="math">\(x\)</span>. The great thing about these two equations is that <span class="math">\(L\)</span> and <span class="math">\(U\)</span> are both triangular matrices, so we can use forward and back substitution like many of you may have learnt at high school.</p>
+<p>Once the LU Decomposition has been calculated, many systems of this form can be solved efficiently.</p>
+</aside>
+<ul>
+<li class="fragment"><span class="math">\(Ax=b\)</span></li>
+<li class="fragment"><span class="math">\(PA = LU\)</span></li>
+<li class="fragment"><span class="math">\(LUx = Pb\)</span></li>
+</ul>
+<ol>
+<li class="fragment"><span class="math">\(Ly = Pb\)</span></li>
+<li class="fragment"><span class="math">\(Ux = y\)</span></li>
+</ol>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>This is how forward substitution works for lower triangular matrices. Back substitution is the same thing, but for upper triangular matrices.</p>
+<p>Observe that the first equation only involves <span class="math">\(x_1\)</span>, and thus one can solve for <span class="math">\(x_1\)</span> directly. The second equation only involves <span class="math">\(x_1\)</span> and <span class="math">\(x_2\)</span>, and thus can be solved once one substitutes in the already solved value for x<sub>1</sub>. Continuing in this way, everything can be deduced.</p>
+</aside>
+<p><span class="math">\[
+\begin{matrix}
+l_{1,1} x_1 &amp;   &amp;             &amp;            &amp;             &amp; = &amp;    b_1 \\
+l_{2,1} x_1 &amp; + &amp; l_{2,2} x_2 &amp;            &amp;             &amp; = &amp;    b_2 \\
+     \vdots &amp;   &amp;      \vdots &amp;     \ddots &amp;             &amp;   &amp; \vdots \\
+l_{m,1} x_1 &amp; + &amp; l_{m,2} x_2 &amp; + \dotsb + &amp; l_{m,m} x_m &amp; = &amp;   b_m  \\
+\end{matrix}
+\]</span></p>
+<p><span class="math">\[
+ x_1 = \frac{b_1}{l_{1,1}} \\
+ x_2 = \frac{b_2 - l_{2,1} x_1}{l_{2,2}} \\
+ x_m = \frac{b_m - \sum_{i=1}^{m-1} l_{m,i}x_i}{l_{m,m}} \\
+\]</span></p>
+</section><section class="slide level2">
+<h1>C API</h1>
+<aside class="notes">
+<p>In the GNU toolchain, Fortran's single-precision type maps into C <code>float</code> and double precision into <code>double</code>, which are consistent with the Java and Scala primitives of the same name.</p>
+<p>But accessing the Fortran API from C is really nasty: there isn't even an official header file for <code>blas.h</code> so you don't even get parameter list checking. Instead, BLAS is accessed through the CBLAS API and LAPACK is accessed through LAPACKE. This allows C constructs to be used instead of magic characters. This is an example of what the CBLAS wrapper is doing.</p>
+<p>It's worth noting that in Fortran, all input parameters are pointers. This is in contrast to C and Java where primitive types are copied when they are passed to a function. In Fortran, you pass a pointer to the primitive and it is always possible to update that primitive within your routine. Even more mutable than C and Java, what can go wrong?</p>
+</aside>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="ot">#include &quot;cblas.h&quot;</span>
+
+<span class="dt">void</span> cblas_dgemm(<span class="dt">const</span> <span class="kw">enum</span> CBLAS_ORDER Order, <span class="dt">const</span> <span class="kw">enum</span> CBLAS_TRANSPOSE TransA,
+                 <span class="dt">const</span> <span class="kw">enum</span> CBLAS_TRANSPOSE TransB, <span class="dt">const</span> <span class="dt">int</span> M, <span class="dt">const</span> <span class="dt">int</span> N,
+                 <span class="dt">const</span> <span class="dt">int</span> K, <span class="dt">const</span> <span class="dt">double</span> alpha, <span class="dt">const</span> <span class="dt">double</span>  *A,
+                 <span class="dt">const</span> <span class="dt">int</span> lda, <span class="dt">const</span> <span class="dt">double</span>  *B, <span class="dt">const</span> <span class="dt">int</span> ldb,
+                 <span class="dt">const</span> <span class="dt">double</span> beta, <span class="dt">double</span>  *C, <span class="dt">const</span> <span class="dt">int</span> ldc) {
+...
+<span class="kw">if</span>( Order == CblasColMajor ) {
+      <span class="kw">if</span>(TransA == CblasTrans) TA=&#39;T&#39;;
+      <span class="kw">else</span> <span class="kw">if</span> ( TransA == CblasConjTrans ) TA=&#39;C&#39;;
+      <span class="kw">else</span> <span class="kw">if</span> ( TransA == CblasNoTrans )   TA=&#39;N&#39;;
+      <span class="kw">else</span> ...
+
+      <span class="kw">if</span>(TransB == CblasTrans) TB=&#39;T&#39;;
+      <span class="kw">else</span> <span class="kw">if</span> ( TransB == CblasConjTrans ) TB=&#39;C&#39;;
+      <span class="kw">else</span> <span class="kw">if</span> ( TransB == CblasNoTrans )   TB=&#39;N&#39;;
+      <span class="kw">else</span> ...
+
+      <span class="ot">#ifdef F77_CHAR</span>
+         F77_TA = C2F_CHAR(&amp;TA);
+         F77_TB = C2F_CHAR(&amp;TB);
+      <span class="ot">#endif</span>
+
+      F77_dgemm(F77_TA, F77_TB, &amp;F77_M, &amp;F77_N, &amp;F77_K, &amp;alpha, A,
+       &amp;F77_lda, B, &amp;F77_ldb, &amp;beta, C, &amp;F77_ldc);
+   } <span class="kw">else</span> <span class="kw">if</span> (Order == CblasRowMajor) { ...</code></pre>
+</section></section>
+<section><section class="titleslide slide level1"><h1>Precision and Stability</h1></section><section class="slide level2">
+<h1>Kinds of Error</h1>
+<aside class="notes">
+<p>Source: <a href="http://www.netlib.org/lapack/lug/node72.html" class="uri">http://www.netlib.org/lapack/lug/node72.html</a></p>
+<p>There are two kinds of numerical error.</p>
+<p>Roundoff error arises from rounding results of floating-point operations during the algorithm. Input error is error in the input to the algorithm from prior calculations or measurements.</p>
+<p>Both are measured in multiples of machine precision, loosely defined as the largest relative error in any floating-point operation that neither overflows nor underflows. (Overflow means the result is too large to represent accurately, and underflow means the result is too small to represent accurately.</p>
+</aside>
+<ul>
+<li>roundoff error</li>
+<li>input error</li>
+<li>machine precision: <span class="math">\(\epsilon\)</span></li>
+</ul>
+</section><section class="slide level2">
+<h1>Types of Structures</h1>
+<aside class="notes">
+<p>We're almost getting back to Scala, we now have Scalars</p>
+<p>LAPACK routines return four types of floating-point output arguments.</p>
+</aside>
+<ul>
+<li><strong><strong>Scalar</strong></strong>, numbers, e.g. an eigenvalue</li>
+<li><strong><strong>Vector</strong></strong>, e.g. the solution <span class="math">\(x\)</span> of system <span class="math">\(Ax=b\)</span></li>
+<li><strong><strong>Matrix</strong></strong>, e.g. matrix inverse <span class="math">\(A^{-1}\)</span></li>
+<li><strong><strong>Subspace</strong></strong>, e.g. space spanned by eigenvectors</li>
+</ul>
+</section><section class="slide level2">
+<h1>Relative Errors</h1>
+<aside class="notes">
+<p>First consider scalars. Let the scalar <span class="math">\(\hat{\alpha}\)</span> be an approximation of the true answer <span class="math">\(\alpha\)</span>. We can measure the difference between <span class="math">\(\alpha\)</span> and <span class="math">\(\hat{\alpha}\)</span> either by the absolute error <span class="math">\(\vert \hat{\alpha} - \alpha \vert\)</span>, or, if <span class="math">\(\alpha\)</span> is nonzero, by the relative error <span class="math">\(\vert \hat{\alpha} - \alpha \vert / \vert
+\alpha \vert\)</span>. Alternatively, it is sometimes more convenient to use</p>
+<p><span class="math">\(\vert \hat{\alpha} - \alpha \vert / \vert \hat{\alpha} \vert\)</span> instead.</p>
+<p>If the relative error of <span class="math">\(\hat{\alpha}\)</span> is, say <span class="math">\(10^{-5}\)</span>, then we say that <span class="math">\(\hat{\alpha}\)</span> is accurate to 5 decimal digits.</p>
+</aside>
+<ul>
+<li class="fragment"><span class="math">\(\hat{\alpha} \approx \alpha\)</span></li>
+<li class="fragment"><span class="math">\(\vert \hat{\alpha} - \alpha \vert\)</span></li>
+<li class="fragment"><span class="math">\(\vert \hat{\alpha} - \alpha \vert / \vert \alpha \vert\)</span></li>
+<li class="fragment"><span class="math">\(\vert \hat{\alpha} - \alpha \vert / \vert \hat{\alpha} \vert\)</span></li>
+<li class="fragment"><span class="math">\(10^{-5}\epsilon\)</span> &quot;5 decimal digits&quot;</li>
+</ul>
+</section><section class="slide level2">
+<h1>Norms</h1>
+<aside class="notes">
+<p>In order to measure the error in vectors and matrices, we need to measure their size, or more correctly its <strong>*norm*</strong>.</p>
+<p>A simple norm to understand is the 1-norm, which simply adds up all the elements of a vector, or the largest column vector in a matrix.</p>
+<p>The 2-norm is perhaps more intuitive for vectors, as it is the Euclidean metric, or Pythagoras. The equivalent for matrices is more complicated - and carries a non-trivial computational cost - so the Frobenius norm is usually substituted, although not at negligible cost.</p>
+<p>The simplest of all norms is the magnitude of the largest component, the &quot;infinity norm&quot;, which is understandable for vectors and matrices alike.</p>
+<p>Thinking geometrically, the 1-norm is like considering the distance between two points in a city to be the distance that a taxi would drive between them on the city's traffic grid. The 2-norm would be &quot;as the crow flies&quot; and the infinity norm is like just remembering how far you have come North, South, East or West. However, such analogies can be misleading because there is nothing particularly special about the 2-norm that makes it universally more accurate.</p>
+</aside>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Vector</th>
+<th style="text-align: left;">Matrix</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>1-norm</strong></td>
+<td style="text-align: left;"><span class="math">\(\Vert x\Vert _{1} = \sum_i \vert x_i\vert\)</span></td>
+<td style="text-align: left;"><span class="math">\(\Vert A\Vert _{1} = \max_j \sum_i \vert a_{ij}\vert\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>2-norm</strong></td>
+<td style="text-align: left;"><span class="math">\(\Vert x\Vert _2 = ( \sum_i \vert x_i\vert^2 )^{1/2}\)</span></td>
+<td style="text-align: left;"><span class="math">\(\Vert A\Vert _2 = \max_{x \neq 0} \Vert Ax\Vert _2 / \Vert x\Vert _2\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Frobenius</strong></td>
+<td style="text-align: left;"><span class="math">\(\Vert x \Vert_F = \Vert x \Vert_2\)</span></td>
+<td style="text-align: left;"><span class="math">\(\Vert A\Vert _F = ( \sum_{ij} \vert a_{ij}\vert^2 )^{1/2}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math">\(\infty\)</span> <strong>norm</strong></td>
+<td style="text-align: left;"><span class="math">\(\Vert x\Vert _{\infty} = \max_i \vert x_i\vert\)</span></td>
+<td style="text-align: left;"><span class="math">\(\Vert A\Vert _{\infty} = \max_i \sum_j \vert a_{ij}\vert\)</span></td>
+</tr>
+</tbody>
+</table>
+</section><section class="slide level2">
+<h1>Condition Number</h1>
+<aside class="notes">
+<p>The condition number of a matrix A is defined as <span class="math">\(\kappa_p (A) \equiv
+\Vert A\Vert _p \cdot \Vert A^{-1}\Vert _p\)</span>, where A is square and invertible, and the norm is computed according to the previous slide.</p>
+<p>The condition number measures how sensitive <span class="math">\(A^{-1}\)</span> is to changes in <span class="math">\(A\)</span>; the larger the condition number, the more sensitive is <span class="math">\(A^{-1}\)</span>. This has consequences for backwards stability. Have you ever typed a phrase into Google Translate and then translated it back into English? Its the same sort of thing here, and the more you do it the weirder it gets.</p>
+<p>LAPACK routines will typically report the approximate reciprocal of the condition number.</p>
+</aside>
+<p><span class="math">\[
+A = \left(
+\begin{array}{ccc}
+  1 &amp; 2 &amp; 3 \\
+  4 &amp; 5 &amp; 6 \\
+  7 &amp; 8 &amp; 10
+\end{array} \right)
+\qquad
+A^{-1} \approx \left(
+\begin{array}{ccc}
+  -.667 &amp; -1.333 &amp; 1 \\
+  -.667 &amp; 3.667  &amp; -2 \\
+  1     &amp; -2     &amp; 1
+\end{array} \right)
+\]</span></p>
+<p><span class="math">\[\kappa_{\infty}(A) = 158.33\]</span></p>
+<p>LAPACK <code>RCOND(A)</code> <span class="math">\(\approx \frac 1 {\kappa_\infty}\)</span></p>
+</section><section class="slide level2">
+<h1>Example</h1>
+<aside class="notes">
+<p>Suppose we want to solve <span class="math">\(Ax=b\)</span>. We can calculate the error in our solution for <span class="math">\(x\)</span> by querying netlib for the norm of <span class="math">\(A\)</span> with <code>SLANGE</code> and the reciprocal of <span class="math">\(A\)</span> with <code>SGECON</code>, multiplying by the machine error to get a bound on the error. We cheat and know the actual error, shown here for comparison.</p>
+<p>But netlib also provides &quot;expert&quot; solvers, or drivers, which are much more accurate and can report on their error bound. Here, <code>SGESVX</code>, the expert equivalent, returns a more accurate solution with a smaller error bound.</p>
+<p>There is ongoing research in the netlib community to come up with ever-more accurate solvers, and the main point I wanted to get across here was that this is something that is often overlooked by amateur implementations, but is absolutely critical to a wide range of applications. Not knowing your error bars can be disastrous.</p>
+</aside>
+<p><span class="math">\[
+Ax = b \\
+A = \left( \begin{array}{ccc}
+   4 &amp; 16000 &amp; 17000 \\
+   2 &amp; 5     &amp; 8 \\
+   3 &amp; 6     &amp; 10
+   \end{array}\right) \qquad
+b = \left( \begin{array}{c}
+    100.1 \\
+    .1 \\
+    .01
+    \end{array}\right)
+\]</span></p>
+<pre class="sourceCode fortran"><code class="sourceCode fortran">ANORM <span class="kw">=</span> SLANGE( <span class="st">&#39;I&#39;</span>, N, N, A, LDA, WORK )
+<span class="kw">CALL</span> SGESV( N, <span class="dv">1</span>, A, LDA, IPIV, B, LDB, INFO )
+<span class="kw">CALL</span> SGECON( <span class="st">&#39;I&#39;</span>, N, A, LDA, ANORM, RCOND, WORK, IWORK, INFO )
+ERRBD <span class="kw">=</span> EPSMCH <span class="kw">/</span> RCOND</code></pre>
+<ul>
+<li class="fragment"><code>SGESV ERRBD</code> <span class="math">\(= 1.5\cdot 10^{-2}\)</span></li>
+<li class="fragment">true error <span class="math">\(= 1.5\cdot 10^{-3}\)</span></li>
+<li class="fragment"><code>SGESVX FERR</code> <span class="math">\(= 3.0 \cdot 10^{-5}\)</span></li>
+<li class="fragment">true error <span class="math">\(4.3 \cdot 10^{-7}\)</span></li>
+</ul>
+</section><section class="slide level2">
+<h1>Hardware Support</h1>
+<aside class="notes">
+<p>Not only are algorithms and computational techniques always improving, but the hardware also gives incredible benefits.</p>
+<p>In particular, Intel have been adding a range of multiply accumulate operations to their latest ranges of CPUs which allow operations like multiplication of two numbers and an addition to occur in one clock cycle and with a single unit of machine rounding.</p>
+</aside>
+<p><span class="math">\(y = a * x + b\)</span></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Mnemonic</th>
+<th style="text-align: left;">Operands</th>
+<th style="text-align: left;">Operation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">VFMADD132SD</td>
+<td style="text-align: left;">xmm,xmm,xmm/m64</td>
+<td style="text-align: left;">$0=$0×$2+$1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">VFMADD213SD</td>
+<td style="text-align: left;">xmm,xmm,xmm/m64</td>
+<td style="text-align: left;">$0=$1×$0+$2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">VFMADD231SD</td>
+<td style="text-align: left;">xmm,xmm,xmm/m64</td>
+<td style="text-align: left;">$0=$1×$2+$0</td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section><section class="titleslide slide level1"><h1>Bottleneck</h1></section><section class="slide level2">
+<h1>Read and Write</h1>
+<aside class="notes">
+<p>Let's come back to our naive Scala implementation of matrix multiplication. I told you that it is not as fast as it could be, but I didn't tell you why.</p>
+<p>To demonstrate the bottleneck, I wrote a little C program (this is just the core part of it) to time how long it takes to allocate and copy an array into a new one, and how long it takes to do the repeated reads of the entries of a column of a matrix.</p>
+<p>I compiled this with super-maximum GCC optimisation flags on, because without them this actually took longer to run than the immutable Scala implementation!</p>
+</aside>
+<pre class="sourceCode c"><code class="sourceCode c">    requestStart = currentTimeNanos();
+    <span class="dt">double</span>* b = calloc(length, <span class="kw">sizeof</span>(<span class="dt">double</span>));
+
+    <span class="kw">for</span> (i = <span class="dv">0</span> ; i &lt; m ; i++) {
+        c = i * m;
+        <span class="kw">for</span> (j = <span class="dv">0</span> ; j &lt; m ; j ++) {
+            <span class="ot">#ifdef READ_COL</span>
+            <span class="kw">for</span> (k = <span class="dv">0</span> ; k &lt; m ; k++) {
+                tmp = a[c + k];
+            }
+            b[c + j] = tmp;
+            <span class="ot">#else</span>
+            b[c + j] = a[c + j];
+            <span class="ot">#endif</span>
+        }
+    }
+    requestEnd = currentTimeNanos();</code></pre>
+</section><section class="slide level2">
+<h1>Timings</h1>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>And these are the results, alongside the timings from our Scala implementations.</p>
+<p>This is quite incredible. With our naive implementation of matrix multiplication, we're taking about the same amount of time that takes a C program, compiled with harsh optimisation flags, to just <strong>read</strong> and <strong>write</strong> the data into RAM. The C program isn't even doing any work.</p>
+<p>Interestingly, if the C program is compiled without any optimisation flags, it is off the chart and takes all day to run. That is a testament to how amazing the JVM JIT really is... it's doing all kinds of optimisations with CPU caching under the hood that you would only expect when using heavy C optimisation flags.</p>
+</aside>
+<p><img src="images/bottleneck.png" /></p>
+</section><section class="slide level2">
+<h1>CPU Architecture</h1>
+<aside class="notes">
+<p>Let's think about the hardware.</p>
+</aside>
+<p><img src="images/i7-front.jpg" /></p>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>This is a &quot;die map&quot; of an Intel i7 Haswell. Each core has two caches: called L1 and L2 and there is a larger shared L3 cache.</p>
+<p>If the CPU needs access to the RAM, it goes through the memory controller (bottom) and if it needs to perform some I/O it has to go through the top.</p>
+<p>The CPUs tick along according to their clock frequency and at every tick they can perform some work. Until a few years ago, clock frequencies were getting faster with every generation of processor. More recently, we get more cores.</p>
+</aside>
+<p><img src="images/i7.jpg" /></p>
+</section><section class="slide level2">
+<h1>CPU Cycles</h1>
+<aside class="notes">
+<ul>
+<li>Source: <a href="http://en.wikipedia.org/wiki/X87#Performance" class="uri">http://en.wikipedia.org/wiki/X87#Performance</a></li>
+<li>Source: <a href="http://stackoverflow.com/questions/15655835" class="uri">http://stackoverflow.com/questions/15655835</a></li>
+</ul>
+<p>This is a chart of some basic floating point operations on the x87 math co-processor, now part of the cores, bringing us up to about 2003.</p>
+<p>If you've ever seen any numerical methods textbooks, you'll see lots of discussion around the order of magnitude of floating point operations, such as multiplication.</p>
+<p>Those old textbooks are very much out of date. In the 1990s, a multiplication took slightly over 100 CPU cycles. In 2003, it took about 5 cycles, and nowadays multiple operations can happen in a single cycle. I've seen numbers that suggest Haswell does 32 floating point multiplications in a single cycle. That's an improvement of one in 5,000 cycles per operation (not even considering the improvements in clock speed).</p>
+<p>I think we can safely say that counting multiplications has not been the bottleneck in linear algebra for a long time.</p>
+</aside>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">FADD</th>
+<th style="text-align: left;">FMUL</th>
+<th style="text-align: left;">FDIV</th>
+<th style="text-align: left;">FSQRT</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>80287</strong></td>
+<td style="text-align: left;">80</td>
+<td style="text-align: left;">120</td>
+<td style="text-align: left;">200</td>
+<td style="text-align: left;">180</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>80387</strong></td>
+<td style="text-align: left;">30</td>
+<td style="text-align: left;">45</td>
+<td style="text-align: left;">90</td>
+<td style="text-align: left;">125</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>80486</strong></td>
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">73</td>
+<td style="text-align: left;">85</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Pentium</strong></td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">39</td>
+<td style="text-align: left;">70</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Pentium II</strong></td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">25</td>
+<td style="text-align: left;">35</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Pentium 4</strong></td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">30</td>
+<td style="text-align: left;">30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">...</td>
+<td style="text-align: left;">...</td>
+<td style="text-align: left;">...</td>
+<td style="text-align: left;">...</td>
+<td style="text-align: left;">...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>i7</strong></td>
+<td style="text-align: left;"><span class="math">\(\frac 1 {32}\)</span></td>
+<td style="text-align: left;"><span class="math">\(\frac 1 {32}\)</span></td>
+<td style="text-align: left;"><span class="math">\(\frac 1 {32}\)</span></td>
+<td style="text-align: left;"><span class="math">\(\frac 1 {32}\)</span></td>
+</tr>
+</tbody>
+</table>
+</section><section class="slide level2">
+<h1>Latency</h1>
+<aside class="notes">
+<p>Source: <a href="https://gist.github.com/hellerbarde/2843375#file-latency_humanized-markdown" class="uri">https://gist.github.com/hellerbarde/2843375#file-latency_humanized-markdown</a></p>
+<p>The real bottleneck is moving data around: latency.</p>
+<p>Peter Norvig once summarised common data access operations ordered by their timescale. His list is now somewhat out of date, but the relative timings have not changed much over the years.</p>
+<p>To assist in understanding of the timescales, somebody multiplied all the times by a billion and related the tasks to things that we do as humans.</p>
+<p>I've sanitised the examples a little bit to be more British.</p>
+<p>The bottleneck we've seen is jumping between L1 and L2 cache references, and for much larger matrices (where a row cannot be held in L2), touching the main memory. For reference, my CPU has an L1 of 32k and an L2 of 256K.</p>
+<p>Put in these terms, that means we're expecting somebody to read a book, but we keep asking them to go brush their teeth every time they finish a page.</p>
+<p>Clearly, the most optimal solution will optimise the pipeline so that the L1 cache rarely misses.</p>
+</aside>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Computer</th>
+<th style="text-align: left;">Human Timescale</th>
+<th style="text-align: left;">Human Analogy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>L1 cache reference</strong></td>
+<td style="text-align: left;"><strong>0.5 secs</strong></td>
+<td style="text-align: left;"><strong>One heart beat</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Branch mispredict</td>
+<td style="text-align: left;">5 secs</td>
+<td style="text-align: left;">Yawn</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>L2 cache reference</strong></td>
+<td style="text-align: left;"><strong>7 secs</strong></td>
+<td style="text-align: left;"><strong>Long yawn</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mutex lock/unlock</td>
+<td style="text-align: left;">25 secs</td>
+<td style="text-align: left;">Making a cup of tea</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Main memory reference</strong></td>
+<td style="text-align: left;"><strong>100 secs</strong></td>
+<td style="text-align: left;"><strong>Brushing your teeth</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Compress 1K bytes with Zippy</td>
+<td style="text-align: left;">50 min</td>
+<td style="text-align: left;">Scala compiler CI pipeline</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Send 2K bytes over 1Gbps network</td>
+<td style="text-align: left;">5.5 hr</td>
+<td style="text-align: left;">Train London to Edinburgh</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SSD random read</td>
+<td style="text-align: left;">1.7 days</td>
+<td style="text-align: left;">Weekend</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Read 1MB sequentially from memory</td>
+<td style="text-align: left;">2.9 days</td>
+<td style="text-align: left;">Long weekend</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Round trip within same datacenter</td>
+<td style="text-align: left;">5.8 days</td>
+<td style="text-align: left;">Short holiday</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Read 1MB sequentially from SSD</td>
+<td style="text-align: left;">11.6 days</td>
+<td style="text-align: left;">Holiday</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Disk seek</td>
+<td style="text-align: left;">16.5 weeks</td>
+<td style="text-align: left;">Term of university</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Read 1MB sequentially from disk</td>
+<td style="text-align: left;">7.8 months</td>
+<td style="text-align: left;">Fully paid maternity in Norway</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Send packet CA-&gt;Netherlands-&gt;CA</td>
+<td style="text-align: left;">4.8 years</td>
+<td style="text-align: left;">Government's term</td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section><section class="titleslide slide level1"><h1>Machine Optimised</h1></section><section class="slide level2">
+<h1>Intel</h1>
+<aside class="notes">
+<p>You'll see in a moment, it's wipes the floor but really this slide summarises a practical consideration about the Intel implementation of BLAS.</p>
+<p>This is a proprietary product, so we have no idea how they are doing anything.</p>
+<p>It comes as part of a monolithic corporate package called Parallel Studio XE along with a bunch of other stuff that you probably don't need. And this is the price list as of November 2014.</p>
+<p>The license does allow you to redistribute with your software, but you're looking at cluster licenses for <strong>every</strong> CI/QA/PROD box and either professional or composer licenses on DEV boxes.</p>
+<p>Renewal prices in brackets.</p>
+<p>However, if you speak to someone in Intel who knows about the products, they'll tell you that you can still buy the MKL standalone and it is a much more reasonable price. Honestly, if you do anything high performance, I think it's worth it. There is a tonne of other good stuff.</p>
+</aside>
+<h3>Parallel Studio</h3>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Cluster</th>
+<th style="text-align: left;">Professional</th>
+<th style="text-align: left;">Composer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Named User</strong></td>
+<td style="text-align: left;">$2,949 ($1,049)</td>
+<td style="text-align: left;">$2,299 ($799)</td>
+<td style="text-align: left;">$1,449 ($499)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>2 Floating Users</strong></td>
+<td style="text-align: left;">$14,749 ($5,199)</td>
+<td style="text-align: left;">$11,499 ($4,049)</td>
+<td style="text-align: left;">$5,099 ($1,799)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>5 Floating Users</strong></td>
+<td style="text-align: left;">$29,499 ($10,349)</td>
+<td style="text-align: left;">$22,999 ($8,049)</td>
+<td style="text-align: left;">$10,899 ($3,849)</td>
+</tr>
+</tbody>
+</table>
+<h3>MKL Standalone</h3>
+<p>$499</p>
+</section><section class="slide level2">
+<h1>AMD Core Math Library</h1>
+<aside class="notes">
+<p>In contrast, AMD have a gratis library called ACML. It's not free software, but you can download without cost and redistribute.</p>
+<p>And because it is proprietary, we have no idea how they are achieving their results.</p>
+<p>I actually don't have access to any AMD hardware, but it is possible to run this library on Intel hardware, which is interesting. They only have a version for Linux and Windows.</p>
+</aside>
+<p><img src="images/amcl.jpg" /></p>
+</section><section class="slide level2">
+<h1>Apple vecLib / Accelerate</h1>
+<aside class="notes">
+<p>Apple have their own machine optimised distribution of both BLAS and LAPACK, which is incredibly convenient.</p>
+</aside>
+<pre><code>$ ll /usr/lib/lib{blas, lapack}.dylib 
+/usr/lib/libblas.dylib -&gt; /System/Library/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+/usr/lib/liblapack.dylib -&gt; /System/Library/Frameworks/vecLib.framework/Versions/A/libLAPACK.dylib
+
+$ tree /System/Library/Frameworks/vecLib.framework/Versions/Current/
+├── _CodeSignature
+│   └── CodeResources
+├── libBLAS.dylib
+├── libLAPACK.dylib
+├── libvDSP.dylib
+├── libvMisc.dylib
+├── Resources
+│   ├── English.lproj
+│   │   └── InfoPlist.strings
+│   ├── Info.plist
+│   └── version.plist
+└── vecLib
+</code></pre>
+</section><section class="slide level2">
+<h1>ATLAS</h1>
+<aside class="notes">
+<p>The most well-known open source implementation of BLAS is ATLAS: Automatically Tuned Linear Algebra Software.</p>
+<p>ATLAS relies heavily on compile-time analysis, which they call &quot;automated empirical optimisation of software&quot;: ironically something can be solved using linear algebra. This means three main things, all involving compiling ATLAS lots of times:</p>
+<ul>
+<li>compiling the same code with different compiler flags to see if there are any free wins.</li>
+<li>compiling the same code with lots of different magic numbers to define things like cache edges and whether or not to copy matrices of various sizes.</li>
+<li>trying out various different implementations of the same function, where there is no clear winner.</li>
+<li>code generation of the level 3 BLAS and LAPACK routines to take all the above into account at the level of branches.</li>
+</ul>
+</aside>
+<ul>
+<li>compiler flags - free wins</li>
+<li>parameterisation
+<ul>
+<li>cache edges - how much to attempt in kernels?</li>
+<li>copy - matrix data can be rearranged optimally</li>
+</ul></li>
+<li>multiple implementations of the same function
+<ul>
+<li>Fred's loop is faster than Bob's on your machine</li>
+</ul></li>
+<li>code generation
+<ul>
+<li>inline on steroids</li>
+</ul></li>
+</ul>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>But the ATLAS binaries will have been optimised on somebody else's machine with a different spec, so to really get maximum performance you need to compile this yourself. For debian based systems, it's very straightforward -- just make sure you don't use your computer for anything else while it's working.</p>
+<p>Personally, I've never seen a big win by building on my machine, but I strongly suspect that the Debian build machines have the same CPU as me. Your mileage may vary. It's free, to do this, so why not?</p>
+</aside>
+<pre><code>cat /usr/share/doc/libatlas3-base/README.Debian
+
+for A in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+  do sudo sh -c &quot;echo performance &gt; $A&quot;
+  done
+cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+
+sudo apt-get source atlas
+sudo apt-get build-dep atlas
+sudo apt-get install devscripts
+cd atlas-*
+fakeroot debian/rules custom
+sudo dpkg -i ../libatlas*.deb
+
+sudo update-alternatives --config libblas.so.3
+sudo update-alternatives --config liblapack.so.3
+</code></pre>
+</section><section class="slide level2">
+<h1>GotoBLAS / OpenBLAS</h1>
+<aside class="notes">
+<p>Another free and open source library.</p>
+<p>GotoBLAS was created by Kazushige Goto in 2003 during his sabbatical from the Japan Patent office and the design concept is to write fast assembly for known processors.</p>
+<p>Development ceased in 2008, and at its peak it was used in 7 of the world's top 10 supercomputers.</p>
+<p>However, OpenBLAS took over and expands the list of processors that it supports to the i7.</p>
+<p>The big advantage of OpenBLAS is that it doesn't require tuning on the target machine, but there is always the risk that some functions aren't as fast as they could be due to the lack of tuning.</p>
+</aside>
+<pre><code>$ ls OpenBLAS/kernel/x86_64/*dgemm*
+
+dgemm_kernel_16x2_haswell.S     dgemm_kernel_6x4_piledriver.S
+dgemm_ncopy_2.S dgemm_ncopy_8.S dgemm_tcopy_8_bulldozer.S
+dgemm_kernel_4x4_haswell.S      dgemm_kernel_8x2_bulldozer.S
+dgemm_ncopy_4.S dgemm_tcopy_2.S dgemm_tcopy_8.S
+dgemm_kernel_4x8_sandy.S        dgemm_kernel_8x2_piledriver.S
+dgemm_ncopy_8_bulldozer.S       dgemm_tcopy_4.S
+</code></pre>
+</section><section class="slide level2">
+<h1>DGEMM Benchmarks</h1>
+<aside class="notes">
+<p>This little C benchmark using CBLAS can have the implementation swapped out at runtime.</p>
+</aside>
+<pre class="sourceCode c"><code class="sourceCode c">requestStart = currentTimeNanos();
+<span class="dt">double</span>* c = calloc(m * m, <span class="kw">sizeof</span>(<span class="dt">double</span>));
+cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, m, m, m, <span class="dv">1</span>, a, m, b, m, <span class="dv">0</span>, c, m);
+requestEnd = currentTimeNanos();</code></pre>
+<pre><code>LD_LIBRARY_PATH=. ./dgemmtest &gt; ../R/netlib-ref.csv
+LD_LIBRARY_PATH=/usr/lib/atlas-base ./dgemmtest &gt; ../R/atlas.csv
+LD_LIBRARY_PATH=/usr/lib/openblas-base ./dgemmtest &gt; ../R/openblas.csv
+LD_LIBRARY_PATH=/opt/acml5.3.1/gfortran64_mp/lib/:. ./dgemmtest &gt; ../R/acml.csv
+LD_LIBRARY_PATH=/opt/intel/mkl/lib/intel64:. ./dgemmtest &gt; ../R/intel.csv
+</code></pre>
+</section><section class="slide level2">
+<h1>DGEMM Comparison</h1>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>Here is the chart you've all been waiting for, overlaid on top of our Scala implementations. There is a lot of information here, so let's go through it slowly.</p>
+<p>The Scala implementations are the black lines, same as before.</p>
+<p>The red lines mark out the High Performance Zone that we discussed in the Bottleneck section.</p>
+<p>The thick green line is the fortran reference implementation of blas. So the only real difference between this and the bottleneck discovery code is that it actually does the multiplications. We can <strong>really</strong> see that the time to do the multiplications is almost insignificant, as this is effectively sitting on the fence.</p>
+<p>Let's then go into the open source implementations in green: ATLAS is good but OpenBLAS is leading the field.</p>
+<p>We also get real performance gains from the proprietary implementations: AMD is in thick blue and Intel is below with blue dashes, and somewhere in between is the Apple implementation. Even though I run these a few times to allow warm-up, the proprietary implementations seem to have these spikes. I have no idea what they are: possibly poor handling of cases on cache boundaries.</p>
+<p>It is truly remarkable that the optimised implementations take only a single order of magnitude more to do the work than to simply copy the arrays. And that's about a thousand times faster than our first attempt at a Scala implementation, and almost 100 times faster than the best we could come up with on the JVM.</p>
+</aside>
+<p><img src="images/optimised.png" /></p>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>And this is the same graph on a machine with 16 Intel(R) Xeon(R) CPU E5-2643 0 @ 3.30GHz cores. No weird spikes from the proprietary implementations, again I don't know why.</p>
+<p>It should be noted that this is only <code>DGEMM</code>, for any specific problem it may be best to compare all the functions that matter with the correct transpose and matrix ordering modes.</p>
+</aside>
+<p><img src="images/optimised-xeon.png" /></p>
+</section></section>
+<section><section class="titleslide slide level1"><h1>netlib-java</h1></section><section class="slide level2">
+<h1>Fortran to ...</h1>
+<aside class="notes">
+<p>netlib-java begins with a direct translation of the netlib reference implementation into Java, using a tool called F2J.</p>
+<p>The tool is written in C++ and takes Fortran, such as this part of <code>DSYMM</code> used for multiplying symmetric matrices:</p>
+</aside>
+<pre class="sourceCode fortran"><code class="sourceCode fortran">      <span class="kw">IF</span>( UPPER )<span class="kw">THEN</span>
+         <span class="kw">DO</span> <span class="dv">70</span>, J <span class="kw">=</span> <span class="dv">1</span>, N
+            <span class="kw">DO</span> <span class="dv">60</span>, I <span class="kw">=</span> <span class="dv">1</span>, M
+               TEMP1 <span class="kw">=</span> ALPHA<span class="kw">*</span>B( I, J )
+               TEMP2 <span class="kw">=</span> ZERO
+               <span class="kw">DO</span> <span class="dv">50</span>, K <span class="kw">=</span> <span class="dv">1</span>, I <span class="kw">-</span> <span class="dv">1</span>
+                  C( K, J ) <span class="kw">=</span> C( K, J ) <span class="kw">+</span> TEMP1    <span class="kw">*</span>A( K, I )
+                  TEMP2     <span class="kw">=</span> TEMP2     <span class="kw">+</span> B( K, J )<span class="kw">*</span>A( K, I )
+<span class="dv">50</span>             <span class="kw">CONTINUE</span>
+               <span class="kw">IF</span>( BETA<span class="kw">.EQ.</span>ZERO )<span class="kw">THEN</span>
+                  C( I, J ) <span class="kw">=</span> TEMP1<span class="kw">*</span>A( I, I ) <span class="kw">+</span> ALPHA<span class="kw">*</span>TEMP2
+               <span class="kw">ELSE</span>
+                  C( I, J ) <span class="kw">=</span> BETA <span class="kw">*</span>C( I, J ) <span class="kw">+</span>
+  $                           TEMP1<span class="kw">*</span>A( I, I ) <span class="kw">+</span> ALPHA<span class="kw">*</span>TEMP2
+               <span class="kw">END IF</span>
+<span class="dv">60</span>          <span class="kw">CONTINUE</span>
+<span class="dv">70</span>       <span class="kw">CONTINUE</span></code></pre>
+</section><section class="slide level2">
+<h1>... Java</h1>
+<aside class="notes">
+<p>Into Java, such as this.</p>
+<p>There are a few things of particular note here. In Fortran, arrays are indexed from ONE --- as God intended. But obviously, in C and Java, the indexes start from zero, so there is a lot of plus/minus one going on.</p>
+<p>The other thing is that Fortran likes to pass around pointers to parts of the array, but there is no way on the JVM to pass a reference to the middle of an array. You have to pass the full array and an offset/sublength. So that means there is a lot of boilerplate to deal with this.</p>
+<p>Finally, Fortran 77 doesn't have loops and instead uses <code>GOTO</code> statements. For simple examples like this, loops are inferred and used, but in other parts of the code it is simply not possible to implement in Java, so <code>Dummy.label</code> is added at the various target points and a special Java processor is applied to construct JVM bytecode.</p>
+<p>In fact, the production of the Java code itself is really a lie because the preferred behaviour of F2J is to compile straight to JVM bytecode.</p>
+</aside>
+<pre class="sourceCode java"><code class="sourceCode java"><span class="kw">if</span> (upper) { 
+  forloop70: <span class="kw">for</span> (j = <span class="dv">1</span>; j &lt;= n; j++) {
+    forloop60: <span class="kw">for</span> (i = <span class="dv">1</span>; i &lt;= m; i++) { 
+      temp1 = alpha * b[(i) - <span class="dv">1</span> + (j - <span class="dv">1</span>) * ldb + _b_offset]; 
+      temp2 = zero;
+      forloop50: <span class="kw">for</span> (k = <span class="dv">1</span>; k &lt;= i - <span class="dv">1</span>; k++) {
+        c[(k) - <span class="dv">1</span> + (j - <span class="dv">1</span>) * Ldc + _c_offset] = c[(k) - <span class="dv">1</span> + (j - <span class="dv">1</span>) * Ldc + _c_offset] + temp1 * a[(k) - <span class="dv">1</span> + (i - <span class="dv">1</span>) * lda + _a_offset];
+        temp2 = temp2 + b[(k) - <span class="dv">1</span> + (j - <span class="dv">1</span>) * ldb + _b_offset] * a[(k) - <span class="dv">1</span> + (i - <span class="dv">1</span>) * lda + _a_offset];
+        Dummy.<span class="fu">label</span>(<span class="st">&quot;Dsymm&quot;</span>, <span class="dv">50</span>);
+      }
+      <span class="kw">if</span> (beta == zero) {
+        c[(i) - <span class="dv">1</span> + (j - <span class="dv">1</span>) * Ldc + _c_offset] = temp1 * a[(i) - <span class="dv">1</span> + (i - <span class="dv">1</span>) * lda + _a_offset] + alpha * temp2; 
+      } <span class="kw">else</span> {
+        c[(i) - <span class="dv">1</span> + (j - <span class="dv">1</span>) * Ldc + _c_offset] = beta * c[(i) - <span class="dv">1</span> + (j - <span class="dv">1</span>) * Ldc + _c_offset] + temp1 * a[(i) - <span class="dv">1</span> + (i - <span class="dv">1</span>) * lda + _a_offset] + alpha * temp2;
+      }
+      Dummy.<span class="fu">label</span>(<span class="st">&quot;Dsymm&quot;</span>, <span class="dv">60</span>);
+    }
+    Dummy.<span class="fu">label</span>(<span class="st">&quot;Dsymm&quot;</span>, <span class="dv">70</span>);
+  }
+}</code></pre>
+</section><section class="slide level2">
+<h1>API Generator</h1>
+<aside class="notes">
+<p>Once we have the entire netlib reference implementation in <code>jar</code> form, netlib-java is able to parse all the objects and construct an abstract interface for both BLAS and LAPACK.</p>
+<p>In fact, pretty much all of netlib-java is code generation, and it's using the ANTLR StringTemplate library to do that.</p>
+<p>This is the sort of thing you can expect in the interface.</p>
+</aside>
+<pre class="sourceCode java"><code class="sourceCode java"><span class="kw">abstract</span> <span class="kw">class</span> BLAS {
+  ...
+  <span class="co">/**</span>
+<span class="co">   * ... original docs here ...</span>
+<span class="co">   */</span>
+  <span class="kw">abstract</span> <span class="kw">public</span> <span class="dt">void</span> <span class="fu">dgemm</span>(
+    String transa,
+    String transb,
+    <span class="dt">int</span> m,
+    <span class="dt">int</span> n,
+    <span class="dt">int</span> k,
+    <span class="dt">double</span> alpha,
+    <span class="dt">double</span>[] a,
+    <span class="dt">int</span> lda,
+    <span class="dt">double</span>[] b,
+    <span class="dt">int</span> ldb,
+    <span class="dt">double</span> beta,
+    <span class="dt">double</span>[] c,
+    <span class="dt">int</span> Ldc
+  );
+  ...
+}</code></pre>
+</section><section class="slide level2">
+<h1>Regex Digression</h1>
+<aside class="notes">
+<p>It's worth noting that in order to work out the names of the parameters to the routines, I had to parse the Javadocs that F2J produces, because this sort of information is not present in the Java 6 class definition. I humbly apologise for having unleashed this regular expression upon your dependency list:</p>
+</aside>
+<pre class="sourceCode java"><code class="sourceCode java">StringBuilder regex = <span class="kw">new</span> StringBuilder();
+regex.<span class="fu">append</span>(<span class="fu">format</span>(<span class="st">&quot;&gt;</span><span class="ch">\\</span><span class="st">Q%s</span><span class="ch">\\</span><span class="st">E&lt;/A&gt;&lt;/(?:B|strong)&gt;</span><span class="ch">\\</span><span class="st">(&quot;</span>, name));
+<span class="kw">for</span> (Class klass : types) {
+  regex.<span class="fu">append</span>(<span class="fu">format</span>(
+    <span class="st">&quot;,?</span><span class="ch">\\</span><span class="st">s*(?:&lt;A[^&gt;]+&gt;)?[</span><span class="ch">\\</span><span class="st">w.]*</span><span class="ch">\\</span><span class="st">Q%s</span><span class="ch">\\</span><span class="st">E(?:&lt;/A&gt;)?(?:&amp;lt;[^&amp;]+&amp;gt;)?&amp;nbsp;([^),</span><span class="ch">\\</span><span class="st">s]+)&quot;</span>,
+    klass.<span class="fu">getSimpleName</span>()
+  ));
+}
+regex.<span class="fu">append</span>(<span class="fu">format</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">)&lt;/CODE&gt;&quot;</span>));
+
+Pattern pattern = Pattern.<span class="fu">compile</span>(regex.<span class="fu">toString</span>(), MULTILINE | CASE_INSENSITIVE);
+Matcher matcher = pattern.<span class="fu">matcher</span>(raw);</code></pre>
+</section><section class="slide level2">
+<h1>Implementations</h1>
+<aside class="notes">
+<p>The abstract API is implemented by three different implementations, looking something like this.</p>
+<p>For the native implementation, this means passing off to JNI.</p>
+</aside>
+<h3>F2jBLAS</h3>
+<pre class="sourceCode java"><code class="sourceCode java"><span class="fu">@Override</span>
+<span class="kw">public</span> <span class="dt">void</span> <span class="fu">dgemm</span>(
+  String transa, String transb, <span class="dt">int</span> m, <span class="dt">int</span> n, <span class="dt">int</span> k,
+  <span class="dt">double</span> alpha, <span class="dt">double</span>[] a, <span class="dt">int</span> lda,
+  <span class="dt">double</span>[] b, <span class="dt">int</span> ldb, <span class="dt">double</span> beta, <span class="dt">double</span>[] c, <span class="dt">int</span> Ldc
+) {
+ org.<span class="fu">netlib</span>.<span class="fu">blas</span>.<span class="fu">Dgemm</span>.<span class="fu">dgemm</span>(
+   transa, transb, m, n, k, alpha, a, <span class="dv">0</span>, lda, b, <span class="dv">0</span>, ldb, beta, c, <span class="dv">0</span>, Ldc
+ );
+}</code></pre>
+<h3>NativeRefBLAS and NativeSystemBLAS</h3>
+<pre class="sourceCode java"><code class="sourceCode java"><span class="fu">@Override</span>
+<span class="kw">public</span> <span class="kw">native</span> <span class="dt">void</span> <span class="fu">dgemm</span>(
+  String transa, String transb, <span class="dt">int</span> m, <span class="dt">int</span> n, <span class="dt">int</span> k,
+  <span class="dt">double</span> alpha, <span class="dt">double</span>[] a, <span class="dt">int</span> lda,
+  <span class="dt">double</span>[] b, <span class="dt">int</span> ldb, <span class="dt">double</span> beta,
+  <span class="dt">double</span>[] c, <span class="dt">int</span> Ldc
+);</code></pre>
+</section><section class="slide level2">
+<h1>JNI</h1>
+<aside class="notes">
+<p>The Java Native Interface (JNI) implementation, which is auto-generated, looks something like this. I'd like to talk about some pitfalls with JNI.</p>
+<p>There is a really nice third-party wrapper around native functions called JNA, but it has a major performance problem: it copies arrays both in and out of the native layer. And we know that's not great for performance.</p>
+<p>But if we use standard JNI functions, and ask for <code>ArrayPrimitive</code> we'll also get a copy of the array. In order for the JNI code to be handed the actual array, as used in the JVM, we have to call <code>CriticalArrayPrimitive</code>.</p>
+<p>But there is a problem with <code>CriticalArrayPrimitive</code>, once you call it, you potentially turn off the garbage collector. That could be a big problem if you are in a churn-heavy application and you're doing many of these operations.</p>
+<p>But it's not as bad as it sounds. The reality is that the optimised native implementations make full use of your CPU, so there isn't much scope to do more than one of them at a time. Therefore, you're well advised to perform your higher level matrix operations in an Akka actor or in a synchronized block, to let the JVM have a bit of breathing room on either side to collect any garbage. This native code doesn't actually produce any garbage, but your code may do that while it's running.</p>
+<p>If we wanted to avoid this problem, we could use NIO <code>Buffers</code>. But the problem with that is that it doesn't match onto the F2J implementation, so everyone living in pure JVM land will take the hit. Ideally, if I had an infinite amount of time to work on this, I'd rewrite F2J to use <code>Buffers</code> instead of arrays.</p>
+<p>There are also some nasty implementation details to do with the exact size of primitives between C and JVM land, which means that not everything matches up nicely. Were you aware that the JVM represents <code>int</code> with a 64 bit C <code>long long</code> type? I've even seen people write --- shocking --- code in Scala to try and optimise heap usage, completely unaware of this fact.</p>
+</aside>
+<pre class="sourceCode c"><code class="sourceCode c">JNIEXPORT <span class="dt">void</span> JNICALL Java_com_github_fommil_netlib_NativeSystemBLAS_dgemm (JNIEnv * env, jobject calling_obj, jstring transa, jstring transb, jint m, jint n, jint k, jdouble alpha, jdoubleArray a, jint lda, jdoubleArray b, jint ldb, jdouble beta, jdoubleArray c, jint Ldc) {
+  <span class="dt">char</span> * jni_transa = (<span class="dt">char</span> *)(*env)-&gt;GetStringUTFChars(env, transa, JNI_FALSE);
+  <span class="dt">char</span> * jni_transb = (<span class="dt">char</span> *)(*env)-&gt;GetStringUTFChars(env, transb, JNI_FALSE);
+  jdouble * jni_a = NULL;
+  <span class="kw">if</span> (a != NULL) {
+    jni_a = (*env)-&gt;GetPrimitiveArrayCritical(env, a, JNI_FALSE);
+    check_memory(env, jni_a);
+  }
+  jdouble * jni_b = NULL;
+  <span class="kw">if</span> (b != NULL) {
+    jni_b = (*env)-&gt;GetPrimitiveArrayCritical(env, b, JNI_FALSE);
+    check_memory(env, jni_b);
+  }
+  jdouble * jni_c = NULL;
+  <span class="kw">if</span> (c != NULL) {
+    jni_c = (*env)-&gt;GetPrimitiveArrayCritical(env, c, JNI_FALSE);
+    check_memory(env, jni_c);
+  }
+  cblas_dgemm(CblasColMajor, getCblasTrans(jni_transa), getCblasTrans(jni_transb), m, n, k, alpha, jni_a, lda, jni_b, ldb, beta, jni_c, Ldc);
+  <span class="kw">if</span> (c != NULL) (*env)-&gt;ReleasePrimitiveArrayCritical(env, c, jni_c, <span class="dv">0</span>);
+  <span class="kw">if</span> (b != NULL) (*env)-&gt;ReleasePrimitiveArrayCritical(env, b, jni_b, <span class="dv">0</span>);
+  <span class="kw">if</span> (a != NULL) (*env)-&gt;ReleasePrimitiveArrayCritical(env, a, jni_a, <span class="dv">0</span>);
+  (*env)-&gt;ReleaseStringUTFChars(env, transb, jni_transb);
+  (*env)-&gt;ReleaseStringUTFChars(env, transa, jni_transa);
+}</code></pre>
+</section><section class="slide level2">
+<h1>Maven Native</h1>
+<aside class="notes">
+<p>A real pain with natives is actually building them. It's possible to use maven's <code>native-maven-plugin</code> to build natives but quite a lot of work is needed to get all the platforms to build on one machine.</p>
+<p>Unfortunately, I was unable to get OS X binaries to cross compile from Linux, so I have to use two build machines when I create a release. I'd <strong>love</strong> to fix that, so if anyone can help me to cross compile Fortran code on Linux targeted at OS X, please get in contact.</p>
+</aside>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;plugin&gt;</span>
+    <span class="kw">&lt;groupId&gt;</span>org.codehaus.mojo<span class="kw">&lt;/groupId&gt;</span>
+    <span class="kw">&lt;artifactId&gt;</span>native-maven-plugin<span class="kw">&lt;/artifactId&gt;</span>
+    <span class="kw">&lt;configuration&gt;</span>
+        <span class="kw">&lt;javahVerbose&gt;</span>true<span class="kw">&lt;/javahVerbose&gt;</span>
+        <span class="kw">&lt;javahClassNames&gt;</span>
+            <span class="kw">&lt;javahClassName&gt;</span>com.github.fommil.netlib.NativeSystemBLAS<span class="kw">&lt;/javahClassName&gt;</span>
+        <span class="kw">&lt;/javahClassNames&gt;</span>
+        <span class="kw">&lt;compilerStartOptions&gt;</span>
+            <span class="kw">&lt;compilerStartOption&gt;</span>-O3<span class="kw">&lt;/compilerStartOption&gt;</span>
+        <span class="kw">&lt;/compilerStartOptions&gt;</span>
+        <span class="kw">&lt;sources&gt;</span>
+            <span class="kw">&lt;source&gt;</span>
+                <span class="kw">&lt;directory&gt;</span>${project.build.directory}/netlib-native<span class="kw">&lt;/directory&gt;</span>
+                <span class="kw">&lt;includes&gt;</span>
+                    <span class="kw">&lt;include&gt;</span>*.c<span class="kw">&lt;/include&gt;</span>
+                <span class="kw">&lt;/includes&gt;</span>
+...</code></pre>
+</section><section class="slide level2">
+<h1>JNILoader</h1>
+<aside class="notes">
+<p>The other big problem with distributing binaries is how to actually load them. The Java Standard library doesn't exactly make it easy, so I had to write <code>JNILoader</code> which allows natives to be bundled as resources which are then unpackaged at runtime into a temporary directory, with safe handling that will throw a predictable exception if the native cannot be loaded on the platform.</p>
+<p>So once you can bundle the natives, they can be loaded as easily as this, with all the OS-specific naming conventions handled by JNILoader.</p>
+</aside>
+<pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> NativeSystemBLAS <span class="kw">extends</span> com.<span class="fu">github</span>.<span class="fu">fommil</span>.<span class="fu">netlib</span>.<span class="fu">F2jBLAS</span> {
+  <span class="dt">static</span> {
+    String jnilib = com.<span class="fu">github</span>.<span class="fu">fommil</span>.<span class="fu">jni</span>.<span class="fu">JniNamer</span>.<span class="fu">getJniName</span>(<span class="st">&quot;netlib-native_system&quot;</span>);
+    String natives = System.<span class="fu">getProperty</span>(<span class="st">&quot;com.github.fommil.netlib.NativeSystemBLAS.natives&quot;</span>, jnilib);
+    com.<span class="fu">github</span>.<span class="fu">fommil</span>.<span class="fu">jni</span>.<span class="fu">JniLoader</span>.<span class="fu">load</span>(natives.<span class="fu">split</span>(<span class="st">&quot;,&quot;</span>));
+  }
+...
+}</code></pre>
+</section><section class="slide level2">
+<h1>Performance</h1>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>And finally back onto the JVM, with a cleaned-up chart, the good news is that thanks to <code>netlib-java</code> you get system optimised performance for free. And the overhead of &quot;going native&quot; is negligible. All the performance charts you've seen so far in Fortran and C are the same from Java --- and Scala.</p>
+<p>Which leaves only one thing, which is a clean API.</p>
+</aside>
+<p><img src="images/netlib-java.png" /></p>
+</section></section>
+<section><section class="titleslide slide level1"><h1>Scala API</h1></section><section class="slide level2">
+<h1>Breeze</h1>
+<aside class="notes">
+<p>Source: <a href="https://github.com/scalanlp/breeze/wiki/Quickstart" class="uri">https://github.com/scalanlp/breeze/wiki/Quickstart</a></p>
+<p>Breeze uses netlib-java under the hood, and although it doesn't support all the netlib functions, it is using the most common ones and uses the same data structures so that you can drop down to the low-level netlib if needed.</p>
+<p>This is the sbt dependency, this is the standard &quot;import all the things&quot; statement and this is how to create an empty dense vector.</p>
+<p>Breeze is true to the netlib convention of storing transposes as bit flags, so a transpose on a vector doesn't actually do anything except wrap it in a <code>Transpose</code> type.</p>
+</aside>
+<pre class="sourceCode scala"><code class="sourceCode scala">libraryDependencies ++= Seq(
+  <span class="st">&quot;org.scalanlp&quot;</span> %% <span class="st">&quot;breeze&quot;</span> % <span class="st">&quot;0.10&quot;</span>,
+  <span class="st">&quot;org.scalanlp&quot;</span> %% <span class="st">&quot;breeze-natives&quot;</span> % <span class="st">&quot;0.10&quot;</span>
+)</code></pre>
+<pre><code>Nov 30, 2014 6:42:51 PM com.github.fommil.jni.JniLoader liberalLoad
+INFO: successfully loaded /tmp/jniloader7150057786941522144netlib-native_system-linux-x86_64.so
+</code></pre>
+<pre class="sourceCode scala"><code class="sourceCode scala">scala&gt; <span class="kw">import</span> breeze.<span class="fu">linalg</span>.<span class="fu">_</span>
+
+scala&gt; <span class="kw">val</span> x = DenseVector.<span class="fu">zeros</span>[Double](<span class="dv">5</span>)
+x: DenseVector[Double] = <span class="fu">DenseVector</span>(<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>)
+
+scala&gt; x.<span class="fu">t</span>
+res1: Transpose[DenseVector[Double]] = <span class="fu">Transpose</span>(<span class="fu">DenseVector</span>(<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>))</code></pre>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>Dense matrices are similar.</p>
+<p>Columns can be accessed as DenseVectors, and rows as DenseMatrices and are mutable. I think I've successfully convinced you that the netlib specific mutable data structures are the only way to achieve high performance.</p>
+<p>Note that Breeze has support for generic types on its matrices. Be careful, only <code>Double</code> and <code>Float</code> matrices are supported by natives.</p>
+</aside>
+<pre class="sourceCode scala"><code class="sourceCode scala">scala&gt; <span class="kw">val</span> m = DenseMatrix.<span class="fu">zeros</span>[Int](<span class="dv">5</span>,<span class="dv">5</span>)
+m: DenseMatrix[Int] = 
+<span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  
+<span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  
+<span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  
+<span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  
+<span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  
+
+scala&gt; (m.<span class="fu">rows</span>, m.<span class="fu">cols</span>)
+(Int, Int) = (<span class="dv">5</span>,<span class="dv">5</span>)
+
+scala&gt; <span class="fu">m</span>(::,<span class="dv">1</span>)
+DenseVector[Int] = <span class="fu">DenseVector</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)
+
+scala&gt; <span class="fu">m</span>(<span class="dv">4</span>,::) := <span class="fu">DenseVector</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>).<span class="fu">t</span>
+DenseMatrix[Int] = <span class="dv">1</span>  <span class="dv">2</span>  <span class="dv">3</span>  <span class="dv">4</span>  <span class="dv">5</span> 
+
+scala&gt; m
+DenseMatrix[Int] = 
+<span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  
+<span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  
+<span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  
+<span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  <span class="dv">0</span>  
+<span class="dv">1</span>  <span class="dv">2</span>  <span class="dv">3</span>  <span class="dv">4</span>  <span class="dv">5</span></code></pre>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>There is a wide variety of operations and conveniences made available in Breeze. I recommend reading the cheatsheet. Here are just some of the things you can do with the nice API:</p>
+</aside>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Operation</th>
+<th style="text-align: left;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Elementwise addition</td>
+<td style="text-align: left;">a + b</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Elementwise multiplication</td>
+<td style="text-align: left;">a :* b</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Vector dot product</td>
+<td style="text-align: left;">a dot b</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Elementwise sum</td>
+<td style="text-align: left;">sum(a)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Elementwise max</td>
+<td style="text-align: left;">a.max</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Elementwise argmax</td>
+<td style="text-align: left;">argmax(a)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Linear solve</td>
+<td style="text-align: left;">a  b</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Transpose</td>
+<td style="text-align: left;">a.t</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Determinant</td>
+<td style="text-align: left;">det(a)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Inverse</td>
+<td style="text-align: left;">inv(a)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pseudoinverse</td>
+<td style="text-align: left;">pinv(a)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SVD</td>
+<td style="text-align: left;">SVD(u,s,v) = svd(a)</td>
+</tr>
+</tbody>
+</table>
+</section><section class="slide level2">
+<h1>Example: Canon Ball</h1>
+<aside class="notes">
+<p>Lets take another look at that canon ball application of the Kalman Filter and see how to implement it in Breeze.</p>
+<p>The caveat here is that this example is designed to show off the clean API of Breeze, but the matrices are so small that we don't actually get any benefit in using the natives. We'll look at a larger example shortly.</p>
+<p>This is how we set up the problem</p>
+</aside>
+<pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">val</span> dt = <span class="fl">0.1</span>
+  <span class="kw">val</span> g = <span class="fl">9.8</span>
+  <span class="kw">def</span> I = DenseMatrix.<span class="fu">eye</span>[Double](<span class="dv">4</span>)
+
+  <span class="kw">val</span> B = <span class="fu">DenseMatrix</span>(
+    (<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>),
+    (<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>),
+    (<span class="fl">0.0</span>, <span class="fl">0.0</span>, -<span class="fl">1.0</span>, <span class="fl">0.0</span>),
+    (<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>, -<span class="fl">1.0</span>)
+  )
+  <span class="kw">val</span> u = <span class="fu">DenseVector</span>(<span class="dv">0</span>, <span class="dv">0</span>, g * Δt * Δt, g * Δt)
+  <span class="kw">val</span> F = <span class="fu">DenseMatrix</span>(
+    (<span class="fl">1.0</span>, dt,  <span class="fl">0.0</span>, <span class="fl">0.0</span>),
+    (<span class="fl">0.0</span>, <span class="fl">1.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>),
+    (<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">1.0</span>, dt),
+    (<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">1.0</span>)
+  )
+  <span class="kw">val</span> H = I
+  <span class="kw">val</span> Q = DenseMatrix.<span class="fu">zeros</span>[Double](<span class="dv">4</span>, <span class="dv">4</span>)
+  <span class="kw">val</span> R = I * <span class="fl">0.2</span>
+
+  <span class="co">// guess of state and variance</span>
+  <span class="kw">var</span> s = DenseVector.<span class="fu">zeros</span>[Double](<span class="dv">4</span>)
+  <span class="kw">var</span> P = I</code></pre>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>And this is the simulation with the Kalman inference.</p>
+<p>Just to be clear, we've implemented a Kalman filter in about 7 lines of Scala code, once everything is all set up.</p>
+</aside>
+<pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">while</span> (<span class="fu">x</span>(<span class="dv">2</span>) &gt;= <span class="dv">0</span>) {
+    <span class="co">// measurement</span>
+    <span class="kw">def</span> <span class="fu">noisy</span>(actual: Double) = actual + Random.<span class="fu">nextGaussian</span> * <span class="dv">50</span>
+    <span class="kw">val</span> z = x.<span class="fu">mapValues</span>(noisy)
+
+    <span class="co">// actual simulation</span>
+    x = F * x + B * u
+    t += dt
+
+    <span class="co">// prediction step</span>
+    <span class="kw">val</span> predS = F * s + B * u
+    <span class="kw">val</span> predP = F * P * F.<span class="fu">t</span> + Q
+    <span class="co">// observation step</span>
+    <span class="kw">val</span> innov = z - H * predS
+    <span class="kw">val</span> innov_cov = H * predP * H.<span class="fu">t</span> + R
+    <span class="co">// update step</span>
+    <span class="kw">val</span> gain = predP * H.<span class="fu">t</span> * <span class="fu">inv</span>(innov_cov)
+    s = predS + gain * innov
+    P = (I - gain * H) * predP
+  }</code></pre>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>Source: <a href="http://greg.czerniak.info/guides/kalman1/" class="uri">http://greg.czerniak.info/guides/kalman1/</a></p>
+<p>This is a simple application of the Kalman filter to the flight trajectory of a canon ball. In this example there is no input back into the system - we can't move the canonball (input), although gravity can - there is no noise in our process model and the observation model is perfect (it wouldn't be in 3D), but there is some noise in observation.</p>
+<p>We only observe the green dots at every timestep, but we're still able to predict the next location in red, which is comparable to the true (blue) location.</p>
+</aside>
+<p><img src="images/canon.png" /></p>
+</section><section class="slide level2">
+<h1>Example: PCA</h1>
+<aside class="notes">
+<p>Remember back to the section on Principal Components Analysis, where we find the eigenvectors and eigenvalues of a matrix. If we take the eigenvectors with the highest eigenvalues, and throw away everything else we get an approximation of the original matrix. That is actually a pretty effective compression algorithm, because it's effectively the same thing as dimensional reduction.</p>
+<p>So let's take an image as an example. In this code we convert a grayscale image into a matrix and then compute its SVD decomposition.</p>
+<p>Then, we only keep the <span class="math">\(i\)</span> top columns of <span class="math">\(u\)</span>, top elements of <span class="math">\(s\)</span> and top rows of <span class="math">\(v\)</span>. Multiplying these out still gives a matrix the same size as the original but the memory required to store u, s and v is far less than storing the entire matrix.</p>
+</aside>
+<pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">val</span> jpg = ImageIO.<span class="fu">read</span>(<span class="fu">file</span>(<span class="st">&quot;input.jpg&quot;</span>))
+  <span class="kw">val</span> orig = <span class="fu">imageToMatrix</span>(jpg)
+
+  <span class="kw">val</span> svd.<span class="fu">SVD</span>(u, s, v) = <span class="fu">svd</span>(orig)
+
+  <span class="kw">for</span> {
+    i &lt;- <span class="dv">1</span> until u.<span class="fu">cols</span>
+    <span class="kw">if</span> i &lt;= <span class="dv">100</span> <span class="co">// no discernable difference beyond!</span>
+  } {
+    <span class="kw">val</span> compressed = <span class="fu">u</span>(::, <span class="dv">0</span> until i) * <span class="fu">diag</span>(<span class="fu">s</span>(<span class="dv">0</span> until i)) * <span class="fu">v</span>(<span class="dv">0</span> until i, ::)
+
+    <span class="kw">val</span> out = f<span class="st">&quot;compressed-$i%03d.bmp&quot;</span>
+    <span class="kw">val</span> converted = <span class="fu">matrixToImage</span>(compressed)
+    ImageIO.<span class="fu">write</span>(converted, <span class="st">&quot;BMP&quot;</span>, <span class="fu">file</span>(out))
+  }</code></pre>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>And lets see what it looks like. In this video progression we start with the dimension, i, = 1 and then work our way up. i can go all the way to 500 but we give up after 100 because the changes become so insignificant after that.</p>
+</aside>
+<video width="500" height="638" controls>
+  <source src="images/odersky.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+
+</section></section>
+<section><section class="titleslide slide level1"><h1>Hardware Acceleration</h1></section><section class="slide level2">
+<h1>Graphics Cards (GPU)</h1>
+<aside class="notes">
+<p>NVIDIA have cuBLAS which is a BLAS-like implementation that runs on graphics cards. AMD have clBLAS which is the same idea but uses OpenCL so more portable.</p>
+<p>Because graphics cards are designed for heavy parallelisation of simple tasks, they are really well suited for operations like matrix multiplication.</p>
+<p>However, calling them BLAS-like is critical. They are not drop-in replacements for BLAS. One has to write custom memory handling code and pass special references to the routines to the GPU memory region.</p>
+</aside>
+<p><img src="images/nvidia.jpg" /></p>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>The problem is that copying the memory from RAM to the GPU is really slow and destroys all the benefits.</p>
+</aside>
+<p><img src="images/gpu.png" /></p>
+</section><section class="slide level2">
+<h1>FPGA</h1>
+<aside class="notes">
+<p>Field Programmable Gate Arrays are unbelievable devices used in aerospace and defence for decades.</p>
+<p>They are exactly as they sound, re-programmable gates. The software for an FPGA is a circuit board design and it will realign itself to match that design. The trick is fitting as much working circuit into the FPGAs as possible to get maximum parallelisation.</p>
+</aside>
+<p><img src="images/fpga.jpg" /></p>
+</section><section class="slide level2">
+
+<aside class="notes">
+<p>I don't actually have access to an FPGA so I can't show any benchmarks, but if you're ever interested in looking at getting custom hardware, you might want to talk to Analytics Engines as they make custom hybrid high performance solutions out of FPGAs, GPUs and CPUs.</p>
+</aside>
+<p><img src="images/analytics-logo.gif" /></p>
+<p><a href="http://analyticsengines.com" class="uri">http://analyticsengines.com</a></p>
+</section><section class="slide level2">
+<h1>APU</h1>
+<aside class="notes">
+<p>Welcome to the world of tomorrow!</p>
+<p>&quot;for free&quot; gains, no copying costs.</p>
+<p>MultiBLAS - allow runtime choice of backend and utilise everything at once. This is future work for me, but realistically I'd probably need a backer or some contributors with access to the hardware.</p>
+</aside>
+<p><img src="images/apu.jpg" /></p>
+</section></section>
