@@ -2862,7 +2862,7 @@ ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution.prototype.toString__T = (func
   return ScalaJS.m.sr_ScalaRunTime().$$undtoString__s_Product__T(this)
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution.prototype.initialAccel__D = (function() {
-  return (this.engine$1.thrust$1 / (this.initialMass__D() + this.payloadMass$1))
+  return ((this.numberOfEngines$1 * this.engine$1.thrust$1) / (this.initialMass__D() + this.payloadMass$1))
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution.prototype.totalDeltaV__D = (function() {
   var ve = (this.atmosphere$1 ? this.engine$1.veAtm__D() : this.engine$1.veVac__D());
@@ -2870,7 +2870,7 @@ ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution.prototype.totalDeltaV__D = (f
   return ((ve * this.numberOfEngines$1) * ScalaJS.uD(ScalaJS.g["Math"]["log"](x)))
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution.prototype.finalMass__D = (function() {
-  return (this.engine$1.mass$1 + this.tank$1.mass__D__D(0.0))
+  return ((this.numberOfEngines$1 * this.engine$1.mass$1) + this.tank$1.mass__D__D(0.0))
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution.prototype.hashCode__I = (function() {
   var acc = (-889275714);
@@ -2883,7 +2883,7 @@ ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution.prototype.hashCode__I = (func
   return ScalaJS.m.sr_Statics().finalizeHash__I__I__I(acc, 6)
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution.prototype.initialMass__D = (function() {
-  return (this.engine$1.mass$1 + this.tank$1.mass__D__D(this.fuelMass$1))
+  return ((this.numberOfEngines$1 * this.engine$1.mass$1) + this.tank$1.mass__D__D(this.fuelMass$1))
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution.prototype.productIterator__sc_Iterator = (function() {
   return new ScalaJS.c.sr_ScalaRunTime$$anon$1().init___s_Product(this)
@@ -2899,7 +2899,7 @@ ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution.prototype.init___D__Lcom_gith
   return this
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution.prototype.stageCost__D = (function() {
-  return (this.engine$1.cost$1 + this.tank$1.cost__D__D(this.fuelMass$1))
+  return ((this.numberOfEngines$1 * this.engine$1.cost$1) + this.tank$1.cost__D__D(this.fuelMass$1))
 });
 ScalaJS.is.Lcom_github_fommil_kerbal_EngineSolution = (function(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_fommil_kerbal_EngineSolution)))
@@ -5752,13 +5752,13 @@ ScalaJS.c.T2.prototype.equals__O__Z = (function(x$1) {
     return false
   }
 });
+ScalaJS.c.T2.prototype.productElement__I__O = (function(n) {
+  return ScalaJS.i.s_Product2$class__productElement__s_Product2__I__O(this, n)
+});
 ScalaJS.c.T2.prototype.init___O__O = (function(_1, _2) {
   this.$$und1$f = _1;
   this.$$und2$f = _2;
   return this
-});
-ScalaJS.c.T2.prototype.productElement__I__O = (function(n) {
-  return ScalaJS.i.s_Product2$class__productElement__s_Product2__I__O(this, n)
 });
 ScalaJS.c.T2.prototype.toString__T = (function() {
   return (((("(" + this.$$und1$f) + ",") + this.$$und2$f) + ")")
@@ -13047,7 +13047,7 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Sol
   var jsx$1 = this.engine$1$f.validTanks__Lcom_github_fommil_kerbal_FuelTanks__sci_Set(this.allTanks$2$2);
   var xo = this.engine$1$f.internal$1;
   var this$3 = jsx$1.$$plus$plus__sc_GenTraversableOnce__sc_Set(xo.toList__sci_List());
-  var f = new ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6().init___Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2__I(this, numEngines);
+  var f = new ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8().init___Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2__I(this, numEngines);
   var this$2 = ScalaJS.m.sci_Set();
   var bf = new ScalaJS.c.scg_GenSetFactory$$anon$1().init___scg_GenSetFactory(this$2);
   return ScalaJS.as.sci_Set(ScalaJS.i.sc_TraversableLike$class__flatMap__sc_TraversableLike__F1__scg_CanBuildFrom__O(this$3, f, bf))
@@ -13076,19 +13076,19 @@ ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Sol
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2.prototype.$classData = ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2;
 /** @constructor */
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6 = (function() {
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = (function() {
   ScalaJS.c.sr_AbstractFunction1.call(this);
   this.$$outer$2 = null;
   this.numEngines$1$f = 0
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6.prototype = new ScalaJS.h.sr_AbstractFunction1();
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6.prototype.constructor = ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6;
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype = new ScalaJS.h.sr_AbstractFunction1();
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype.constructor = ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8;
 /** @constructor */
-ScalaJS.h.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6 = (function() {
+ScalaJS.h.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = (function() {
   /*<skip>*/
 });
-ScalaJS.h.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6.prototype = ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6.prototype;
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6.prototype.init___Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2__I = (function($$outer, numEngines$1) {
+ScalaJS.h.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype = ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype;
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype.init___Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2__I = (function($$outer, numEngines$1) {
   if (($$outer === null)) {
     throw ScalaJS.unwrapJavaScriptException(null)
   } else {
@@ -13097,10 +13097,10 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Sol
   this.numEngines$1$f = numEngines$1;
   return this
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6.prototype.apply__O__O = (function(v1) {
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype.apply__O__O = (function(v1) {
   return this.apply__Lcom_github_fommil_kerbal_FuelTank__sci_IndexedSeq(ScalaJS.as.Lcom_github_fommil_kerbal_FuelTank(v1))
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6.prototype.apply__Lcom_github_fommil_kerbal_FuelTank__sci_IndexedSeq = (function(tank) {
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype.apply__Lcom_github_fommil_kerbal_FuelTank__sci_IndexedSeq = (function(tank) {
   var this$4 = new ScalaJS.c.sci_Range$Inclusive().init___I__I__I(0, 100, 1);
   var start = this$4.start$4;
   var end = this$4.end$4;
@@ -13129,29 +13129,29 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Sol
     })
   })(this, tank)), (ScalaJS.m.sci_IndexedSeq(), ScalaJS.m.sc_IndexedSeq().ReusableCBF$6)))
 });
-ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6 = (function(obj) {
-  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6)))
+ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = (function(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8)))
 });
-ScalaJS.as.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6 = (function(obj) {
-  return ((ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6(obj) || (obj === null)) ? obj : ScalaJS.throwClassCastException(obj, "com.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6"))
+ScalaJS.as.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = (function(obj) {
+  return ((ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8(obj) || (obj === null)) ? obj : ScalaJS.throwClassCastException(obj, "com.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8"))
 });
-ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6 = (function(obj, depth) {
-  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6)))
+ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = (function(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8)))
 });
-ScalaJS.asArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6 = (function(obj, depth) {
-  return ((ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6(obj, depth) || (obj === null)) ? obj : ScalaJS.throwArrayCastException(obj, "Lcom.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6;", depth))
+ScalaJS.asArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = (function(obj, depth) {
+  return ((ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8(obj, depth) || (obj === null)) ? obj : ScalaJS.throwArrayCastException(obj, "Lcom.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8;", depth))
 });
-ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6 = new ScalaJS.ClassTypeData({
-  Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6: 0
-}, false, "com.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6", ScalaJS.d.sr_AbstractFunction1, {
-  Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6: 1,
+ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = new ScalaJS.ClassTypeData({
+  Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8: 0
+}, false, "com.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8", ScalaJS.d.sr_AbstractFunction1, {
+  Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8: 1,
   s_Serializable: 1,
   Ljava_io_Serializable: 1,
   sr_AbstractFunction1: 1,
   F1: 1,
   O: 1
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6.prototype.$classData = ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$6;
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype.$classData = ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8;
 /** @constructor */
 ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$solve$1 = (function() {
   ScalaJS.c.sr_AbstractFunction1.call(this);
@@ -13180,21 +13180,55 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$solve$1.prototype.init___D__
   return this
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$solve$1.prototype.apply__Lcom_github_fommil_kerbal_Engine__sci_Stream = (function(engine) {
-  var this$1 = ScalaJS.m.Lcom_github_fommil_kerbal_Solver().com$github$fommil$kerbal$Solver$$candidates__Lcom_github_fommil_kerbal_Engine__D__Z__Lcom_github_fommil_kerbal_FuelTanks__sci_Stream(engine, this.payloadMass$1$2, this.atmosphere$1$2, this.allTanks$1$2);
+  var this$2 = ScalaJS.as.sci_Stream(ScalaJS.m.Lcom_github_fommil_kerbal_Solver().com$github$fommil$kerbal$Solver$$candidates__Lcom_github_fommil_kerbal_Engine__D__Z__Lcom_github_fommil_kerbal_FuelTanks__sci_Stream(engine, this.payloadMass$1$2, this.atmosphere$1$2, this.allTanks$1$2).map__F1__scg_CanBuildFrom__O(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(candidate$2) {
+    var candidate = ScalaJS.as.Lcom_github_fommil_kerbal_EngineSolution(candidate$2);
+    var dv = candidate.totalDeltaV__D();
+    return new ScalaJS.c.T2().init___O__O(candidate, dv)
+  })), (ScalaJS.m.sci_Stream(), new ScalaJS.c.sci_Stream$StreamCanBuildFrom().init___())));
   var p = new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer) {
-    return (function(candidate$2) {
-      var candidate = ScalaJS.as.Lcom_github_fommil_kerbal_EngineSolution(candidate$2);
-      return (candidate.totalDeltaV__D() >= arg$outer.dvMin$1$f)
+    return (function(x$1$2) {
+      var x$1 = ScalaJS.as.T2(x$1$2);
+      if ((x$1 !== null)) {
+        var dv$1 = ScalaJS.uD(x$1.$$und2$f);
+        return (!(!((dv$1 >= arg$outer.dvMin$1$f) & (dv$1 < (arg$outer.dvMin$1$f * 2)))))
+      } else {
+        throw new ScalaJS.c.s_MatchError().init___O(x$1)
+      }
     })
   })(this));
-  return ScalaJS.as.sci_Stream(new ScalaJS.c.sci_Stream$StreamWithFilter().init___sci_Stream__F1(this$1, p).withFilter__F1__sci_Stream$StreamWithFilter(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer$1) {
-    return (function(candidate$2$1) {
-      var candidate$1 = ScalaJS.as.Lcom_github_fommil_kerbal_EngineSolution(candidate$2$1);
-      return (candidate$1.initialAccel__D() >= arg$outer$1.accelMin$1$f)
+  var this$4 = ScalaJS.as.sci_Stream(new ScalaJS.c.sci_Stream$StreamWithFilter().init___sci_Stream__F1(this$2, p).map__F1__scg_CanBuildFrom__O(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(x$3$2) {
+    var x$3 = ScalaJS.as.T2(x$3$2);
+    if ((x$3 !== null)) {
+      var candidate$1 = ScalaJS.as.Lcom_github_fommil_kerbal_EngineSolution(x$3.$$und1$f);
+      var a = candidate$1.initialAccel__D();
+      return new ScalaJS.c.T2().init___O__O(x$3, a)
+    } else {
+      throw new ScalaJS.c.s_MatchError().init___O(x$3)
+    }
+  })), (ScalaJS.m.sci_Stream(), new ScalaJS.c.sci_Stream$StreamCanBuildFrom().init___())));
+  var p$1 = new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer$1) {
+    return (function(x$4$2) {
+      var x$4 = ScalaJS.as.T2(x$4$2);
+      if ((x$4 !== null)) {
+        var p2 = ScalaJS.as.T2(x$4.$$und1$f);
+        var a$1 = ScalaJS.uD(x$4.$$und2$f);
+        if ((p2 !== null)) {
+          return (!(!((a$1 >= arg$outer$1.accelMin$1$f) & (a$1 < ((arg$outer$1.accelMin$1$f * 2) + 10)))))
+        }
+      };
+      throw new ScalaJS.c.s_MatchError().init___O(x$4)
     })
-  })(this))).map__F1__scg_CanBuildFrom__O(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(candidate$2$2) {
-    var candidate$3 = ScalaJS.as.Lcom_github_fommil_kerbal_EngineSolution(candidate$2$2);
-    return candidate$3
+  })(this));
+  return ScalaJS.as.sci_Stream(new ScalaJS.c.sci_Stream$StreamWithFilter().init___sci_Stream__F1(this$4, p$1).map__F1__scg_CanBuildFrom__O(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(x$5$2) {
+    var x$5 = ScalaJS.as.T2(x$5$2);
+    if ((x$5 !== null)) {
+      var p2$1 = ScalaJS.as.T2(x$5.$$und1$f);
+      if ((p2$1 !== null)) {
+        var candidate$3 = ScalaJS.as.Lcom_github_fommil_kerbal_EngineSolution(p2$1.$$und1$f);
+        return candidate$3
+      }
+    };
+    throw new ScalaJS.c.s_MatchError().init___O(x$5)
   })), (ScalaJS.m.sci_Stream(), new ScalaJS.c.sci_Stream$StreamCanBuildFrom().init___())))
 });
 ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$solve$1 = (function(obj) {
@@ -15921,13 +15955,6 @@ ScalaJS.c.sci_Stream$StreamWithFilter.prototype.tailFlatMap$1__p2__sci_Stream__F
       })(this, f$4, tail)))
     }
   }
-});
-ScalaJS.c.sci_Stream$StreamWithFilter.prototype.withFilter__F1__sci_Stream$StreamWithFilter = (function(q) {
-  return new ScalaJS.c.sci_Stream$StreamWithFilter().init___sci_Stream__F1(ScalaJS.as.sci_Stream(this.$$outer$f), new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(this$2, q$1) {
-    return (function(x$2) {
-      return (ScalaJS.uZ(this$2.p$2.apply__O__O(x$2)) && ScalaJS.uZ(q$1.apply__O__O(x$2)))
-    })
-  })(this, q)))
 });
 ScalaJS.c.sci_Stream$StreamWithFilter.prototype.tailMap$1__p2__sci_Stream__F1__sci_Stream = (function(coll, f$3) {
   var head = null;
