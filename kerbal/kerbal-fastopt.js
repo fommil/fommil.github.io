@@ -2432,6 +2432,7 @@ ScalaJS.c.LSolverJsApp$.prototype.main__V = (function() {
 ScalaJS.c.LSolverJsApp$.prototype.solve__V = (function() {
   var qual$1 = (0, ScalaJS.g["jQuery"])("#spinner");
   qual$1["show"]();
+  (0, ScalaJS.g["jQuery"])("#results")["empty"]();
   try {
     var x = this.getParam__p1__T__T("dv");
     var this$2 = new ScalaJS.c.sci_StringOps().init___T(x);
@@ -2446,6 +2447,10 @@ ScalaJS.c.LSolverJsApp$.prototype.solve__V = (function() {
     var s$2 = this$10.repr$1;
     var a = ScalaJS.m.jl_Float().parseFloat__T__F(s$2);
     var atm = this.getCheckbox__p1__T__Z("atm");
+    var x$3 = new ScalaJS.c.s_StringContext().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array(["", " ", " ", " ", ""])).s__sc_Seq__T(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([dv, m, a, atm]));
+    var this$14 = ScalaJS.m.s_Console();
+    var this$15 = this$14.outVar$2;
+    ScalaJS.as.Ljava_io_PrintStream(this$15.tl$1.get__O()).println__O__V(x$3);
     var solns = ScalaJS.m.Lcom_github_fommil_kerbal_Solver().solve__D__D__D__Z__Lcom_github_fommil_kerbal_Engines__Lcom_github_fommil_kerbal_FuelTanks__sci_Stream(dv, m, a, atm, ScalaJS.m.Lcom_github_fommil_kerbal_Engines().Stock$1, ScalaJS.m.Lcom_github_fommil_kerbal_FuelTanks().Stock$1);
     var jsx$1 = (0, ScalaJS.g["jQuery"])("#results");
     var f = new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(x$1$2) {
@@ -2453,7 +2458,7 @@ ScalaJS.c.LSolverJsApp$.prototype.solve__V = (function() {
       return x$1$1.initialMass__D()
     }));
     var ord = ScalaJS.m.s_math_Ordering$Double();
-    jsx$1["replaceWith"](this.tabulate__sc_Seq__T(ScalaJS.as.sc_Seq(ScalaJS.i.sc_SeqLike$class__sortBy__sc_SeqLike__F1__s_math_Ordering__O(solns, f, ord))))
+    jsx$1["append"](this.tabulate__sc_Seq__T(ScalaJS.as.sc_Seq(ScalaJS.i.sc_SeqLike$class__sortBy__sc_SeqLike__F1__s_math_Ordering__O(solns, f, ord))))
   } finally {
     var qual$2 = (0, ScalaJS.g["jQuery"])("#spinner");
     qual$2["hide"]()
@@ -2493,10 +2498,10 @@ ScalaJS.c.LSolverJsApp$.prototype.tabulate__sc_Seq__T = (function(solns) {
       var jsx$13 = ScalaJS.as.Lscalatags_Text$TypedTag(jsx$14).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$1)]));
       var jsx$12 = ScalaJS.m.Lscalatags_Text$all().td$1;
       ScalaJS.m.Lscalatags_Text$all();
-      var arg$macro$14 = s.fuelMass$1;
-      var arg$macro$15 = ((100 * s.fuelMass$1) / s.tank$1.max__D());
+      var arg$macro$7 = s.fuelMass$1;
+      var arg$macro$8 = ((100 * s.fuelMass$1) / s.tank$1.max__D());
       var this$12 = new ScalaJS.c.sci_StringOps().init___T("%.3ft (%.0f%%)");
-      var args = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$14, arg$macro$15]);
+      var args = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$7, arg$macro$8]);
       var v$2 = ScalaJS.i.sci_StringLike$class__format__sci_StringLike__sc_Seq__T(this$12, args);
       var jsx$11 = ScalaJS.as.Lscalatags_Text$TypedTag(jsx$12).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$2)]));
       var jsx$10 = ScalaJS.m.Lscalatags_Text$all().td$1;
@@ -2505,30 +2510,30 @@ ScalaJS.c.LSolverJsApp$.prototype.tabulate__sc_Seq__T = (function(solns) {
       var jsx$9 = ScalaJS.as.Lscalatags_Text$TypedTag(jsx$10).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$3)]));
       var jsx$8 = ScalaJS.m.Lscalatags_Text$all().td$1;
       ScalaJS.m.Lscalatags_Text$all();
-      var arg$macro$16 = s.totalDeltaV__D();
+      var arg$macro$9 = s.totalDeltaV__D();
       var this$15 = new ScalaJS.c.sci_StringOps().init___T("%.0f");
-      var args$1 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$16]);
+      var args$1 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$9]);
       var v$4 = ScalaJS.i.sci_StringLike$class__format__sci_StringLike__sc_Seq__T(this$15, args$1);
       var jsx$7 = ScalaJS.as.Lscalatags_Text$TypedTag(jsx$8).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$4)]));
       var jsx$6 = ScalaJS.m.Lscalatags_Text$all().td$1;
       ScalaJS.m.Lscalatags_Text$all();
-      var arg$macro$17 = s.initialAccel__D();
+      var arg$macro$10 = s.initialAccel__D();
       var this$17 = new ScalaJS.c.sci_StringOps().init___T("%.1f");
-      var args$2 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$17]);
+      var args$2 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$10]);
       var v$5 = ScalaJS.i.sci_StringLike$class__format__sci_StringLike__sc_Seq__T(this$17, args$2);
       var jsx$5 = ScalaJS.as.Lscalatags_Text$TypedTag(jsx$6).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$5)]));
       var jsx$4 = ScalaJS.m.Lscalatags_Text$all().td$1;
       ScalaJS.m.Lscalatags_Text$all();
-      var arg$macro$18 = s.initialMass__D();
+      var arg$macro$11 = s.initialMass__D();
       var this$19 = new ScalaJS.c.sci_StringOps().init___T("%.1f");
-      var args$3 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$18]);
+      var args$3 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$11]);
       var v$6 = ScalaJS.i.sci_StringLike$class__format__sci_StringLike__sc_Seq__T(this$19, args$3);
       var jsx$3 = ScalaJS.as.Lscalatags_Text$TypedTag(jsx$4).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$6)]));
       var jsx$2 = ScalaJS.m.Lscalatags_Text$all().td$1;
       ScalaJS.m.Lscalatags_Text$all();
-      var arg$macro$19 = s.stageCost__D();
+      var arg$macro$12 = s.stageCost__D();
       var this$21 = new ScalaJS.c.sci_StringOps().init___T("%.0f");
-      var args$4 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$19]);
+      var args$4 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$12]);
       var v$7 = ScalaJS.i.sci_StringLike$class__format__sci_StringLike__sc_Seq__T(this$21, args$4);
       return jsx$15.apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([jsx$13, jsx$11, jsx$9, jsx$7, jsx$5, jsx$3, ScalaJS.as.Lscalatags_Text$TypedTag(jsx$2).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$7)]))]))
     } else {
