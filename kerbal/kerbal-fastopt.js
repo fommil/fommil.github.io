@@ -3787,7 +3787,7 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Solver$.prototype.solve__D__D__D__Z__Lcom_gi
   return ScalaJS.as.sci_Stream(engines.engines$1.toStream__sci_Stream().flatMap__F1__scg_CanBuildFrom__O(new ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$solve$1().init___D__D__D__Z__Lcom_github_fommil_kerbal_FuelTanks(dvMin, payloadMass, accelMin, atmosphere, allTanks), (ScalaJS.m.sci_Stream(), new ScalaJS.c.sci_Stream$StreamCanBuildFrom().init___())))
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_Solver$.prototype.com$github$fommil$kerbal$Solver$$candidates__Lcom_github_fommil_kerbal_Engine__D__Z__Lcom_github_fommil_kerbal_FuelTanks__sci_Stream = (function(engine, payloadMass, atmosphere, allTanks) {
-  var this$4 = new ScalaJS.c.sci_Range$Inclusive().init___I__I__I(1, 8, 1);
+  var this$4 = new ScalaJS.c.sci_Range$Inclusive().init___I__I__I(1, 6, 1);
   var this$5 = new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I(this$4, 0, this$4.length__I());
   var this$6 = ScalaJS.i.sc_Iterator$class__toStream__sc_Iterator__sci_Stream(this$5);
   var p = new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(engine$1) {
