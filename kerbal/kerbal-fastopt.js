@@ -1222,6 +1222,16 @@ ScalaJS.i.sc_IndexedSeqOptimized$class__foreach__sc_IndexedSeqOptimized__F1__V =
     i = ((i + 1) | 0)
   }
 });
+ScalaJS.i.sc_IndexedSeqOptimized$class__prefixLengthImpl__sc_IndexedSeqOptimized__F1__Z__I = (function($$this, p, expectTrue) {
+  var i = 0;
+  while (((i < $$this.length__I()) && (ScalaJS.uZ(p.apply__O__O($$this.apply__I__O(i))) === expectTrue))) {
+    i = ((i + 1) | 0)
+  };
+  return i
+});
+ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z = (function($$this, p) {
+  return (ScalaJS.i.sc_IndexedSeqOptimized$class__prefixLengthImpl__sc_IndexedSeqOptimized__F1__Z__I($$this, p, true) === $$this.length__I())
+});
 ScalaJS.i.sc_IndexedSeqOptimized$class__foldl__sc_IndexedSeqOptimized__I__I__O__F2__O = (function($$this, start, end, z, op) {
   _foldl: while (true) {
     if ((start === end)) {
@@ -1465,6 +1475,16 @@ ScalaJS.i.sc_LinearSeqOptimized$class__length__sc_LinearSeqOptimized__I = (funct
     these = ScalaJS.as.sc_LinearSeqOptimized(these.tail__O())
   };
   return len
+});
+ScalaJS.i.sc_LinearSeqOptimized$class__forall__sc_LinearSeqOptimized__F1__Z = (function($$this, p) {
+  var these = $$this;
+  while ((!these.isEmpty__Z())) {
+    if ((!ScalaJS.uZ(p.apply__O__O(these.head__O())))) {
+      return false
+    };
+    these = ScalaJS.as.sc_LinearSeqOptimized(these.tail__O())
+  };
+  return true
 });
 ScalaJS.i.sc_SeqLike$class__sorted__sc_SeqLike__s_math_Ordering__O = (function($$this, ord) {
   var len = $$this.length__I();
@@ -2469,9 +2489,6 @@ ScalaJS.c.LSolverJsApp$.prototype.setupUI__V = (function() {
     return (ScalaJS.m.LSolverJsApp().solve__V(), (void 0))
   }))
 });
-ScalaJS.c.LSolverJsApp$.prototype.getCheckbox__p1__T__Z = (function(id) {
-  return ScalaJS.uZ((0, ScalaJS.g["jQuery"])(("#" + id))["is"](":checked"))
-});
 ScalaJS.c.LSolverJsApp$.prototype.tabulate__sc_Seq__T = (function(solns) {
   var jsx$21 = ScalaJS.m.Lscalatags_Text$all().table$1;
   var this$1 = ScalaJS.m.Lscalatags_Text$all().class$1;
@@ -2498,10 +2515,10 @@ ScalaJS.c.LSolverJsApp$.prototype.tabulate__sc_Seq__T = (function(solns) {
       var jsx$13 = ScalaJS.as.Lscalatags_Text$TypedTag(jsx$14).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$1)]));
       var jsx$12 = ScalaJS.m.Lscalatags_Text$all().td$1;
       ScalaJS.m.Lscalatags_Text$all();
-      var arg$macro$7 = s.fuelMass$1;
-      var arg$macro$8 = ((100 * s.fuelMass$1) / s.tank$1.max__D());
+      var arg$macro$14 = s.fuelMass$1;
+      var arg$macro$15 = ((100 * s.fuelMass$1) / s.tank$1.max__D());
       var this$12 = new ScalaJS.c.sci_StringOps().init___T("%.3ft (%.0f%%)");
-      var args = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$7, arg$macro$8]);
+      var args = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$14, arg$macro$15]);
       var v$2 = ScalaJS.i.sci_StringLike$class__format__sci_StringLike__sc_Seq__T(this$12, args);
       var jsx$11 = ScalaJS.as.Lscalatags_Text$TypedTag(jsx$12).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$2)]));
       var jsx$10 = ScalaJS.m.Lscalatags_Text$all().td$1;
@@ -2510,30 +2527,30 @@ ScalaJS.c.LSolverJsApp$.prototype.tabulate__sc_Seq__T = (function(solns) {
       var jsx$9 = ScalaJS.as.Lscalatags_Text$TypedTag(jsx$10).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$3)]));
       var jsx$8 = ScalaJS.m.Lscalatags_Text$all().td$1;
       ScalaJS.m.Lscalatags_Text$all();
-      var arg$macro$9 = s.totalDeltaV__D();
+      var arg$macro$16 = s.totalDeltaV__D();
       var this$15 = new ScalaJS.c.sci_StringOps().init___T("%.0f");
-      var args$1 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$9]);
+      var args$1 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$16]);
       var v$4 = ScalaJS.i.sci_StringLike$class__format__sci_StringLike__sc_Seq__T(this$15, args$1);
       var jsx$7 = ScalaJS.as.Lscalatags_Text$TypedTag(jsx$8).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$4)]));
       var jsx$6 = ScalaJS.m.Lscalatags_Text$all().td$1;
       ScalaJS.m.Lscalatags_Text$all();
-      var arg$macro$10 = s.initialAccel__D();
+      var arg$macro$17 = s.initialAccel__D();
       var this$17 = new ScalaJS.c.sci_StringOps().init___T("%.1f");
-      var args$2 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$10]);
+      var args$2 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$17]);
       var v$5 = ScalaJS.i.sci_StringLike$class__format__sci_StringLike__sc_Seq__T(this$17, args$2);
       var jsx$5 = ScalaJS.as.Lscalatags_Text$TypedTag(jsx$6).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$5)]));
       var jsx$4 = ScalaJS.m.Lscalatags_Text$all().td$1;
       ScalaJS.m.Lscalatags_Text$all();
-      var arg$macro$11 = s.initialMass__D();
+      var arg$macro$18 = s.initialMass__D();
       var this$19 = new ScalaJS.c.sci_StringOps().init___T("%.1f");
-      var args$3 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$11]);
+      var args$3 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$18]);
       var v$6 = ScalaJS.i.sci_StringLike$class__format__sci_StringLike__sc_Seq__T(this$19, args$3);
       var jsx$3 = ScalaJS.as.Lscalatags_Text$TypedTag(jsx$4).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$6)]));
       var jsx$2 = ScalaJS.m.Lscalatags_Text$all().td$1;
       ScalaJS.m.Lscalatags_Text$all();
-      var arg$macro$12 = s.stageCost__D();
+      var arg$macro$19 = s.stageCost__D();
       var this$21 = new ScalaJS.c.sci_StringOps().init___T("%.0f");
-      var args$4 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$12]);
+      var args$4 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([arg$macro$19]);
       var v$7 = ScalaJS.i.sci_StringLike$class__format__sci_StringLike__sc_Seq__T(this$21, args$4);
       return jsx$15.apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([jsx$13, jsx$11, jsx$9, jsx$7, jsx$5, jsx$3, ScalaJS.as.Lscalatags_Text$TypedTag(jsx$2).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$StringFrag().init___T(v$7)]))]))
     } else {
@@ -2545,6 +2562,9 @@ ScalaJS.c.LSolverJsApp$.prototype.tabulate__sc_Seq__T = (function(solns) {
   var evidence$1 = ScalaJS.m.s_Predef().singleton$und$less$colon$less$2;
   var this$25 = jsx$20.apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([jsx$19, ScalaJS.as.Lscalatags_Text$TypedTag(jsx$18).apply__sc_Seq__Lscalatags_Text$TypedTag(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lscalatags_Text$Cap$SeqFrag().init___Lscalatags_Text$Cap__sc_Seq__F1(this$24, xs, evidence$1)]))]));
   return this$25.toString__T()
+});
+ScalaJS.c.LSolverJsApp$.prototype.getCheckbox__p1__T__Z = (function(id) {
+  return ScalaJS.uZ((0, ScalaJS.g["jQuery"])(("#" + id))["is"](":checked"))
 });
 ScalaJS.c.LSolverJsApp$.prototype.$$js$exported$meth$main__O = (function() {
   return (this.main__V(), (void 0))
@@ -2686,7 +2706,7 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Engine.prototype.validTanks__Lcom_github_fom
   while ((!these.isEmpty__Z())) {
     var x$2 = these.head__O();
     var tank = ScalaJS.as.Lcom_github_fommil_kerbal_FuelTank(x$2);
-    if ((ScalaJS.anyRefEqEq(this.fuel$1, tank.fuel$1) && ((ScalaJS.anyRefEqEq(this.mount$1, ScalaJS.m.Lcom_github_fommil_kerbal_Radial()) || ScalaJS.anyRefEqEq(tank.mount$1, ScalaJS.m.Lcom_github_fommil_kerbal_Radial())) || ScalaJS.anyRefEqEq(this.mount$1, tank.mount$1)))) {
+    if ((ScalaJS.anyRefEqEq(this.fuel$1, tank.fuel$1) && ((ScalaJS.is.Lcom_github_fommil_kerbal_Radial(this.mount$1) || ScalaJS.is.Lcom_github_fommil_kerbal_Radial(tank.mount$1)) || ScalaJS.anyRefEqEq(this.mount$1, tank.mount$1)))) {
       b.$$plus$eq__O__scm_ListBuffer(x$2)
     };
     these = ScalaJS.as.sci_List(these.tail__O())
@@ -2974,7 +2994,7 @@ ScalaJS.h.Lcom_github_fommil_kerbal_Engines$.prototype = ScalaJS.c.Lcom_github_f
 ScalaJS.c.Lcom_github_fommil_kerbal_Engines$.prototype.init___ = (function() {
   ScalaJS.n.Lcom_github_fommil_kerbal_Engines = this;
   ScalaJS.m.sci_List();
-  var xs = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-1R", ScalaJS.m.Lcom_github_fommil_kerbal_Radial(), 650.0, 0.03, 4.0, 220.0, 290.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("O-10", ScalaJS.m.Lcom_github_fommil_kerbal_Radial(), 800.0, 0.09, 20.0, 220.0, 290.0, ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax 24-77", ScalaJS.m.Lcom_github_fommil_kerbal_Radial(), 480.0, 0.09, 20.0, 250.0, 300.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax Mark 55", ScalaJS.m.Lcom_github_fommil_kerbal_Radial(), 800.0, 0.9, 120.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-1", ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 350.0, 0.03, 4.0, 220.0, 290.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax 48-7S", ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 300.0, 0.1, 30.0, 300.0, 350.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-909", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 750.0, 0.5, 50.0, 300.0, 390.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-T30", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 850.0, 1.25, 215.0, 320.0, 370.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-T45", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 950.0, 1.5, 200.0, 320.0, 370.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("R.A.P.I.E.R. (Liquid)", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 3600.0, 1.2, 175.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Toroidal Aerospike", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 3850.0, 1.5, 175.0, 388.0, 390.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-N Atomic", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 8700.0, 2.25, 60.0, 220.0, 800.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax \"Poodle\"", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 1600.0, 2.0, 220.0, 270.0, 390.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax \"Skipper\"", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 2850.0, 3.0, 650.0, 320.0, 370.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax \"Mainsail\"", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 5650.0, 6.0, 1500.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("LFB KR-1x2", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 13462.4, 10.0, 2000.0, 290.0, 340.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), 16400.0, 42.0), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Kerbodyne KR-2L", ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 20850.0, 6.5, 2500.0, 280.0, 380.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("S3 KS-25x4 Cluster", ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 32400.0, 9.75, 3200.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("Launch Escape System", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 791.0, 1.0, 750.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 800.0, 1.1125), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("RT-10", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 65.2, 0.5, 250.0, 225.0, 240.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 325.0, 3.7475), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("Rockomax BACC", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 190.0, 1.5, 315.0, 230.0, 250.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 700.0, 7.875), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("S1 SRB-KD25k", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 300.0, 3.0, 650.0, 230.0, 250.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 1800.0, 21.75), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("Sepratron I", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 45.2, 0.0125, 18.0, 100.0, 100.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 50.0, 0.0725), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("PB-ION", ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 5700.0, 0.25, 2.0, 0.0, 4200.0, ScalaJS.m.Lcom_github_fommil_kerbal_Xenon(), ScalaJS.m.s_None())]);
+  var xs = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-1R", new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([4, 6, 8, 12])), 650.0, 0.03, 4.0, 220.0, 290.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("O-10", new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([4, 6, 8, 12])), 800.0, 0.09, 20.0, 220.0, 290.0, ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax 24-77", new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([2, 4, 6, 8])), 480.0, 0.09, 20.0, 250.0, 300.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax Mark 55", new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([0, 2, 4, 6])), 800.0, 0.9, 120.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-1", ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 350.0, 0.03, 4.0, 220.0, 290.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax 48-7S", ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 300.0, 0.1, 30.0, 300.0, 350.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-909", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 750.0, 0.5, 50.0, 300.0, 390.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-T30", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 850.0, 1.25, 215.0, 320.0, 370.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-T45", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 950.0, 1.5, 200.0, 320.0, 370.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("R.A.P.I.E.R. (Liquid)", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 3600.0, 1.2, 175.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Toroidal Aerospike", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 3850.0, 1.5, 175.0, 388.0, 390.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-N Atomic", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 8700.0, 2.25, 60.0, 220.0, 800.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax \"Poodle\"", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 1600.0, 2.0, 220.0, 270.0, 390.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax \"Skipper\"", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 2850.0, 3.0, 650.0, 320.0, 370.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax \"Mainsail\"", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 5650.0, 6.0, 1500.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("LFB KR-1x2", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 13462.4, 10.0, 2000.0, 290.0, 340.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), 16400.0, 42.0), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Kerbodyne KR-2L", ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 20850.0, 6.5, 2500.0, 280.0, 380.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("S3 KS-25x4 Cluster", ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 32400.0, 9.75, 3200.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("Launch Escape System", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 791.0, 1.0, 750.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 800.0, 1.1125), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("RT-10", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 65.2, 0.5, 250.0, 225.0, 240.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 325.0, 3.7475), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("Rockomax BACC", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 190.0, 1.5, 315.0, 230.0, 250.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 700.0, 7.875), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("S1 SRB-KD25k", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 300.0, 3.0, 650.0, 230.0, 250.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 1800.0, 21.75), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("Sepratron I", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 45.2, 0.0125, 18.0, 100.0, 100.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 50.0, 0.0725), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("PB-ION", ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 5700.0, 0.25, 2.0, 0.0, 4200.0, ScalaJS.m.Lcom_github_fommil_kerbal_Xenon(), ScalaJS.m.s_None())]);
   var this$20 = ScalaJS.m.sci_List();
   var cbf = this$20.ReusableCBFInstance$2;
   this.Stock$1 = new ScalaJS.c.Lcom_github_fommil_kerbal_Engines().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs, cbf)));
@@ -3026,6 +3046,9 @@ ScalaJS.c.Lcom_github_fommil_kerbal_ExtraLarge$.prototype.productPrefix__T = (fu
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_ExtraLarge$.prototype.productArity__I = (function() {
   return 0
+});
+ScalaJS.c.Lcom_github_fommil_kerbal_ExtraLarge$.prototype.max__Lcom_github_fommil_kerbal_FuelTank__I = (function(tank) {
+  return 1
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_ExtraLarge$.prototype.productElement__I__O = (function(x$1) {
   matchEnd3: {
@@ -3301,7 +3324,7 @@ ScalaJS.h.Lcom_github_fommil_kerbal_FuelTanks$.prototype = ScalaJS.c.Lcom_github
 ScalaJS.c.Lcom_github_fommil_kerbal_FuelTanks$.prototype.init___ = (function() {
   ScalaJS.n.Lcom_github_fommil_kerbal_FuelTanks = this;
   ScalaJS.m.sci_List();
-  var xs = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("ROUND-8 Toroidal", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 349.8, 360.0, 0.025, 0.136, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Oscar-B", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 174.2, 180.0, 0.015, 0.78675, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T100", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 204.1, 250.0, 0.0625, 0.5625, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T200", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 333.2, 425.0, 0.125, 1.125, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T400", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 666.4, 850.0, 0.25, 2.25, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T800", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 1232.8, 1600.0, 0.5, 4.5, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax X200-8", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 1232.8, 1600.0, 0.5, 4.5, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax X200-16", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 2465.6, 3200.0, 1.0, 9.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax X200-32", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 4931.2, 6400.0, 2.0, 18.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax Jumbo-64", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 9862.4, 12800.0, 4.0, 36.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Kerbodyne S3-3600", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 5547.6, 7200.0, 2.5, 20.5, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Kerbodyne S3-7200", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 11095.2, 14400.0, 5.0, 41.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Kerbodyne S3-14400", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 16190.4, 22800.0, 10.0, 82.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-R10", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 340.0, 400.0, 0.05, 0.37, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-R25", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 680.0, 800.0, 0.15, 1.15, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-R1", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 400.0, 1300.0, 0.4, 3.4, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Stratus-V Roundified Monopropellant", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Radial(), 352.0, 400.0, 0.075, 0.315, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Stratus-V Cylindrified Monopropellant", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Radial(), 620.0, 800.0, 0.15, 0.75, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("B-X50R", ScalaJS.m.Lcom_github_fommil_kerbal_Xenon(), ScalaJS.m.Lcom_github_fommil_kerbal_Radial(), 600.0, 2200.0, 0.03, 0.07, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("PB-X150", ScalaJS.m.Lcom_github_fommil_kerbal_Xenon(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 200.0, 3000.0, 0.05, 0.12, false)]);
+  var xs = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("ROUND-8 Toroidal", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 349.8, 360.0, 0.025, 0.136, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Oscar-B", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 174.2, 180.0, 0.015, 0.78675, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T100", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 204.1, 250.0, 0.0625, 0.5625, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T200", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 333.2, 425.0, 0.125, 1.125, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T400", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 666.4, 850.0, 0.25, 2.25, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T800", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 1232.8, 1600.0, 0.5, 4.5, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax X200-8", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 1232.8, 1600.0, 0.5, 4.5, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax X200-16", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 2465.6, 3200.0, 1.0, 9.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax X200-32", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 4931.2, 6400.0, 2.0, 18.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax Jumbo-64", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 9862.4, 12800.0, 4.0, 36.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Kerbodyne S3-3600", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 5547.6, 7200.0, 2.5, 20.5, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Kerbodyne S3-7200", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 11095.2, 14400.0, 5.0, 41.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Kerbodyne S3-14400", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 16190.4, 22800.0, 10.0, 82.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-R10", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 340.0, 400.0, 0.05, 0.37, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-R25", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 680.0, 800.0, 0.15, 1.15, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-R1", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 400.0, 1300.0, 0.4, 3.4, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Stratus-V Roundified Monopropellant", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([1, 1, 1, 1])), 352.0, 400.0, 0.075, 0.315, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Stratus-V Cylindrified Monopropellant", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([1, 1, 1, 1])), 620.0, 800.0, 0.15, 0.75, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("B-X50R", ScalaJS.m.Lcom_github_fommil_kerbal_Xenon(), new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([1, 1, 1, 1])), 600.0, 2200.0, 0.03, 0.07, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("PB-X150", ScalaJS.m.Lcom_github_fommil_kerbal_Xenon(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 200.0, 3000.0, 0.05, 0.12, false)]);
   var this$2 = ScalaJS.m.sci_List();
   var cbf = this$2.ReusableCBFInstance$2;
   this.Stock$1 = new ScalaJS.c.Lcom_github_fommil_kerbal_FuelTanks().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs, cbf)));
@@ -3396,6 +3419,9 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Large$.prototype.productPrefix__T = (functio
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_Large$.prototype.productArity__I = (function() {
   return 0
+});
+ScalaJS.c.Lcom_github_fommil_kerbal_Large$.prototype.max__Lcom_github_fommil_kerbal_FuelTank__I = (function(tank) {
+  return 1
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_Large$.prototype.productElement__I__O = (function(x$1) {
   matchEnd3: {
@@ -3575,56 +3601,107 @@ ScalaJS.m.Lcom_github_fommil_kerbal_Mono = (function() {
   return ScalaJS.n.Lcom_github_fommil_kerbal_Mono
 });
 /** @constructor */
-ScalaJS.c.Lcom_github_fommil_kerbal_Radial$ = (function() {
-  ScalaJS.c.O.call(this)
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial = (function() {
+  ScalaJS.c.O.call(this);
+  this.sizings$1 = null
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Radial$.prototype = new ScalaJS.h.O();
-ScalaJS.c.Lcom_github_fommil_kerbal_Radial$.prototype.constructor = ScalaJS.c.Lcom_github_fommil_kerbal_Radial$;
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype = new ScalaJS.h.O();
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.constructor = ScalaJS.c.Lcom_github_fommil_kerbal_Radial;
 /** @constructor */
-ScalaJS.h.Lcom_github_fommil_kerbal_Radial$ = (function() {
+ScalaJS.h.Lcom_github_fommil_kerbal_Radial = (function() {
   /*<skip>*/
 });
-ScalaJS.h.Lcom_github_fommil_kerbal_Radial$.prototype = ScalaJS.c.Lcom_github_fommil_kerbal_Radial$.prototype;
-ScalaJS.c.Lcom_github_fommil_kerbal_Radial$.prototype.init___ = (function() {
-  ScalaJS.n.Lcom_github_fommil_kerbal_Radial = this;
-  return this
-});
-ScalaJS.c.Lcom_github_fommil_kerbal_Radial$.prototype.productPrefix__T = (function() {
+ScalaJS.h.Lcom_github_fommil_kerbal_Radial.prototype = ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype;
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.productPrefix__T = (function() {
   return "Radial"
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Radial$.prototype.productArity__I = (function() {
-  return 0
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.productArity__I = (function() {
+  return 1
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Radial$.prototype.productElement__I__O = (function(x$1) {
-  matchEnd3: {
-    throw new ScalaJS.c.jl_IndexOutOfBoundsException().init___T(ScalaJS.objectToString(x$1))
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.max__Lcom_github_fommil_kerbal_FuelTank__I = (function(tank) {
+  var x1 = tank.mount$1;
+  if (ScalaJS.anyRefEqEq(ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), x1)) {
+    return ScalaJS.uI(this.sizings$1.apply__I__O(0))
+  };
+  if (ScalaJS.anyRefEqEq(ScalaJS.m.Lcom_github_fommil_kerbal_Small(), x1)) {
+    return ScalaJS.uI(this.sizings$1.apply__I__O(1))
+  };
+  if (ScalaJS.anyRefEqEq(ScalaJS.m.Lcom_github_fommil_kerbal_Large(), x1)) {
+    return ScalaJS.uI(this.sizings$1.apply__I__O(2))
+  };
+  if (ScalaJS.anyRefEqEq(ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), x1)) {
+    return ScalaJS.uI(this.sizings$1.apply__I__O(3))
+  };
+  if (ScalaJS.is.Lcom_github_fommil_kerbal_Radial(x1)) {
+    var x2 = ScalaJS.as.Lcom_github_fommil_kerbal_Radial(x1);
+    if (((x2.sizings$1 !== null) && (x2.sizings$1.lengthCompare__I__I(1) === 0))) {
+      return 0
+    }
+  };
+  throw new ScalaJS.c.s_MatchError().init___O(x1)
+});
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.equals__O__Z = (function(x$1) {
+  if ((this === x$1)) {
+    return true
+  } else if (ScalaJS.is.Lcom_github_fommil_kerbal_Radial(x$1)) {
+    var Radial$1 = ScalaJS.as.Lcom_github_fommil_kerbal_Radial(x$1);
+    return ScalaJS.anyRefEqEq(this.sizings$1, Radial$1.sizings$1)
+  } else {
+    return false
   }
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Radial$.prototype.toString__T = (function() {
-  return "Radial"
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.productElement__I__O = (function(x$1) {
+  switch (x$1) {
+    case 0:
+      {
+        return this.sizings$1;
+        break
+      };
+    default:
+      throw new ScalaJS.c.jl_IndexOutOfBoundsException().init___T(ScalaJS.objectToString(x$1));
+  }
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Radial$.prototype.hashCode__I = (function() {
-  return (-1854712257)
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.toString__T = (function() {
+  return ScalaJS.m.sr_ScalaRunTime().$$undtoString__s_Product__T(this)
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Radial$.prototype.productIterator__sc_Iterator = (function() {
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.init___sc_Seq = (function(sizings) {
+  this.sizings$1 = sizings;
+  var requirement = (sizings.size__I() === 4);
+  if ((!requirement)) {
+    throw new ScalaJS.c.jl_IllegalArgumentException().init___T(("requirement failed: " + "missing sizings"))
+  };
+  var requirement$1 = sizings.forall__F1__Z(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(x$1$2) {
+    var x$1 = ScalaJS.uI(x$1$2);
+    return (x$1 >= 0)
+  })));
+  if ((!requirement$1)) {
+    throw new ScalaJS.c.jl_IllegalArgumentException().init___T(("requirement failed: " + "negatives not allowed"))
+  };
+  return this
+});
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.hashCode__I = (function() {
+  var this$2 = ScalaJS.m.s_util_hashing_MurmurHash3();
+  return this$2.productHash__s_Product__I__I(this, (-889275714))
+});
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.productIterator__sc_Iterator = (function() {
   return new ScalaJS.c.sr_ScalaRunTime$$anon$1().init___s_Product(this)
 });
-ScalaJS.is.Lcom_github_fommil_kerbal_Radial$ = (function(obj) {
-  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_fommil_kerbal_Radial$)))
+ScalaJS.is.Lcom_github_fommil_kerbal_Radial = (function(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_fommil_kerbal_Radial)))
 });
-ScalaJS.as.Lcom_github_fommil_kerbal_Radial$ = (function(obj) {
-  return ((ScalaJS.is.Lcom_github_fommil_kerbal_Radial$(obj) || (obj === null)) ? obj : ScalaJS.throwClassCastException(obj, "com.github.fommil.kerbal.Radial$"))
+ScalaJS.as.Lcom_github_fommil_kerbal_Radial = (function(obj) {
+  return ((ScalaJS.is.Lcom_github_fommil_kerbal_Radial(obj) || (obj === null)) ? obj : ScalaJS.throwClassCastException(obj, "com.github.fommil.kerbal.Radial"))
 });
-ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Radial$ = (function(obj, depth) {
-  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lcom_github_fommil_kerbal_Radial$)))
+ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Radial = (function(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lcom_github_fommil_kerbal_Radial)))
 });
-ScalaJS.asArrayOf.Lcom_github_fommil_kerbal_Radial$ = (function(obj, depth) {
-  return ((ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Radial$(obj, depth) || (obj === null)) ? obj : ScalaJS.throwArrayCastException(obj, "Lcom.github.fommil.kerbal.Radial$;", depth))
+ScalaJS.asArrayOf.Lcom_github_fommil_kerbal_Radial = (function(obj, depth) {
+  return ((ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Radial(obj, depth) || (obj === null)) ? obj : ScalaJS.throwArrayCastException(obj, "Lcom.github.fommil.kerbal.Radial;", depth))
 });
-ScalaJS.d.Lcom_github_fommil_kerbal_Radial$ = new ScalaJS.ClassTypeData({
-  Lcom_github_fommil_kerbal_Radial$: 0
-}, false, "com.github.fommil.kerbal.Radial$", ScalaJS.d.O, {
-  Lcom_github_fommil_kerbal_Radial$: 1,
+ScalaJS.d.Lcom_github_fommil_kerbal_Radial = new ScalaJS.ClassTypeData({
+  Lcom_github_fommil_kerbal_Radial: 0
+}, false, "com.github.fommil.kerbal.Radial", ScalaJS.d.O, {
+  Lcom_github_fommil_kerbal_Radial: 1,
   s_Serializable: 1,
   Ljava_io_Serializable: 1,
   s_Product: 1,
@@ -3632,14 +3709,7 @@ ScalaJS.d.Lcom_github_fommil_kerbal_Radial$ = new ScalaJS.ClassTypeData({
   Lcom_github_fommil_kerbal_Mount: 1,
   O: 1
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Radial$.prototype.$classData = ScalaJS.d.Lcom_github_fommil_kerbal_Radial$;
-ScalaJS.n.Lcom_github_fommil_kerbal_Radial = (void 0);
-ScalaJS.m.Lcom_github_fommil_kerbal_Radial = (function() {
-  if ((!ScalaJS.n.Lcom_github_fommil_kerbal_Radial)) {
-    ScalaJS.n.Lcom_github_fommil_kerbal_Radial = new ScalaJS.c.Lcom_github_fommil_kerbal_Radial$().init___()
-  };
-  return ScalaJS.n.Lcom_github_fommil_kerbal_Radial
-});
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.$classData = ScalaJS.d.Lcom_github_fommil_kerbal_Radial;
 /** @constructor */
 ScalaJS.c.Lcom_github_fommil_kerbal_Small$ = (function() {
   ScalaJS.c.O.call(this)
@@ -3660,6 +3730,9 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Small$.prototype.productPrefix__T = (functio
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_Small$.prototype.productArity__I = (function() {
   return 0
+});
+ScalaJS.c.Lcom_github_fommil_kerbal_Small$.prototype.max__Lcom_github_fommil_kerbal_FuelTank__I = (function(tank) {
+  return 1
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_Small$.prototype.productElement__I__O = (function(x$1) {
   matchEnd3: {
@@ -3787,16 +3860,10 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Solver$.prototype.solve__D__D__D__Z__Lcom_gi
   return ScalaJS.as.sci_Stream(engines.engines$1.toStream__sci_Stream().flatMap__F1__scg_CanBuildFrom__O(new ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$solve$1().init___D__D__D__Z__Lcom_github_fommil_kerbal_FuelTanks(dvMin, payloadMass, accelMin, atmosphere, allTanks), (ScalaJS.m.sci_Stream(), new ScalaJS.c.sci_Stream$StreamCanBuildFrom().init___())))
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_Solver$.prototype.com$github$fommil$kerbal$Solver$$candidates__Lcom_github_fommil_kerbal_Engine__D__Z__Lcom_github_fommil_kerbal_FuelTanks__sci_Stream = (function(engine, payloadMass, atmosphere, allTanks) {
-  var this$4 = new ScalaJS.c.sci_Range$Inclusive().init___I__I__I(1, 6, 1);
-  var this$5 = new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I(this$4, 0, this$4.length__I());
-  var this$6 = ScalaJS.i.sc_Iterator$class__toStream__sc_Iterator__sci_Stream(this$5);
-  var p = new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(engine$1) {
-    return (function(numEngines$2) {
-      var numEngines = ScalaJS.uI(numEngines$2);
-      return (!(!((numEngines === 1) | ScalaJS.anyRefEqEq(engine$1.mount$1, ScalaJS.m.Lcom_github_fommil_kerbal_Radial()))))
-    })
-  })(engine));
-  return ScalaJS.as.sci_Stream(new ScalaJS.c.sci_Stream$StreamWithFilter().init___sci_Stream__F1(this$6, p).flatMap__F1__scg_CanBuildFrom__O(new ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2().init___Lcom_github_fommil_kerbal_Engine__D__Z__Lcom_github_fommil_kerbal_FuelTanks(engine, payloadMass, atmosphere, allTanks), (ScalaJS.m.sci_Stream(), new ScalaJS.c.sci_Stream$StreamCanBuildFrom().init___())))
+  var jsx$1 = engine.validTanks__Lcom_github_fommil_kerbal_FuelTanks__sci_Set(allTanks);
+  var xo = engine.internal$1;
+  var this$2 = jsx$1.$$plus$plus__sc_GenTraversableOnce__sc_Set(xo.toList__sci_List());
+  return ScalaJS.as.sci_Stream(this$2.iterator__sc_Iterator().toStream__sci_Stream().flatMap__F1__scg_CanBuildFrom__O(new ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1().init___Lcom_github_fommil_kerbal_Engine__D__Z(engine, payloadMass, atmosphere), (ScalaJS.m.sci_Stream(), new ScalaJS.c.sci_Stream$StreamCanBuildFrom().init___())))
 });
 ScalaJS.is.Lcom_github_fommil_kerbal_Solver$ = (function(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_fommil_kerbal_Solver$)))
@@ -3844,6 +3911,9 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Tiny$.prototype.productPrefix__T = (function
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_Tiny$.prototype.productArity__I = (function() {
   return 0
+});
+ScalaJS.c.Lcom_github_fommil_kerbal_Tiny$.prototype.max__Lcom_github_fommil_kerbal_FuelTank__I = (function(tank) {
+  return 1
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_Tiny$.prototype.productElement__I__O = (function(x$1) {
   matchEnd3: {
@@ -9836,11 +9906,11 @@ ScalaJS.c.sc_AbstractTraversable.prototype.toBuffer__scm_Buffer = (function() {
   var cbf = this$1.ReusableCBFInstance$2;
   return ScalaJS.as.scm_Buffer(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(this, cbf))
 });
-ScalaJS.c.sc_AbstractTraversable.prototype.tail__O = (function() {
-  return ScalaJS.i.sc_TraversableLike$class__tail__sc_TraversableLike__O(this)
-});
 ScalaJS.c.sc_AbstractTraversable.prototype.addString__scm_StringBuilder__T__T__T__scm_StringBuilder = (function(b, start, sep, end) {
   return ScalaJS.i.sc_TraversableOnce$class__addString__sc_TraversableOnce__scm_StringBuilder__T__T__T__scm_StringBuilder(this, b, start, sep, end)
+});
+ScalaJS.c.sc_AbstractTraversable.prototype.tail__O = (function() {
+  return ScalaJS.i.sc_TraversableLike$class__tail__sc_TraversableLike__O(this)
 });
 ScalaJS.c.sc_AbstractTraversable.prototype.repr__O = (function() {
   return this
@@ -9851,11 +9921,11 @@ ScalaJS.c.sc_AbstractTraversable.prototype.$$div$colon__O__F2__O = (function(z, 
 ScalaJS.c.sc_AbstractTraversable.prototype.isTraversableAgain__Z = (function() {
   return true
 });
-ScalaJS.c.sc_AbstractTraversable.prototype.map__F1__scg_CanBuildFrom__O = (function(f, bf) {
-  return ScalaJS.i.sc_TraversableLike$class__map__sc_TraversableLike__F1__scg_CanBuildFrom__O(this, f, bf)
-});
 ScalaJS.c.sc_AbstractTraversable.prototype.toArray__s_reflect_ClassTag__O = (function(evidence$1) {
   return ScalaJS.i.sc_TraversableOnce$class__toArray__sc_TraversableOnce__s_reflect_ClassTag__O(this, evidence$1)
+});
+ScalaJS.c.sc_AbstractTraversable.prototype.map__F1__scg_CanBuildFrom__O = (function(f, bf) {
+  return ScalaJS.i.sc_TraversableLike$class__map__sc_TraversableLike__F1__scg_CanBuildFrom__O(this, f, bf)
 });
 ScalaJS.c.sc_AbstractTraversable.prototype.newBuilder__scm_Builder = (function() {
   return this.companion__scg_GenericCompanion().newBuilder__scm_Builder()
@@ -10344,15 +10414,6 @@ ScalaJS.h.sc_TraversableLike$WithFilter = (function() {
   /*<skip>*/
 });
 ScalaJS.h.sc_TraversableLike$WithFilter.prototype = ScalaJS.c.sc_TraversableLike$WithFilter.prototype;
-ScalaJS.c.sc_TraversableLike$WithFilter.prototype.flatMap__F1__scg_CanBuildFrom__O = (function(f, bf) {
-  var b = bf.apply__O__scm_Builder(this.$$outer$f.repr__O());
-  this.$$outer$f.foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(this$2, f$1, b$1) {
-    return (function(x$2) {
-      return (ScalaJS.uZ(this$2.p$1.apply__O__O(x$2)) ? b$1.$$plus$plus$eq__sc_TraversableOnce__scg_Growable(ScalaJS.as.sc_GenTraversableOnce(f$1.apply__O__O(x$2)).seq__sc_TraversableOnce()) : (void 0))
-    })
-  })(this, f, b)));
-  return b.result__O()
-});
 ScalaJS.c.sc_TraversableLike$WithFilter.prototype.map__F1__scg_CanBuildFrom__O = (function(f, bf) {
   var b = bf.apply__O__scm_Builder(this.$$outer$f.repr__O());
   this.$$outer$f.foreach__F1__V(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(this$2, f$1, b$1) {
@@ -11493,11 +11554,11 @@ ScalaJS.c.scm_Builder$$anon$1.prototype.result__O = (function() {
 ScalaJS.c.scm_Builder$$anon$1.prototype.sizeHintBounded__I__sc_TraversableLike__V = (function(size, boundColl) {
   this.self$1.sizeHintBounded__I__sc_TraversableLike__V(size, boundColl)
 });
-ScalaJS.c.scm_Builder$$anon$1.prototype.$$plus$eq__O__scm_Builder$$anon$1 = (function(x) {
-  return (this.self$1.$$plus$eq__O__scm_Builder(x), this)
-});
 ScalaJS.c.scm_Builder$$anon$1.prototype.$$plus$eq__O__scm_Builder = (function(elem) {
   return this.$$plus$eq__O__scm_Builder$$anon$1(elem)
+});
+ScalaJS.c.scm_Builder$$anon$1.prototype.$$plus$eq__O__scm_Builder$$anon$1 = (function(x) {
+  return (this.self$1.$$plus$eq__O__scm_Builder(x), this)
 });
 ScalaJS.c.scm_Builder$$anon$1.prototype.hashCode__I = (function() {
   return ScalaJS.i.s_Proxy$class__hashCode__s_Proxy__I(this)
@@ -13019,88 +13080,84 @@ ScalaJS.m.sr_Statics = (function() {
   return ScalaJS.n.sr_Statics
 });
 /** @constructor */
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2 = (function() {
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1 = (function() {
   ScalaJS.c.sr_AbstractFunction1.call(this);
   this.engine$1$f = null;
   this.payloadMass$2$f = 0.0;
-  this.atmosphere$2$f = false;
-  this.allTanks$2$2 = null
+  this.atmosphere$2$f = false
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2.prototype = new ScalaJS.h.sr_AbstractFunction1();
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2.prototype.constructor = ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2;
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1.prototype = new ScalaJS.h.sr_AbstractFunction1();
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1.prototype.constructor = ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1;
 /** @constructor */
-ScalaJS.h.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2 = (function() {
+ScalaJS.h.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1 = (function() {
   /*<skip>*/
 });
-ScalaJS.h.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2.prototype = ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2.prototype;
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2.prototype.apply__O__O = (function(v1) {
-  return this.apply__I__sci_Set(ScalaJS.uI(v1))
+ScalaJS.h.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1.prototype = ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1.prototype;
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1.prototype.apply__O__O = (function(v1) {
+  return this.apply__Lcom_github_fommil_kerbal_FuelTank__sci_IndexedSeq(ScalaJS.as.Lcom_github_fommil_kerbal_FuelTank(v1))
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2.prototype.init___Lcom_github_fommil_kerbal_Engine__D__Z__Lcom_github_fommil_kerbal_FuelTanks = (function(engine$1, payloadMass$2, atmosphere$2, allTanks$2) {
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1.prototype.apply__Lcom_github_fommil_kerbal_FuelTank__sci_IndexedSeq = (function(tank) {
+  var end = this.engine$1$f.mount$1.max__Lcom_github_fommil_kerbal_FuelTank__I(tank);
+  var this$5 = new ScalaJS.c.sci_Range$Inclusive().init___I__I__I(1, end, 1);
+  var f = new ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8().init___Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1__Lcom_github_fommil_kerbal_FuelTank(this, tank);
+  var bf = (ScalaJS.m.sci_IndexedSeq(), ScalaJS.m.sc_IndexedSeq().ReusableCBF$6);
+  return ScalaJS.as.sci_IndexedSeq(ScalaJS.i.sc_TraversableLike$class__flatMap__sc_TraversableLike__F1__scg_CanBuildFrom__O(this$5, f, bf))
+});
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1.prototype.init___Lcom_github_fommil_kerbal_Engine__D__Z = (function(engine$1, payloadMass$2, atmosphere$2) {
   this.engine$1$f = engine$1;
   this.payloadMass$2$f = payloadMass$2;
   this.atmosphere$2$f = atmosphere$2;
-  this.allTanks$2$2 = allTanks$2;
   return this
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2.prototype.apply__I__sci_Set = (function(numEngines) {
-  var jsx$1 = this.engine$1$f.validTanks__Lcom_github_fommil_kerbal_FuelTanks__sci_Set(this.allTanks$2$2);
-  var xo = this.engine$1$f.internal$1;
-  var this$3 = jsx$1.$$plus$plus__sc_GenTraversableOnce__sc_Set(xo.toList__sci_List());
-  var f = new ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8().init___Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2__I(this, numEngines);
-  var this$2 = ScalaJS.m.sci_Set();
-  var bf = new ScalaJS.c.scg_GenSetFactory$$anon$1().init___scg_GenSetFactory(this$2);
-  return ScalaJS.as.sci_Set(ScalaJS.i.sc_TraversableLike$class__flatMap__sc_TraversableLike__F1__scg_CanBuildFrom__O(this$3, f, bf))
+ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1 = (function(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1)))
 });
-ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2 = (function(obj) {
-  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2)))
+ScalaJS.as.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1 = (function(obj) {
+  return ((ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1(obj) || (obj === null)) ? obj : ScalaJS.throwClassCastException(obj, "com.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1"))
 });
-ScalaJS.as.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2 = (function(obj) {
-  return ((ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2(obj) || (obj === null)) ? obj : ScalaJS.throwClassCastException(obj, "com.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2"))
+ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1 = (function(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1)))
 });
-ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2 = (function(obj, depth) {
-  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2)))
+ScalaJS.asArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1 = (function(obj, depth) {
+  return ((ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1(obj, depth) || (obj === null)) ? obj : ScalaJS.throwArrayCastException(obj, "Lcom.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1;", depth))
 });
-ScalaJS.asArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2 = (function(obj, depth) {
-  return ((ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2(obj, depth) || (obj === null)) ? obj : ScalaJS.throwArrayCastException(obj, "Lcom.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2;", depth))
-});
-ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2 = new ScalaJS.ClassTypeData({
-  Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2: 0
-}, false, "com.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2", ScalaJS.d.sr_AbstractFunction1, {
-  Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2: 1,
+ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1 = new ScalaJS.ClassTypeData({
+  Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1: 0
+}, false, "com.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1", ScalaJS.d.sr_AbstractFunction1, {
+  Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1: 1,
   s_Serializable: 1,
   Ljava_io_Serializable: 1,
   sr_AbstractFunction1: 1,
   F1: 1,
   O: 1
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2.prototype.$classData = ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2;
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1.prototype.$classData = ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1;
 /** @constructor */
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = (function() {
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8 = (function() {
   ScalaJS.c.sr_AbstractFunction1.call(this);
   this.$$outer$2 = null;
-  this.numEngines$1$f = 0
+  this.tank$1$f = null
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype = new ScalaJS.h.sr_AbstractFunction1();
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype.constructor = ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8;
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8.prototype = new ScalaJS.h.sr_AbstractFunction1();
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8.prototype.constructor = ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8;
 /** @constructor */
-ScalaJS.h.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = (function() {
+ScalaJS.h.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8 = (function() {
   /*<skip>*/
 });
-ScalaJS.h.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype = ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype;
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype.init___Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2__I = (function($$outer, numEngines$1) {
+ScalaJS.h.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8.prototype = ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8.prototype;
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8.prototype.apply__O__O = (function(v1) {
+  return this.apply__I__sci_IndexedSeq(ScalaJS.uI(v1))
+});
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8.prototype.init___Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1__Lcom_github_fommil_kerbal_FuelTank = (function($$outer, tank$1) {
   if (($$outer === null)) {
     throw ScalaJS.unwrapJavaScriptException(null)
   } else {
     this.$$outer$2 = $$outer
   };
-  this.numEngines$1$f = numEngines$1;
+  this.tank$1$f = tank$1;
   return this
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype.apply__O__O = (function(v1) {
-  return this.apply__Lcom_github_fommil_kerbal_FuelTank__sci_IndexedSeq(ScalaJS.as.Lcom_github_fommil_kerbal_FuelTank(v1))
-});
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype.apply__Lcom_github_fommil_kerbal_FuelTank__sci_IndexedSeq = (function(tank) {
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8.prototype.apply__I__sci_IndexedSeq = (function(numEngines) {
   var this$4 = new ScalaJS.c.sci_Range$Inclusive().init___I__I__I(0, 100, 1);
   var start = this$4.start$4;
   var end = this$4.end$4;
@@ -13115,43 +13172,43 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Sol
   var step = this$6.step$4;
   while ((isCommonCase ? (i !== terminal) : (count < this$6.numRangeElements$4))) {
     var x$2 = i;
-    b.$$plus$eq__O__scm_Builder(((x$2 / 100.0) * tank.max__D()));
+    b.$$plus$eq__O__scm_Builder(((x$2 / 100.0) * this.tank$1$f.max__D()));
     count = ((count + 1) | 0);
     i = ((i + step) | 0)
   };
   return ScalaJS.as.sci_IndexedSeq(ScalaJS.as.sc_TraversableLike(b.result__O()).withFilter__F1__scg_FilterMonadic(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(fuel$2) {
     var fuel = ScalaJS.uD(fuel$2);
     return (fuel > 0)
-  }))).map__F1__scg_CanBuildFrom__O(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer, tank$1) {
+  }))).map__F1__scg_CanBuildFrom__O(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer, numEngines$1) {
     return (function(fuel$2$1) {
       var fuel$1 = ScalaJS.uD(fuel$2$1);
-      return new ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution().init___D__Lcom_github_fommil_kerbal_Engine__I__Lcom_github_fommil_kerbal_FuelTank__D__Z(arg$outer.$$outer$2.payloadMass$2$f, arg$outer.$$outer$2.engine$1$f, arg$outer.numEngines$1$f, tank$1, fuel$1, arg$outer.$$outer$2.atmosphere$2$f)
+      return new ScalaJS.c.Lcom_github_fommil_kerbal_EngineSolution().init___D__Lcom_github_fommil_kerbal_Engine__I__Lcom_github_fommil_kerbal_FuelTank__D__Z(arg$outer.$$outer$2.payloadMass$2$f, arg$outer.$$outer$2.engine$1$f, numEngines$1, arg$outer.tank$1$f, fuel$1, arg$outer.$$outer$2.atmosphere$2$f)
     })
-  })(this, tank)), (ScalaJS.m.sci_IndexedSeq(), ScalaJS.m.sc_IndexedSeq().ReusableCBF$6)))
+  })(this, numEngines)), (ScalaJS.m.sci_IndexedSeq(), ScalaJS.m.sc_IndexedSeq().ReusableCBF$6)))
 });
-ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = (function(obj) {
-  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8)))
+ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8 = (function(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8)))
 });
-ScalaJS.as.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = (function(obj) {
-  return ((ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8(obj) || (obj === null)) ? obj : ScalaJS.throwClassCastException(obj, "com.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8"))
+ScalaJS.as.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8 = (function(obj) {
+  return ((ScalaJS.is.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8(obj) || (obj === null)) ? obj : ScalaJS.throwClassCastException(obj, "com.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8"))
 });
-ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = (function(obj, depth) {
-  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8)))
+ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8 = (function(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8)))
 });
-ScalaJS.asArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = (function(obj, depth) {
-  return ((ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8(obj, depth) || (obj === null)) ? obj : ScalaJS.throwArrayCastException(obj, "Lcom.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8;", depth))
+ScalaJS.asArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8 = (function(obj, depth) {
+  return ((ScalaJS.isArrayOf.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8(obj, depth) || (obj === null)) ? obj : ScalaJS.throwArrayCastException(obj, "Lcom.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8;", depth))
 });
-ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8 = new ScalaJS.ClassTypeData({
-  Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8: 0
-}, false, "com.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8", ScalaJS.d.sr_AbstractFunction1, {
-  Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8: 1,
+ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8 = new ScalaJS.ClassTypeData({
+  Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8: 0
+}, false, "com.github.fommil.kerbal.Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8", ScalaJS.d.sr_AbstractFunction1, {
+  Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8: 1,
   s_Serializable: 1,
   Ljava_io_Serializable: 1,
   sr_AbstractFunction1: 1,
   F1: 1,
   O: 1
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8.prototype.$classData = ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$2$$anonfun$apply$8;
+ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8.prototype.$classData = ScalaJS.d.Lcom_github_fommil_kerbal_Solver$$anonfun$com$github$fommil$kerbal$Solver$$candidates$1$$anonfun$apply$8;
 /** @constructor */
 ScalaJS.c.Lcom_github_fommil_kerbal_Solver$$anonfun$solve$1 = (function() {
   ScalaJS.c.sr_AbstractFunction1.call(this);
@@ -15396,11 +15453,11 @@ ScalaJS.c.sc_AbstractIterable.prototype.foreach__F1__V = (function(f) {
 ScalaJS.c.sc_AbstractIterable.prototype.zipWithIndex__scg_CanBuildFrom__O = (function(bf) {
   return ScalaJS.i.sc_IterableLike$class__zipWithIndex__sc_IterableLike__scg_CanBuildFrom__O(this, bf)
 });
-ScalaJS.c.sc_AbstractIterable.prototype.drop__I__O = (function(n) {
-  return ScalaJS.i.sc_IterableLike$class__drop__sc_IterableLike__I__O(this, n)
-});
 ScalaJS.c.sc_AbstractIterable.prototype.toStream__sci_Stream = (function() {
   return this.iterator__sc_Iterator().toStream__sci_Stream()
+});
+ScalaJS.c.sc_AbstractIterable.prototype.drop__I__O = (function(n) {
+  return ScalaJS.i.sc_IterableLike$class__drop__sc_IterableLike__I__O(this, n)
 });
 ScalaJS.c.sc_AbstractIterable.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
   ScalaJS.i.sc_IterableLike$class__copyToArray__sc_IterableLike__O__I__I__V(this, xs, start, len)
@@ -15928,34 +15985,6 @@ ScalaJS.h.sci_Stream$StreamWithFilter = (function() {
   /*<skip>*/
 });
 ScalaJS.h.sci_Stream$StreamWithFilter.prototype = ScalaJS.c.sci_Stream$StreamWithFilter.prototype;
-ScalaJS.c.sci_Stream$StreamWithFilter.prototype.flatMap__F1__scg_CanBuildFrom__O = (function(f, bf) {
-  var this$1 = ScalaJS.as.sci_Stream(this.$$outer$f);
-  if (ScalaJS.is.sci_Stream$StreamBuilder(bf.apply__O__scm_Builder(this$1))) {
-    ScalaJS.as.sci_Stream(this.$$outer$f);
-    var x = this.tailFlatMap$1__p2__sci_Stream__F1__sci_Stream(ScalaJS.as.sci_Stream(this.$$outer$f), f);
-    return x
-  } else {
-    return ScalaJS.c.sc_TraversableLike$WithFilter.prototype.flatMap__F1__scg_CanBuildFrom__O.call(this, f, bf)
-  }
-});
-ScalaJS.c.sci_Stream$StreamWithFilter.prototype.tailFlatMap$1__p2__sci_Stream__F1__sci_Stream = (function(coll, f$4) {
-  var head = null;
-  var tail = new ScalaJS.c.sr_ObjectRef().init___O(coll);
-  while (true) {
-    if (ScalaJS.as.sci_Stream(tail.elem$1).isEmpty__Z()) {
-      return ScalaJS.m.sci_Stream$Empty()
-    };
-    head = ScalaJS.as.sci_Stream(tail.elem$1).head__O();
-    tail.elem$1 = ScalaJS.as.sci_Stream(ScalaJS.as.sci_Stream(tail.elem$1).tail__O());
-    if (ScalaJS.uZ(this.p$2.apply__O__O(head))) {
-      return ScalaJS.as.sc_GenTraversableOnce(f$4.apply__O__O(head)).toStream__sci_Stream().append__F0__sci_Stream(new ScalaJS.c.sjsr_AnonFunction0().init___sjs_js_Function0((function(this$2, f$4$1, tail$1) {
-        return (function() {
-          return this$2.tailFlatMap$1__p2__sci_Stream__F1__sci_Stream(ScalaJS.as.sci_Stream(tail$1.elem$1), f$4$1)
-        })
-      })(this, f$4, tail)))
-    }
-  }
-});
 ScalaJS.c.sci_Stream$StreamWithFilter.prototype.tailMap$1__p2__sci_Stream__F1__sci_Stream = (function(coll, f$3) {
   var head = null;
   var tail = new ScalaJS.c.sr_ObjectRef().init___O(coll);
@@ -18923,6 +18952,9 @@ ScalaJS.c.sci_List.prototype.thisCollection__sc_Traversable = (function() {
 ScalaJS.c.sci_List.prototype.drop__I__sc_LinearSeqOptimized = (function(n) {
   return this.drop__I__sci_List(n)
 });
+ScalaJS.c.sci_List.prototype.forall__F1__Z = (function(p) {
+  return ScalaJS.i.sc_LinearSeqOptimized$class__forall__sc_LinearSeqOptimized__F1__Z(this, p)
+});
 ScalaJS.c.sci_List.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.sci_List()
 });
@@ -19066,11 +19098,11 @@ ScalaJS.c.sci_ListSet.prototype.head__O = (function() {
 ScalaJS.c.sci_ListSet.prototype.apply__O__O = (function(v1) {
   return this.contains__O__Z(v1)
 });
-ScalaJS.c.sci_ListSet.prototype.isEmpty__Z = (function() {
-  return true
-});
 ScalaJS.c.sci_ListSet.prototype.thisCollection__sc_Traversable = (function() {
   return this
+});
+ScalaJS.c.sci_ListSet.prototype.isEmpty__Z = (function() {
+  return true
 });
 ScalaJS.c.sci_ListSet.prototype.scala$collection$immutable$ListSet$$unchecked$undouter__sci_ListSet = (function() {
   throw new ScalaJS.c.ju_NoSuchElementException().init___T("Empty ListSet has no outer pointer")
@@ -19634,11 +19666,11 @@ ScalaJS.c.sci_Set$Set1.prototype.iterator__sc_Iterator = (function() {
 ScalaJS.c.sci_Set$Set1.prototype.empty__sc_Set = (function() {
   return ScalaJS.m.sci_Set$EmptySet()
 });
-ScalaJS.c.sci_Set$Set1.prototype.$$plus__O__sci_Set = (function(elem) {
-  return (this.contains__O__Z(elem) ? this : new ScalaJS.c.sci_Set$Set2().init___O__O(this.elem1$4, elem))
-});
 ScalaJS.c.sci_Set$Set1.prototype.seq__sc_Set = (function() {
   return this
+});
+ScalaJS.c.sci_Set$Set1.prototype.$$plus__O__sci_Set = (function(elem) {
+  return (this.contains__O__Z(elem) ? this : new ScalaJS.c.sci_Set$Set2().init___O__O(this.elem1$4, elem))
 });
 ScalaJS.c.sci_Set$Set1.prototype.contains__O__Z = (function(elem) {
   return ScalaJS.anyEqEq(elem, this.elem1$4)
@@ -19744,11 +19776,11 @@ ScalaJS.c.sci_Set$Set2.prototype.iterator__sc_Iterator = (function() {
 ScalaJS.c.sci_Set$Set2.prototype.empty__sc_Set = (function() {
   return ScalaJS.m.sci_Set$EmptySet()
 });
-ScalaJS.c.sci_Set$Set2.prototype.$$plus__O__sci_Set = (function(elem) {
-  return (this.contains__O__Z(elem) ? this : new ScalaJS.c.sci_Set$Set3().init___O__O__O(this.elem1$4, this.elem2$4, elem))
-});
 ScalaJS.c.sci_Set$Set2.prototype.seq__sc_Set = (function() {
   return this
+});
+ScalaJS.c.sci_Set$Set2.prototype.$$plus__O__sci_Set = (function(elem) {
+  return (this.contains__O__Z(elem) ? this : new ScalaJS.c.sci_Set$Set3().init___O__O__O(this.elem1$4, this.elem2$4, elem))
 });
 ScalaJS.c.sci_Set$Set2.prototype.contains__O__Z = (function(elem) {
   return (ScalaJS.anyEqEq(elem, this.elem1$4) || ScalaJS.anyEqEq(elem, this.elem2$4))
@@ -19857,11 +19889,11 @@ ScalaJS.c.sci_Set$Set3.prototype.iterator__sc_Iterator = (function() {
 ScalaJS.c.sci_Set$Set3.prototype.empty__sc_Set = (function() {
   return ScalaJS.m.sci_Set$EmptySet()
 });
-ScalaJS.c.sci_Set$Set3.prototype.$$plus__O__sci_Set = (function(elem) {
-  return (this.contains__O__Z(elem) ? this : new ScalaJS.c.sci_Set$Set4().init___O__O__O__O(this.elem1$4, this.elem2$4, this.elem3$4, elem))
-});
 ScalaJS.c.sci_Set$Set3.prototype.seq__sc_Set = (function() {
   return this
+});
+ScalaJS.c.sci_Set$Set3.prototype.$$plus__O__sci_Set = (function(elem) {
+  return (this.contains__O__Z(elem) ? this : new ScalaJS.c.sci_Set$Set4().init___O__O__O__O(this.elem1$4, this.elem2$4, this.elem3$4, elem))
 });
 ScalaJS.c.sci_Set$Set3.prototype.contains__O__Z = (function(elem) {
   return ((ScalaJS.anyEqEq(elem, this.elem1$4) || ScalaJS.anyEqEq(elem, this.elem2$4)) || ScalaJS.anyEqEq(elem, this.elem3$4))
@@ -19966,11 +19998,11 @@ ScalaJS.c.sci_Set$Set4.prototype.iterator__sc_Iterator = (function() {
 ScalaJS.c.sci_Set$Set4.prototype.empty__sc_Set = (function() {
   return ScalaJS.m.sci_Set$EmptySet()
 });
-ScalaJS.c.sci_Set$Set4.prototype.$$plus__O__sci_Set = (function(elem) {
-  return (this.contains__O__Z(elem) ? this : new ScalaJS.c.sci_HashSet().init___().$$plus__O__O__sc_Seq__sci_HashSet(this.elem1$4, this.elem2$4, new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([this.elem3$4, this.elem4$4, elem])))
-});
 ScalaJS.c.sci_Set$Set4.prototype.seq__sc_Set = (function() {
   return this
+});
+ScalaJS.c.sci_Set$Set4.prototype.$$plus__O__sci_Set = (function(elem) {
+  return (this.contains__O__Z(elem) ? this : new ScalaJS.c.sci_HashSet().init___().$$plus__O__O__sc_Seq__sci_HashSet(this.elem1$4, this.elem2$4, new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([this.elem3$4, this.elem4$4, elem])))
 });
 ScalaJS.c.sci_Set$Set4.prototype.contains__O__Z = (function(elem) {
   return (((ScalaJS.anyEqEq(elem, this.elem1$4) || ScalaJS.anyEqEq(elem, this.elem2$4)) || ScalaJS.anyEqEq(elem, this.elem3$4)) || ScalaJS.anyEqEq(elem, this.elem4$4))
@@ -20099,9 +20131,6 @@ ScalaJS.c.sci_Stream.prototype.drop__I__sc_LinearSeqOptimized = (function(n) {
 ScalaJS.c.sci_Stream.prototype.mkString__T__T__T__T = (function(start, sep, end) {
   return (this.force__sci_Stream(), ScalaJS.i.sc_TraversableOnce$class__mkString__sc_TraversableOnce__T__T__T__T(this, start, sep, end))
 });
-ScalaJS.c.sci_Stream.prototype.withFilter__F1__scg_FilterMonadic = (function(p) {
-  return new ScalaJS.c.sci_Stream$StreamWithFilter().init___sci_Stream__F1(this, p)
-});
 ScalaJS.c.sci_Stream.prototype.loop$3__p4__T__sci_Stream__scm_StringBuilder__T__T__V = (function(pre, these, b$1, sep$2, end$1) {
   x: {
     _loop: while (true) {
@@ -20122,11 +20151,17 @@ ScalaJS.c.sci_Stream.prototype.loop$3__p4__T__sci_Stream__scm_StringBuilder__T__
     }
   }
 });
-ScalaJS.c.sci_Stream.prototype.companion__scg_GenericCompanion = (function() {
-  return ScalaJS.m.sci_Stream()
+ScalaJS.c.sci_Stream.prototype.withFilter__F1__scg_FilterMonadic = (function(p) {
+  return new ScalaJS.c.sci_Stream$StreamWithFilter().init___sci_Stream__F1(this, p)
+});
+ScalaJS.c.sci_Stream.prototype.forall__F1__Z = (function(p) {
+  return ScalaJS.i.sc_LinearSeqOptimized$class__forall__sc_LinearSeqOptimized__F1__Z(this, p)
 });
 ScalaJS.c.sci_Stream.prototype.toString__T = (function() {
   return ScalaJS.i.sc_TraversableOnce$class__mkString__sc_TraversableOnce__T__T__T__T(this, ("Stream" + "("), ", ", ")")
+});
+ScalaJS.c.sci_Stream.prototype.companion__scg_GenericCompanion = (function() {
+  return ScalaJS.m.sci_Stream()
 });
 ScalaJS.c.sci_Stream.prototype.foreach__F1__V = (function(f) {
   var _$this = this;
@@ -20158,10 +20193,6 @@ ScalaJS.c.sci_Stream.prototype.foldLeft__O__F2__O = (function(z, op) {
 ScalaJS.c.sci_Stream.prototype.iterator__sc_Iterator = (function() {
   return new ScalaJS.c.sci_StreamIterator().init___sci_Stream(this)
 });
-ScalaJS.c.sci_Stream.prototype.zipWithIndex__scg_CanBuildFrom__O = (function(bf) {
-  var this$1 = ScalaJS.m.sci_Stream();
-  return this.zip__sc_GenIterable__scg_CanBuildFrom__O(this$1.from__I__I__sci_Stream(0, 1), bf)
-});
 ScalaJS.c.sci_Stream.prototype.seq__sc_Seq = (function() {
   return this
 });
@@ -20173,6 +20204,10 @@ ScalaJS.c.sci_Stream.prototype.length__I = (function() {
     left = ScalaJS.as.sci_Stream(left.tail__O())
   };
   return len
+});
+ScalaJS.c.sci_Stream.prototype.zipWithIndex__scg_CanBuildFrom__O = (function(bf) {
+  var this$1 = ScalaJS.m.sci_Stream();
+  return this.zip__sc_GenIterable__scg_CanBuildFrom__O(this$1.from__I__I__sci_Stream(0, 1), bf)
 });
 ScalaJS.c.sci_Stream.prototype.toStream__sci_Stream = (function() {
   return this
@@ -20239,6 +20274,9 @@ ScalaJS.c.sci_Stream.prototype.append__F0__sci_Stream = (function(rest) {
     return new ScalaJS.c.sci_Stream$Cons().init___O__F0(hd, tl)
   }
 });
+ScalaJS.c.sci_Stream.prototype.stringPrefix__T = (function() {
+  return "Stream"
+});
 ScalaJS.c.sci_Stream.prototype.zip__sc_GenIterable__scg_CanBuildFrom__O = (function(that, bf) {
   if (ScalaJS.is.sci_Stream$StreamBuilder(bf.apply__O__scm_Builder(this))) {
     if ((this.isEmpty__Z() || that.isEmpty__Z())) {
@@ -20257,9 +20295,6 @@ ScalaJS.c.sci_Stream.prototype.zip__sc_GenIterable__scg_CanBuildFrom__O = (funct
   } else {
     return ScalaJS.i.sc_IterableLike$class__zip__sc_IterableLike__sc_GenIterable__scg_CanBuildFrom__O(this, that, bf)
   }
-});
-ScalaJS.c.sci_Stream.prototype.stringPrefix__T = (function() {
-  return "Stream"
 });
 ScalaJS.is.sci_Stream = (function(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.sci_Stream)))
@@ -20511,11 +20546,11 @@ ScalaJS.c.sci_Vector.prototype.display1$und$eq__AO__V = (function(x$1) {
 ScalaJS.c.sci_Vector.prototype.length__I = (function() {
   return ((this.endIndex$4 - this.startIndex$4) | 0)
 });
-ScalaJS.c.sci_Vector.prototype.display4$und$eq__AO__V = (function(x$1) {
-  this.display4$4 = x$1
-});
 ScalaJS.c.sci_Vector.prototype.seq__sc_Seq = (function() {
   return this
+});
+ScalaJS.c.sci_Vector.prototype.display4$und$eq__AO__V = (function(x$1) {
+  this.display4$4 = x$1
 });
 ScalaJS.c.sci_Vector.prototype.display1__AO = (function() {
   return this.display1$4
@@ -20528,6 +20563,11 @@ ScalaJS.c.sci_Vector.prototype.display5__AO = (function() {
 });
 ScalaJS.c.sci_Vector.prototype.tail__O = (function() {
   return this.tail__sci_Vector()
+});
+ScalaJS.c.sci_Vector.prototype.iterator__sci_VectorIterator = (function() {
+  var s = new ScalaJS.c.sci_VectorIterator().init___I__I(this.startIndex$4, this.endIndex$4);
+  this.initIterator__sci_VectorIterator__V(s);
+  return s
 });
 ScalaJS.c.sci_Vector.prototype.requiredDepth__p4__I__I = (function(xor) {
   if ((xor < 32)) {
@@ -20545,11 +20585,6 @@ ScalaJS.c.sci_Vector.prototype.requiredDepth__p4__I__I = (function(xor) {
   } else {
     throw new ScalaJS.c.jl_IllegalArgumentException().init___()
   }
-});
-ScalaJS.c.sci_Vector.prototype.iterator__sci_VectorIterator = (function() {
-  var s = new ScalaJS.c.sci_VectorIterator().init___I__I(this.startIndex$4, this.endIndex$4);
-  this.initIterator__sci_VectorIterator__V(s);
-  return s
 });
 ScalaJS.c.sci_Vector.prototype.zeroLeft__p4__AO__I__V = (function(array, index) {
   var i = 0;
@@ -20594,14 +20629,14 @@ ScalaJS.c.sci_Vector.prototype.drop__I__sci_Vector = (function(n) {
     return this$1.NIL$6
   }
 });
+ScalaJS.c.sci_Vector.prototype.display3$und$eq__AO__V = (function(x$1) {
+  this.display3$4 = x$1
+});
 ScalaJS.c.sci_Vector.prototype.copyRight__p4__AO__I__AO = (function(array, left) {
   var a2 = ScalaJS.newArrayObject(ScalaJS.d.O.getArrayOf(), [array.u["length"]]);
   var length = ((a2.u["length"] - left) | 0);
   ScalaJS.systemArraycopy(array, left, a2, left, length);
   return a2
-});
-ScalaJS.c.sci_Vector.prototype.display3$und$eq__AO__V = (function(x$1) {
-  this.display3$4 = x$1
 });
 ScalaJS.is.sci_Vector = (function(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.sci_Vector)))
@@ -20681,12 +20716,12 @@ ScalaJS.c.sci_WrappedString.prototype.apply__I__O = (function(idx) {
 ScalaJS.c.sci_WrappedString.prototype.lengthCompare__I__I = (function(len) {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__lengthCompare__sc_IndexedSeqOptimized__I__I(this, len)
 });
-ScalaJS.c.sci_WrappedString.prototype.sameElements__sc_GenIterable__Z = (function(that) {
-  return ScalaJS.i.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
-});
 ScalaJS.c.sci_WrappedString.prototype.apply__O__O = (function(v1) {
   var n = ScalaJS.uI(v1);
   return ScalaJS.bC(ScalaJS.i.sjsr_RuntimeString$class__charAt__sjsr_RuntimeString__I__C(this.self$4, n))
+});
+ScalaJS.c.sci_WrappedString.prototype.sameElements__sc_GenIterable__Z = (function(that) {
+  return ScalaJS.i.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
 });
 ScalaJS.c.sci_WrappedString.prototype.isEmpty__Z = (function() {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__isEmpty__sc_IndexedSeqOptimized__Z(this)
@@ -20694,11 +20729,14 @@ ScalaJS.c.sci_WrappedString.prototype.isEmpty__Z = (function() {
 ScalaJS.c.sci_WrappedString.prototype.thisCollection__sc_Traversable = (function() {
   return this
 });
-ScalaJS.c.sci_WrappedString.prototype.companion__scg_GenericCompanion = (function() {
-  return ScalaJS.m.sci_IndexedSeq()
+ScalaJS.c.sci_WrappedString.prototype.forall__F1__Z = (function(p) {
+  return ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z(this, p)
 });
 ScalaJS.c.sci_WrappedString.prototype.toString__T = (function() {
   return this.self$4
+});
+ScalaJS.c.sci_WrappedString.prototype.companion__scg_GenericCompanion = (function() {
+  return ScalaJS.m.sci_IndexedSeq()
 });
 ScalaJS.c.sci_WrappedString.prototype.foreach__F1__V = (function(f) {
   ScalaJS.i.sc_IndexedSeqOptimized$class__foreach__sc_IndexedSeqOptimized__F1__V(this, f)
@@ -20715,14 +20753,14 @@ ScalaJS.c.sci_WrappedString.prototype.toBuffer__scm_Buffer = (function() {
 ScalaJS.c.sci_WrappedString.prototype.iterator__sc_Iterator = (function() {
   return new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I(this, 0, ScalaJS.i.sjsr_RuntimeString$class__length__sjsr_RuntimeString__I(this.self$4))
 });
-ScalaJS.c.sci_WrappedString.prototype.zipWithIndex__scg_CanBuildFrom__O = (function(bf) {
-  return ScalaJS.i.sc_IndexedSeqOptimized$class__zipWithIndex__sc_IndexedSeqOptimized__scg_CanBuildFrom__O(this, bf)
+ScalaJS.c.sci_WrappedString.prototype.seq__sc_Seq = (function() {
+  return this
 });
 ScalaJS.c.sci_WrappedString.prototype.length__I = (function() {
   return ScalaJS.i.sjsr_RuntimeString$class__length__sjsr_RuntimeString__I(this.self$4)
 });
-ScalaJS.c.sci_WrappedString.prototype.seq__sc_Seq = (function() {
-  return this
+ScalaJS.c.sci_WrappedString.prototype.zipWithIndex__scg_CanBuildFrom__O = (function(bf) {
+  return ScalaJS.i.sc_IndexedSeqOptimized$class__zipWithIndex__sc_IndexedSeqOptimized__scg_CanBuildFrom__O(this, bf)
 });
 ScalaJS.c.sci_WrappedString.prototype.drop__I__O = (function(n) {
   var until = ScalaJS.i.sjsr_RuntimeString$class__length__sjsr_RuntimeString__I(this.self$4);
@@ -20731,11 +20769,11 @@ ScalaJS.c.sci_WrappedString.prototype.drop__I__O = (function(n) {
 ScalaJS.c.sci_WrappedString.prototype.tail__O = (function() {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__tail__sc_IndexedSeqOptimized__O(this)
 });
-ScalaJS.c.sci_WrappedString.prototype.hashCode__I = (function() {
-  return ScalaJS.m.s_util_hashing_MurmurHash3().seqHash__sc_Seq__I(this)
-});
 ScalaJS.c.sci_WrappedString.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
   ScalaJS.i.sc_IndexedSeqOptimized$class__copyToArray__sc_IndexedSeqOptimized__O__I__I__V(this, xs, start, len)
+});
+ScalaJS.c.sci_WrappedString.prototype.hashCode__I = (function() {
+  return ScalaJS.m.s_util_hashing_MurmurHash3().seqHash__sc_Seq__I(this)
 });
 ScalaJS.c.sci_WrappedString.prototype.init___T = (function(self) {
   this.self$4 = self;
@@ -20917,14 +20955,14 @@ ScalaJS.c.scm_AbstractSet.prototype.sizeHint__I__V = (function(size) {
 ScalaJS.c.scm_AbstractSet.prototype.map__F1__scg_CanBuildFrom__O = (function(f, bf) {
   return ScalaJS.i.sc_TraversableLike$class__map__sc_TraversableLike__F1__scg_CanBuildFrom__O(this, f, bf)
 });
+ScalaJS.c.scm_AbstractSet.prototype.stringPrefix__T = (function() {
+  return "Set"
+});
 ScalaJS.c.scm_AbstractSet.prototype.newBuilder__scm_Builder = (function() {
   return new ScalaJS.c.scm_HashSet().init___()
 });
 ScalaJS.c.scm_AbstractSet.prototype.$$plus$plus$eq__sc_TraversableOnce__scg_Growable = (function(xs) {
   return ScalaJS.i.scg_Growable$class__$plus$plus$eq__scg_Growable__sc_TraversableOnce__scg_Growable(this, xs)
-});
-ScalaJS.c.scm_AbstractSet.prototype.stringPrefix__T = (function() {
-  return "Set"
 });
 ScalaJS.is.scm_AbstractSet = (function(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.scm_AbstractSet)))
@@ -22720,14 +22758,17 @@ ScalaJS.c.scm_ArraySeq.prototype.apply__I__O = (function(idx) {
 ScalaJS.c.scm_ArraySeq.prototype.lengthCompare__I__I = (function(len) {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__lengthCompare__sc_IndexedSeqOptimized__I__I(this, len)
 });
-ScalaJS.c.scm_ArraySeq.prototype.sameElements__sc_GenIterable__Z = (function(that) {
-  return ScalaJS.i.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
-});
 ScalaJS.c.scm_ArraySeq.prototype.apply__O__O = (function(v1) {
   return this.apply__I__O(ScalaJS.uI(v1))
 });
+ScalaJS.c.scm_ArraySeq.prototype.sameElements__sc_GenIterable__Z = (function(that) {
+  return ScalaJS.i.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
+});
 ScalaJS.c.scm_ArraySeq.prototype.isEmpty__Z = (function() {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__isEmpty__sc_IndexedSeqOptimized__Z(this)
+});
+ScalaJS.c.scm_ArraySeq.prototype.thisCollection__sc_Traversable = (function() {
+  return this
 });
 ScalaJS.c.scm_ArraySeq.prototype.update__I__O__V = (function(idx, elem) {
   if ((idx >= this.length$5)) {
@@ -22735,8 +22776,8 @@ ScalaJS.c.scm_ArraySeq.prototype.update__I__O__V = (function(idx, elem) {
   };
   this.array$5.u[idx] = elem
 });
-ScalaJS.c.scm_ArraySeq.prototype.thisCollection__sc_Traversable = (function() {
-  return this
+ScalaJS.c.scm_ArraySeq.prototype.forall__F1__Z = (function(p) {
+  return ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z(this, p)
 });
 ScalaJS.c.scm_ArraySeq.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.scm_ArraySeq()
@@ -22757,15 +22798,18 @@ ScalaJS.c.scm_ArraySeq.prototype.slice__I__I__O = (function(from, until) {
 ScalaJS.c.scm_ArraySeq.prototype.toBuffer__scm_Buffer = (function() {
   return ScalaJS.i.sc_IndexedSeqLike$class__toBuffer__sc_IndexedSeqLike__scm_Buffer(this)
 });
-ScalaJS.c.scm_ArraySeq.prototype.iterator__sc_Iterator = (function() {
-  return new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I(this, 0, this.length$5)
-});
 ScalaJS.c.scm_ArraySeq.prototype.seq__scm_Seq = (function() {
   return this
+});
+ScalaJS.c.scm_ArraySeq.prototype.iterator__sc_Iterator = (function() {
+  return new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I(this, 0, this.length$5)
 });
 ScalaJS.c.scm_ArraySeq.prototype.init___I = (function(length) {
   this.length$5 = length;
   this.array$5 = ScalaJS.newArrayObject(ScalaJS.d.O.getArrayOf(), [length]);
+  return this
+});
+ScalaJS.c.scm_ArraySeq.prototype.seq__sc_Seq = (function() {
   return this
 });
 ScalaJS.c.scm_ArraySeq.prototype.zipWithIndex__scg_CanBuildFrom__O = (function(bf) {
@@ -22773,9 +22817,6 @@ ScalaJS.c.scm_ArraySeq.prototype.zipWithIndex__scg_CanBuildFrom__O = (function(b
 });
 ScalaJS.c.scm_ArraySeq.prototype.length__I = (function() {
   return this.length$5
-});
-ScalaJS.c.scm_ArraySeq.prototype.seq__sc_Seq = (function() {
-  return this
 });
 ScalaJS.c.scm_ArraySeq.prototype.drop__I__O = (function(n) {
   var until = this.length$5;
@@ -23198,14 +23239,14 @@ ScalaJS.h.scm_StringBuilder.prototype = ScalaJS.c.scm_StringBuilder.prototype;
 ScalaJS.c.scm_StringBuilder.prototype.seq__sc_TraversableOnce = (function() {
   return this
 });
+ScalaJS.c.scm_StringBuilder.prototype.init___ = (function() {
+  return (ScalaJS.c.scm_StringBuilder.prototype.init___I__T.call(this, 16, ""), this)
+});
 ScalaJS.c.scm_StringBuilder.prototype.head__O = (function() {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__head__sc_IndexedSeqOptimized__O(this)
 });
 ScalaJS.c.scm_StringBuilder.prototype.$$plus$eq__C__scm_StringBuilder = (function(x) {
   return (this.append__C__scm_StringBuilder(x), this)
-});
-ScalaJS.c.scm_StringBuilder.prototype.init___ = (function() {
-  return (ScalaJS.c.scm_StringBuilder.prototype.init___I__T.call(this, 16, ""), this)
 });
 ScalaJS.c.scm_StringBuilder.prototype.apply__I__O = (function(idx) {
   var this$1 = this.underlying$5;
@@ -23214,13 +23255,13 @@ ScalaJS.c.scm_StringBuilder.prototype.apply__I__O = (function(idx) {
 ScalaJS.c.scm_StringBuilder.prototype.lengthCompare__I__I = (function(len) {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__lengthCompare__sc_IndexedSeqOptimized__I__I(this, len)
 });
-ScalaJS.c.scm_StringBuilder.prototype.sameElements__sc_GenIterable__Z = (function(that) {
-  return ScalaJS.i.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
-});
 ScalaJS.c.scm_StringBuilder.prototype.apply__O__O = (function(v1) {
   var index = ScalaJS.uI(v1);
   var this$1 = this.underlying$5;
   return ScalaJS.bC(ScalaJS.i.sjsr_RuntimeString$class__charAt__sjsr_RuntimeString__I__C(this$1.content$1, index))
+});
+ScalaJS.c.scm_StringBuilder.prototype.sameElements__sc_GenIterable__Z = (function(that) {
+  return ScalaJS.i.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
 });
 ScalaJS.c.scm_StringBuilder.prototype.isEmpty__Z = (function() {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__isEmpty__sc_IndexedSeqOptimized__Z(this)
@@ -23237,6 +23278,9 @@ ScalaJS.c.scm_StringBuilder.prototype.$$plus$plus$eq__T__scm_StringBuilder = (fu
 });
 ScalaJS.c.scm_StringBuilder.prototype.$$plus$eq__O__scg_Growable = (function(elem) {
   return this.$$plus$eq__C__scm_StringBuilder(ScalaJS.uC(elem))
+});
+ScalaJS.c.scm_StringBuilder.prototype.forall__F1__Z = (function(p) {
+  return ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z(this, p)
 });
 ScalaJS.c.scm_StringBuilder.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.scm_IndexedSeq()
@@ -23306,11 +23350,11 @@ ScalaJS.c.scm_StringBuilder.prototype.append__O__scm_StringBuilder = (function(x
 ScalaJS.c.scm_StringBuilder.prototype.$$plus$eq__O__scm_Builder = (function(elem) {
   return this.$$plus$eq__C__scm_StringBuilder(ScalaJS.uC(elem))
 });
-ScalaJS.c.scm_StringBuilder.prototype.sizeHint__I__V = (function(size) {
-  /*<skip>*/
-});
 ScalaJS.c.scm_StringBuilder.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
   ScalaJS.i.sc_IndexedSeqOptimized$class__copyToArray__sc_IndexedSeqOptimized__O__I__I__V(this, xs, start, len)
+});
+ScalaJS.c.scm_StringBuilder.prototype.sizeHint__I__V = (function(size) {
+  /*<skip>*/
 });
 ScalaJS.c.scm_StringBuilder.prototype.hashCode__I = (function() {
   return ScalaJS.m.s_util_hashing_MurmurHash3().seqHash__sc_Seq__I(this)
@@ -23423,6 +23467,9 @@ ScalaJS.c.scm_WrappedArray.prototype.isEmpty__Z = (function() {
 ScalaJS.c.scm_WrappedArray.prototype.thisCollection__sc_Traversable = (function() {
   return this
 });
+ScalaJS.c.scm_WrappedArray.prototype.forall__F1__Z = (function(p) {
+  return ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z(this, p)
+});
 ScalaJS.c.scm_WrappedArray.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.scm_IndexedSeq()
 });
@@ -23438,17 +23485,17 @@ ScalaJS.c.scm_WrappedArray.prototype.slice__I__I__O = (function(from, until) {
 ScalaJS.c.scm_WrappedArray.prototype.toBuffer__scm_Buffer = (function() {
   return ScalaJS.i.sc_IndexedSeqLike$class__toBuffer__sc_IndexedSeqLike__scm_Buffer(this)
 });
+ScalaJS.c.scm_WrappedArray.prototype.seq__scm_Seq = (function() {
+  return this
+});
 ScalaJS.c.scm_WrappedArray.prototype.iterator__sc_Iterator = (function() {
   return new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I(this, 0, this.length__I())
 });
-ScalaJS.c.scm_WrappedArray.prototype.seq__scm_Seq = (function() {
+ScalaJS.c.scm_WrappedArray.prototype.seq__sc_Seq = (function() {
   return this
 });
 ScalaJS.c.scm_WrappedArray.prototype.zipWithIndex__scg_CanBuildFrom__O = (function(bf) {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__zipWithIndex__sc_IndexedSeqOptimized__scg_CanBuildFrom__O(this, bf)
-});
-ScalaJS.c.scm_WrappedArray.prototype.seq__sc_Seq = (function() {
-  return this
 });
 ScalaJS.c.scm_WrappedArray.prototype.drop__I__O = (function(n) {
   var until = this.length__I();
@@ -23457,11 +23504,11 @@ ScalaJS.c.scm_WrappedArray.prototype.drop__I__O = (function(n) {
 ScalaJS.c.scm_WrappedArray.prototype.tail__O = (function() {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__tail__sc_IndexedSeqOptimized__O(this)
 });
-ScalaJS.c.scm_WrappedArray.prototype.hashCode__I = (function() {
-  return ScalaJS.m.s_util_hashing_MurmurHash3().seqHash__sc_Seq__I(this)
-});
 ScalaJS.c.scm_WrappedArray.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
   ScalaJS.i.sc_IndexedSeqOptimized$class__copyToArray__sc_IndexedSeqOptimized__O__I__I__V(this, xs, start, len)
+});
+ScalaJS.c.scm_WrappedArray.prototype.hashCode__I = (function() {
+  return ScalaJS.m.s_util_hashing_MurmurHash3().seqHash__sc_Seq__I(this)
 });
 ScalaJS.c.scm_WrappedArray.prototype.toArray__s_reflect_ClassTag__O = (function(evidence$1) {
   var thatElementClass = ScalaJS.m.sr_ScalaRunTime().arrayElementClass__O__jl_Class(evidence$1);
@@ -23560,17 +23607,20 @@ ScalaJS.c.sjs_js_WrappedArray.prototype.apply__I__O = (function(index) {
 ScalaJS.c.sjs_js_WrappedArray.prototype.lengthCompare__I__I = (function(len) {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__lengthCompare__sc_IndexedSeqOptimized__I__I(this, len)
 });
-ScalaJS.c.sjs_js_WrappedArray.prototype.sameElements__sc_GenIterable__Z = (function(that) {
-  return ScalaJS.i.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
-});
 ScalaJS.c.sjs_js_WrappedArray.prototype.apply__O__O = (function(v1) {
   return this.apply__I__O(ScalaJS.uI(v1))
+});
+ScalaJS.c.sjs_js_WrappedArray.prototype.sameElements__sc_GenIterable__Z = (function(that) {
+  return ScalaJS.i.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.isEmpty__Z = (function() {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__isEmpty__sc_IndexedSeqOptimized__Z(this)
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.thisCollection__sc_Traversable = (function() {
   return this
+});
+ScalaJS.c.sjs_js_WrappedArray.prototype.forall__F1__Z = (function(p) {
+  return ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z(this, p)
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.scm_IndexedSeq()
@@ -23587,10 +23637,13 @@ ScalaJS.c.sjs_js_WrappedArray.prototype.slice__I__I__O = (function(from, until) 
 ScalaJS.c.sjs_js_WrappedArray.prototype.toBuffer__scm_Buffer = (function() {
   return ScalaJS.i.sc_IndexedSeqLike$class__toBuffer__sc_IndexedSeqLike__scm_Buffer(this)
 });
+ScalaJS.c.sjs_js_WrappedArray.prototype.seq__scm_Seq = (function() {
+  return this
+});
 ScalaJS.c.sjs_js_WrappedArray.prototype.iterator__sc_Iterator = (function() {
   return new ScalaJS.c.sc_IndexedSeqLike$Elements().init___sc_IndexedSeqLike__I__I(this, 0, this.length__I())
 });
-ScalaJS.c.sjs_js_WrappedArray.prototype.seq__scm_Seq = (function() {
+ScalaJS.c.sjs_js_WrappedArray.prototype.seq__sc_Seq = (function() {
   return this
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.zipWithIndex__scg_CanBuildFrom__O = (function(bf) {
@@ -23599,9 +23652,6 @@ ScalaJS.c.sjs_js_WrappedArray.prototype.zipWithIndex__scg_CanBuildFrom__O = (fun
 ScalaJS.c.sjs_js_WrappedArray.prototype.length__I = (function() {
   return ScalaJS.uI(this.array$5["length"])
 });
-ScalaJS.c.sjs_js_WrappedArray.prototype.seq__sc_Seq = (function() {
-  return this
-});
 ScalaJS.c.sjs_js_WrappedArray.prototype.drop__I__O = (function(n) {
   var until = this.length__I();
   return ScalaJS.i.sc_IndexedSeqOptimized$class__slice__sc_IndexedSeqOptimized__I__I__O(this, n, until)
@@ -23609,11 +23659,11 @@ ScalaJS.c.sjs_js_WrappedArray.prototype.drop__I__O = (function(n) {
 ScalaJS.c.sjs_js_WrappedArray.prototype.tail__O = (function() {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__tail__sc_IndexedSeqOptimized__O(this)
 });
-ScalaJS.c.sjs_js_WrappedArray.prototype.hashCode__I = (function() {
-  return ScalaJS.m.s_util_hashing_MurmurHash3().seqHash__sc_Seq__I(this)
-});
 ScalaJS.c.sjs_js_WrappedArray.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
   ScalaJS.i.sc_IndexedSeqOptimized$class__copyToArray__sc_IndexedSeqOptimized__O__I__I__V(this, xs, start, len)
+});
+ScalaJS.c.sjs_js_WrappedArray.prototype.hashCode__I = (function() {
+  return ScalaJS.m.s_util_hashing_MurmurHash3().seqHash__sc_Seq__I(this)
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.init___sjs_js_Array = (function(array) {
   this.array$5 = array;
@@ -24367,6 +24417,9 @@ ScalaJS.c.scm_ArrayBuffer.prototype.thisCollection__sc_Traversable = (function()
 ScalaJS.c.scm_ArrayBuffer.prototype.$$plus$eq__O__scg_Growable = (function(elem) {
   return this.$$plus$eq__O__scm_ArrayBuffer(elem)
 });
+ScalaJS.c.scm_ArrayBuffer.prototype.forall__F1__Z = (function(p) {
+  return ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z(this, p)
+});
 ScalaJS.c.scm_ArrayBuffer.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.scm_ArrayBuffer()
 });
@@ -24399,11 +24452,11 @@ ScalaJS.c.scm_ArrayBuffer.prototype.init___I = (function(initialSize) {
   ScalaJS.i.scm_ResizableArray$class__$init$__scm_ResizableArray__V(this);
   return this
 });
-ScalaJS.c.scm_ArrayBuffer.prototype.length__I = (function() {
-  return this.size0$6
-});
 ScalaJS.c.scm_ArrayBuffer.prototype.zipWithIndex__scg_CanBuildFrom__O = (function(bf) {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__zipWithIndex__sc_IndexedSeqOptimized__scg_CanBuildFrom__O(this, bf)
+});
+ScalaJS.c.scm_ArrayBuffer.prototype.length__I = (function() {
+  return this.size0$6
 });
 ScalaJS.c.scm_ArrayBuffer.prototype.seq__sc_Seq = (function() {
   return this
@@ -24431,6 +24484,9 @@ ScalaJS.c.scm_ArrayBuffer.prototype.$$plus$plus$eq__sc_TraversableOnce__scm_Arra
 ScalaJS.c.scm_ArrayBuffer.prototype.$$plus$eq__O__scm_Builder = (function(elem) {
   return this.$$plus$eq__O__scm_ArrayBuffer(elem)
 });
+ScalaJS.c.scm_ArrayBuffer.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
+  ScalaJS.i.scm_ResizableArray$class__copyToArray__scm_ResizableArray__O__I__I__V(this, xs, start, len)
+});
 ScalaJS.c.scm_ArrayBuffer.prototype.sizeHint__I__V = (function(len) {
   if (((len > this.size0$6) && (len >= 1))) {
     var newarray = ScalaJS.newArrayObject(ScalaJS.d.O.getArrayOf(), [len]);
@@ -24439,9 +24495,6 @@ ScalaJS.c.scm_ArrayBuffer.prototype.sizeHint__I__V = (function(len) {
     ScalaJS.systemArraycopy(src, 0, newarray, 0, length);
     this.array$6 = newarray
   }
-});
-ScalaJS.c.scm_ArrayBuffer.prototype.copyToArray__O__I__I__V = (function(xs, start, len) {
-  ScalaJS.i.scm_ResizableArray$class__copyToArray__scm_ResizableArray__O__I__I__V(this, xs, start, len)
 });
 ScalaJS.c.scm_ArrayBuffer.prototype.hashCode__I = (function() {
   return ScalaJS.m.s_util_hashing_MurmurHash3().seqHash__sc_Seq__I(this)
@@ -24555,14 +24608,14 @@ ScalaJS.c.scm_ListBuffer.prototype.copy__p6__V = (function() {
     cursor = ScalaJS.as.sci_List(cursor.tail__O())
   }
 });
-ScalaJS.c.scm_ListBuffer.prototype.head__O = (function() {
-  return this.scala$collection$mutable$ListBuffer$$start$6.head__O()
-});
 ScalaJS.c.scm_ListBuffer.prototype.init___ = (function() {
   this.scala$collection$mutable$ListBuffer$$start$6 = ScalaJS.m.sci_Nil();
   this.exported$6 = false;
   this.len$6 = 0;
   return this
+});
+ScalaJS.c.scm_ListBuffer.prototype.head__O = (function() {
+  return this.scala$collection$mutable$ListBuffer$$start$6.head__O()
 });
 ScalaJS.c.scm_ListBuffer.prototype.apply__I__O = (function(n) {
   if (((n < 0) || (n >= this.len$6))) {
@@ -24576,12 +24629,12 @@ ScalaJS.c.scm_ListBuffer.prototype.lengthCompare__I__I = (function(len) {
   var this$1 = this.scala$collection$mutable$ListBuffer$$start$6;
   return ScalaJS.i.sc_LinearSeqOptimized$class__lengthCompare__sc_LinearSeqOptimized__I__I(this$1, len)
 });
+ScalaJS.c.scm_ListBuffer.prototype.apply__O__O = (function(v1) {
+  return this.apply__I__O(ScalaJS.uI(v1))
+});
 ScalaJS.c.scm_ListBuffer.prototype.sameElements__sc_GenIterable__Z = (function(that) {
   var this$1 = this.scala$collection$mutable$ListBuffer$$start$6;
   return ScalaJS.i.sc_LinearSeqOptimized$class__sameElements__sc_LinearSeqOptimized__sc_GenIterable__Z(this$1, that)
-});
-ScalaJS.c.scm_ListBuffer.prototype.apply__O__O = (function(v1) {
-  return this.apply__I__O(ScalaJS.uI(v1))
 });
 ScalaJS.c.scm_ListBuffer.prototype.isEmpty__Z = (function() {
   return this.scala$collection$mutable$ListBuffer$$start$6.isEmpty__Z()
@@ -24607,6 +24660,10 @@ ScalaJS.c.scm_ListBuffer.prototype.mkString__T__T__T__T = (function(start, sep, 
 });
 ScalaJS.c.scm_ListBuffer.prototype.$$plus$eq__O__scg_Growable = (function(elem) {
   return this.$$plus$eq__O__scm_ListBuffer(elem)
+});
+ScalaJS.c.scm_ListBuffer.prototype.forall__F1__Z = (function(p) {
+  var this$1 = this.scala$collection$mutable$ListBuffer$$start$6;
+  return ScalaJS.i.sc_LinearSeqOptimized$class__forall__sc_LinearSeqOptimized__F1__Z(this$1, p)
 });
 ScalaJS.c.scm_ListBuffer.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.scm_ListBuffer()
