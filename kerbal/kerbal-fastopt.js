@@ -1222,16 +1222,6 @@ ScalaJS.i.sc_IndexedSeqOptimized$class__foreach__sc_IndexedSeqOptimized__F1__V =
     i = ((i + 1) | 0)
   }
 });
-ScalaJS.i.sc_IndexedSeqOptimized$class__prefixLengthImpl__sc_IndexedSeqOptimized__F1__Z__I = (function($$this, p, expectTrue) {
-  var i = 0;
-  while (((i < $$this.length__I()) && (ScalaJS.uZ(p.apply__O__O($$this.apply__I__O(i))) === expectTrue))) {
-    i = ((i + 1) | 0)
-  };
-  return i
-});
-ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z = (function($$this, p) {
-  return (ScalaJS.i.sc_IndexedSeqOptimized$class__prefixLengthImpl__sc_IndexedSeqOptimized__F1__Z__I($$this, p, true) === $$this.length__I())
-});
 ScalaJS.i.sc_IndexedSeqOptimized$class__foldl__sc_IndexedSeqOptimized__I__I__O__F2__O = (function($$this, start, end, z, op) {
   _foldl: while (true) {
     if ((start === end)) {
@@ -1475,16 +1465,6 @@ ScalaJS.i.sc_LinearSeqOptimized$class__length__sc_LinearSeqOptimized__I = (funct
     these = ScalaJS.as.sc_LinearSeqOptimized(these.tail__O())
   };
   return len
-});
-ScalaJS.i.sc_LinearSeqOptimized$class__forall__sc_LinearSeqOptimized__F1__Z = (function($$this, p) {
-  var these = $$this;
-  while ((!these.isEmpty__Z())) {
-    if ((!ScalaJS.uZ(p.apply__O__O(these.head__O())))) {
-      return false
-    };
-    these = ScalaJS.as.sc_LinearSeqOptimized(these.tail__O())
-  };
-  return true
 });
 ScalaJS.i.sc_SeqLike$class__sorted__sc_SeqLike__s_math_Ordering__O = (function($$this, ord) {
   var len = $$this.length__I();
@@ -2994,10 +2974,25 @@ ScalaJS.h.Lcom_github_fommil_kerbal_Engines$.prototype = ScalaJS.c.Lcom_github_f
 ScalaJS.c.Lcom_github_fommil_kerbal_Engines$.prototype.init___ = (function() {
   ScalaJS.n.Lcom_github_fommil_kerbal_Engines = this;
   ScalaJS.m.sci_List();
-  var xs = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-1R", new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([4, 6, 8, 12])), 650.0, 0.03, 4.0, 220.0, 290.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("O-10", new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([4, 6, 8, 12])), 800.0, 0.09, 20.0, 220.0, 290.0, ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax 24-77", new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([2, 4, 6, 8])), 480.0, 0.09, 20.0, 250.0, 300.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax Mark 55", new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([0, 2, 4, 6])), 800.0, 0.9, 120.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-1", ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 350.0, 0.03, 4.0, 220.0, 290.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax 48-7S", ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 300.0, 0.1, 30.0, 300.0, 350.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-909", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 750.0, 0.5, 50.0, 300.0, 390.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-T30", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 850.0, 1.25, 215.0, 320.0, 370.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-T45", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 950.0, 1.5, 200.0, 320.0, 370.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("R.A.P.I.E.R. (Liquid)", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 3600.0, 1.2, 175.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Toroidal Aerospike", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 3850.0, 1.5, 175.0, 388.0, 390.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-N Atomic", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 8700.0, 2.25, 60.0, 220.0, 800.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax \"Poodle\"", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 1600.0, 2.0, 220.0, 270.0, 390.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax \"Skipper\"", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 2850.0, 3.0, 650.0, 320.0, 370.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax \"Mainsail\"", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 5650.0, 6.0, 1500.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("LFB KR-1x2", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 13462.4, 10.0, 2000.0, 290.0, 340.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), 16400.0, 42.0), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Kerbodyne KR-2L", ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 20850.0, 6.5, 2500.0, 280.0, 380.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("S3 KS-25x4 Cluster", ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 32400.0, 9.75, 3200.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("Launch Escape System", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 791.0, 1.0, 750.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 800.0, 1.1125), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("RT-10", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 65.2, 0.5, 250.0, 225.0, 240.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 325.0, 3.7475), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("Rockomax BACC", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 190.0, 1.5, 315.0, 230.0, 250.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 700.0, 7.875), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("S1 SRB-KD25k", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 300.0, 3.0, 650.0, 230.0, 250.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 1800.0, 21.75), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("Sepratron I", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 45.2, 0.0125, 18.0, 100.0, 100.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 50.0, 0.0725), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("PB-ION", ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 5700.0, 0.25, 2.0, 0.0, 4200.0, ScalaJS.m.Lcom_github_fommil_kerbal_Xenon(), ScalaJS.m.s_None())]);
-  var this$20 = ScalaJS.m.sci_List();
-  var cbf = this$20.ReusableCBFInstance$2;
-  this.Stock$1 = new ScalaJS.c.Lcom_github_fommil_kerbal_Engines().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs, cbf)));
+  var sizings = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([4, 6, 8, 12]);
+  var this$2 = ScalaJS.m.sci_List();
+  var cbf = this$2.ReusableCBFInstance$2;
+  var jsx$3 = new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-1R", new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(sizings, cbf))), 650.0, 0.03, 4.0, 220.0, 290.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None());
+  var sizings$1 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([4, 6, 8, 12]);
+  var this$5 = ScalaJS.m.sci_List();
+  var cbf$1 = this$5.ReusableCBFInstance$2;
+  var jsx$2 = new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("O-10", new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(sizings$1, cbf$1))), 800.0, 0.09, 20.0, 220.0, 290.0, ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.s_None());
+  var sizings$2 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([2, 4, 6, 8]);
+  var this$8 = ScalaJS.m.sci_List();
+  var cbf$2 = this$8.ReusableCBFInstance$2;
+  var jsx$1 = new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax 24-77", new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(sizings$2, cbf$2))), 480.0, 0.09, 20.0, 250.0, 300.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None());
+  var sizings$3 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([0, 2, 4, 6]);
+  var this$11 = ScalaJS.m.sci_List();
+  var cbf$3 = this$11.ReusableCBFInstance$2;
+  var xs = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([jsx$3, jsx$2, jsx$1, new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax Mark 55", new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(sizings$3, cbf$3))), 800.0, 0.9, 120.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-1", ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 350.0, 0.03, 4.0, 220.0, 290.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax 48-7S", ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 300.0, 0.1, 30.0, 300.0, 350.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-909", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 750.0, 0.5, 50.0, 300.0, 390.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-T30", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 850.0, 1.25, 215.0, 320.0, 370.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-T45", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 950.0, 1.5, 200.0, 320.0, 370.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("R.A.P.I.E.R. (Liquid)", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 3600.0, 1.2, 175.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Toroidal Aerospike", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 3850.0, 1.5, 175.0, 388.0, 390.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("LV-N Atomic", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 8700.0, 2.25, 60.0, 220.0, 800.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax \"Poodle\"", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 1600.0, 2.0, 220.0, 270.0, 390.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax \"Skipper\"", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 2850.0, 3.0, 650.0, 320.0, 370.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Rockomax \"Mainsail\"", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 5650.0, 6.0, 1500.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("LFB KR-1x2", ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 13462.4, 10.0, 2000.0, 290.0, 340.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), 16400.0, 42.0), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("Kerbodyne KR-2L", ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 20850.0, 6.5, 2500.0, 280.0, 380.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("S3 KS-25x4 Cluster", ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 32400.0, 9.75, 3200.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.s_None()), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("Launch Escape System", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 791.0, 1.0, 750.0, 320.0, 360.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 800.0, 1.1125), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("RT-10", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 65.2, 0.5, 250.0, 225.0, 240.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 325.0, 3.7475), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("Rockomax BACC", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 190.0, 1.5, 315.0, 230.0, 250.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 700.0, 7.875), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("S1 SRB-KD25k", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 300.0, 3.0, 650.0, 230.0, 250.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 1800.0, 21.75), ScalaJS.m.Lcom_github_fommil_kerbal_Engine().apply__T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__D__D__Lcom_github_fommil_kerbal_Engine("Sepratron I", ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 45.2, 0.0125, 18.0, 100.0, 100.0, ScalaJS.m.Lcom_github_fommil_kerbal_Solid(), 50.0, 0.0725), new ScalaJS.c.Lcom_github_fommil_kerbal_Engine().init___T__Lcom_github_fommil_kerbal_Mount__D__D__D__D__D__Lcom_github_fommil_kerbal_Fuel__s_Option("PB-ION", ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 5700.0, 0.25, 2.0, 0.0, 4200.0, ScalaJS.m.Lcom_github_fommil_kerbal_Xenon(), ScalaJS.m.s_None())]);
+  var this$28 = ScalaJS.m.sci_List();
+  var cbf$4 = this$28.ReusableCBFInstance$2;
+  this.Stock$1 = new ScalaJS.c.Lcom_github_fommil_kerbal_Engines().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs, cbf$4)));
   return this
 });
 ScalaJS.is.Lcom_github_fommil_kerbal_Engines$ = (function(obj) {
@@ -3324,10 +3319,40 @@ ScalaJS.h.Lcom_github_fommil_kerbal_FuelTanks$.prototype = ScalaJS.c.Lcom_github
 ScalaJS.c.Lcom_github_fommil_kerbal_FuelTanks$.prototype.init___ = (function() {
   ScalaJS.n.Lcom_github_fommil_kerbal_FuelTanks = this;
   ScalaJS.m.sci_List();
-  var xs = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("ROUND-8 Toroidal", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 349.8, 360.0, 0.025, 0.136, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Oscar-B", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 174.2, 180.0, 0.015, 0.78675, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T100", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 204.1, 250.0, 0.0625, 0.5625, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T200", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 333.2, 425.0, 0.125, 1.125, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T400", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 666.4, 850.0, 0.25, 2.25, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T800", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 1232.8, 1600.0, 0.5, 4.5, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax X200-8", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 1232.8, 1600.0, 0.5, 4.5, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax X200-16", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 2465.6, 3200.0, 1.0, 9.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax X200-32", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 4931.2, 6400.0, 2.0, 18.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax Jumbo-64", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 9862.4, 12800.0, 4.0, 36.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Kerbodyne S3-3600", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 5547.6, 7200.0, 2.5, 20.5, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Kerbodyne S3-7200", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 11095.2, 14400.0, 5.0, 41.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Kerbodyne S3-14400", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 16190.4, 22800.0, 10.0, 82.0, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-R10", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 340.0, 400.0, 0.05, 0.37, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-R25", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 680.0, 800.0, 0.15, 1.15, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-R1", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 400.0, 1300.0, 0.4, 3.4, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Stratus-V Roundified Monopropellant", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([1, 1, 1, 1])), 352.0, 400.0, 0.075, 0.315, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Stratus-V Cylindrified Monopropellant", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([1, 1, 1, 1])), 620.0, 800.0, 0.15, 0.75, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("B-X50R", ScalaJS.m.Lcom_github_fommil_kerbal_Xenon(), new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sc_Seq(new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([1, 1, 1, 1])), 600.0, 2200.0, 0.03, 0.07, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("PB-X150", ScalaJS.m.Lcom_github_fommil_kerbal_Xenon(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 200.0, 3000.0, 0.05, 0.12, false)]);
+  var jsx$21 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("ROUND-8 Toroidal", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 349.8, 360.0, 0.025, 0.136, false);
+  var jsx$20 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Oscar-B", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 174.2, 180.0, 0.015, 0.78675, false);
+  var jsx$19 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T100", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 204.1, 250.0, 0.0625, 0.5625, false);
+  var jsx$18 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T200", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 333.2, 425.0, 0.125, 1.125, false);
+  var jsx$17 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T400", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 666.4, 850.0, 0.25, 2.25, false);
+  var jsx$16 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-T800", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 1232.8, 1600.0, 0.5, 4.5, false);
+  var jsx$15 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax X200-8", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 1232.8, 1600.0, 0.5, 4.5, false);
+  var jsx$14 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax X200-16", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 2465.6, 3200.0, 1.0, 9.0, false);
+  var jsx$13 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax X200-32", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 4931.2, 6400.0, 2.0, 18.0, false);
+  var jsx$12 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Rockomax Jumbo-64", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 9862.4, 12800.0, 4.0, 36.0, false);
+  var jsx$11 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Kerbodyne S3-3600", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 5547.6, 7200.0, 2.5, 20.5, false);
+  var jsx$10 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Kerbodyne S3-7200", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 11095.2, 14400.0, 5.0, 41.0, false);
+  var jsx$9 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Kerbodyne S3-14400", ScalaJS.m.Lcom_github_fommil_kerbal_Liquid(), ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), 16190.4, 22800.0, 10.0, 82.0, false);
+  var jsx$8 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-R10", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 340.0, 400.0, 0.05, 0.37, false);
+  var jsx$7 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-R25", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Small(), 680.0, 800.0, 0.15, 1.15, false);
+  var jsx$6 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("FL-R1", ScalaJS.m.Lcom_github_fommil_kerbal_Mono(), ScalaJS.m.Lcom_github_fommil_kerbal_Large(), 400.0, 1300.0, 0.4, 3.4, false);
+  var jsx$5 = ScalaJS.m.Lcom_github_fommil_kerbal_Mono();
+  var sizings = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([1, 1, 1, 1]);
   var this$2 = ScalaJS.m.sci_List();
   var cbf = this$2.ReusableCBFInstance$2;
-  this.Stock$1 = new ScalaJS.c.Lcom_github_fommil_kerbal_FuelTanks().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs, cbf)));
+  var jsx$4 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Stratus-V Roundified Monopropellant", jsx$5, new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(sizings, cbf))), 352.0, 400.0, 0.075, 0.315, false);
+  var jsx$3 = ScalaJS.m.Lcom_github_fommil_kerbal_Mono();
+  var sizings$1 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([1, 1, 1, 1]);
+  var this$4 = ScalaJS.m.sci_List();
+  var cbf$1 = this$4.ReusableCBFInstance$2;
+  var jsx$2 = new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("Stratus-V Cylindrified Monopropellant", jsx$3, new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(sizings$1, cbf$1))), 620.0, 800.0, 0.15, 0.75, false);
+  var jsx$1 = ScalaJS.m.Lcom_github_fommil_kerbal_Xenon();
+  var sizings$2 = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([1, 1, 1, 1]);
+  var this$6 = ScalaJS.m.sci_List();
+  var cbf$2 = this$6.ReusableCBFInstance$2;
+  var xs = new ScalaJS.c.sjs_js_WrappedArray().init___sjs_js_Array([jsx$21, jsx$20, jsx$19, jsx$18, jsx$17, jsx$16, jsx$15, jsx$14, jsx$13, jsx$12, jsx$11, jsx$10, jsx$9, jsx$8, jsx$7, jsx$6, jsx$4, jsx$2, new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("B-X50R", jsx$1, new ScalaJS.c.Lcom_github_fommil_kerbal_Radial().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(sizings$2, cbf$2))), 600.0, 2200.0, 0.03, 0.07, false), new ScalaJS.c.Lcom_github_fommil_kerbal_FixedFuelTank().init___T__Lcom_github_fommil_kerbal_Fuel__Lcom_github_fommil_kerbal_Mount__D__D__D__D__Z("PB-X150", ScalaJS.m.Lcom_github_fommil_kerbal_Xenon(), ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), 200.0, 3000.0, 0.05, 0.12, false)]);
+  var this$8 = ScalaJS.m.sci_List();
+  var cbf$3 = this$8.ReusableCBFInstance$2;
+  this.Stock$1 = new ScalaJS.c.Lcom_github_fommil_kerbal_FuelTanks().init___sci_List(ScalaJS.as.sci_List(ScalaJS.i.sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs, cbf$3)));
   return this
 });
 ScalaJS.is.Lcom_github_fommil_kerbal_FuelTanks$ = (function(obj) {
@@ -3621,24 +3646,22 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.productArity__I = (function
 ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.max__Lcom_github_fommil_kerbal_FuelTank__I = (function(tank) {
   var x1 = tank.mount$1;
   if (ScalaJS.anyRefEqEq(ScalaJS.m.Lcom_github_fommil_kerbal_Tiny(), x1)) {
-    return ScalaJS.uI(this.sizings$1.apply__I__O(0))
-  };
-  if (ScalaJS.anyRefEqEq(ScalaJS.m.Lcom_github_fommil_kerbal_Small(), x1)) {
-    return ScalaJS.uI(this.sizings$1.apply__I__O(1))
-  };
-  if (ScalaJS.anyRefEqEq(ScalaJS.m.Lcom_github_fommil_kerbal_Large(), x1)) {
-    return ScalaJS.uI(this.sizings$1.apply__I__O(2))
-  };
-  if (ScalaJS.anyRefEqEq(ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), x1)) {
-    return ScalaJS.uI(this.sizings$1.apply__I__O(3))
-  };
-  if (ScalaJS.is.Lcom_github_fommil_kerbal_Radial(x1)) {
-    var x2 = ScalaJS.as.Lcom_github_fommil_kerbal_Radial(x1);
-    if (((x2.sizings$1 !== null) && (x2.sizings$1.lengthCompare__I__I(1) === 0))) {
-      return 0
-    }
-  };
-  throw new ScalaJS.c.s_MatchError().init___O(x1)
+    var this$1 = this.sizings$1;
+    return ScalaJS.uI(ScalaJS.i.sc_LinearSeqOptimized$class__apply__sc_LinearSeqOptimized__I__O(this$1, 0))
+  } else if (ScalaJS.anyRefEqEq(ScalaJS.m.Lcom_github_fommil_kerbal_Small(), x1)) {
+    var this$2 = this.sizings$1;
+    return ScalaJS.uI(ScalaJS.i.sc_LinearSeqOptimized$class__apply__sc_LinearSeqOptimized__I__O(this$2, 1))
+  } else if (ScalaJS.anyRefEqEq(ScalaJS.m.Lcom_github_fommil_kerbal_Large(), x1)) {
+    var this$3 = this.sizings$1;
+    return ScalaJS.uI(ScalaJS.i.sc_LinearSeqOptimized$class__apply__sc_LinearSeqOptimized__I__O(this$3, 2))
+  } else if (ScalaJS.anyRefEqEq(ScalaJS.m.Lcom_github_fommil_kerbal_ExtraLarge(), x1)) {
+    var this$4 = this.sizings$1;
+    return ScalaJS.uI(ScalaJS.i.sc_LinearSeqOptimized$class__apply__sc_LinearSeqOptimized__I__O(this$4, 3))
+  } else if (ScalaJS.is.Lcom_github_fommil_kerbal_Radial(x1)) {
+    return 0
+  } else {
+    throw new ScalaJS.c.s_MatchError().init___O(x1)
+  }
 });
 ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.equals__O__Z = (function(x$1) {
   if ((this === x$1)) {
@@ -3664,16 +3687,25 @@ ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.productElement__I__O = (fun
 ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.toString__T = (function() {
   return ScalaJS.m.sr_ScalaRunTime().$$undtoString__s_Product__T(this)
 });
-ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.init___sc_Seq = (function(sizings) {
+ScalaJS.c.Lcom_github_fommil_kerbal_Radial.prototype.init___sci_List = (function(sizings) {
   this.sizings$1 = sizings;
-  var requirement = (sizings.size__I() === 4);
+  var requirement = (ScalaJS.i.sc_LinearSeqOptimized$class__length__sc_LinearSeqOptimized__I(sizings) === 4);
   if ((!requirement)) {
     throw new ScalaJS.c.jl_IllegalArgumentException().init___T(("requirement failed: " + "missing sizings"))
   };
-  var requirement$1 = sizings.forall__F1__Z(new ScalaJS.c.sjsr_AnonFunction1().init___sjs_js_Function1((function(x$1$2) {
-    var x$1 = ScalaJS.uI(x$1$2);
-    return (x$1 >= 0)
-  })));
+  inlinereturn$6: {
+    var these = sizings;
+    while ((!these.isEmpty__Z())) {
+      var x$1$2 = these.head__O();
+      var x$1 = ScalaJS.uI(x$1$2);
+      if ((!(x$1 >= 0))) {
+        var requirement$1 = false;
+        break inlinereturn$6
+      };
+      these = ScalaJS.as.sc_LinearSeqOptimized(these.tail__O())
+    };
+    var requirement$1 = true
+  };
   if ((!requirement$1)) {
     throw new ScalaJS.c.jl_IllegalArgumentException().init___T(("requirement failed: " + "negatives not allowed"))
   };
@@ -18952,9 +18984,6 @@ ScalaJS.c.sci_List.prototype.thisCollection__sc_Traversable = (function() {
 ScalaJS.c.sci_List.prototype.drop__I__sc_LinearSeqOptimized = (function(n) {
   return this.drop__I__sci_List(n)
 });
-ScalaJS.c.sci_List.prototype.forall__F1__Z = (function(p) {
-  return ScalaJS.i.sc_LinearSeqOptimized$class__forall__sc_LinearSeqOptimized__F1__Z(this, p)
-});
 ScalaJS.c.sci_List.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.sci_List()
 });
@@ -20154,9 +20183,6 @@ ScalaJS.c.sci_Stream.prototype.loop$3__p4__T__sci_Stream__scm_StringBuilder__T__
 ScalaJS.c.sci_Stream.prototype.withFilter__F1__scg_FilterMonadic = (function(p) {
   return new ScalaJS.c.sci_Stream$StreamWithFilter().init___sci_Stream__F1(this, p)
 });
-ScalaJS.c.sci_Stream.prototype.forall__F1__Z = (function(p) {
-  return ScalaJS.i.sc_LinearSeqOptimized$class__forall__sc_LinearSeqOptimized__F1__Z(this, p)
-});
 ScalaJS.c.sci_Stream.prototype.toString__T = (function() {
   return ScalaJS.i.sc_TraversableOnce$class__mkString__sc_TraversableOnce__T__T__T__T(this, ("Stream" + "("), ", ", ")")
 });
@@ -20729,9 +20755,6 @@ ScalaJS.c.sci_WrappedString.prototype.isEmpty__Z = (function() {
 ScalaJS.c.sci_WrappedString.prototype.thisCollection__sc_Traversable = (function() {
   return this
 });
-ScalaJS.c.sci_WrappedString.prototype.forall__F1__Z = (function(p) {
-  return ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z(this, p)
-});
 ScalaJS.c.sci_WrappedString.prototype.toString__T = (function() {
   return this.self$4
 });
@@ -20779,6 +20802,9 @@ ScalaJS.c.sci_WrappedString.prototype.init___T = (function(self) {
   this.self$4 = self;
   return this
 });
+ScalaJS.c.sci_WrappedString.prototype.toArray__s_reflect_ClassTag__O = (function(evidence$1) {
+  return ScalaJS.i.sjsr_RuntimeString$class__toCharArray__sjsr_RuntimeString__AC(this.self$4)
+});
 ScalaJS.c.sci_WrappedString.prototype.slice__I__I__sci_WrappedString = (function(from, until) {
   var start = ((from < 0) ? 0 : from);
   if (((until <= start) || (start >= ScalaJS.i.sjsr_RuntimeString$class__length__sjsr_RuntimeString__I(this.self$4)))) {
@@ -20786,9 +20812,6 @@ ScalaJS.c.sci_WrappedString.prototype.slice__I__I__sci_WrappedString = (function
   };
   var end = ((until > ScalaJS.i.sjsr_RuntimeString$class__length__sjsr_RuntimeString__I(this.self$4)) ? ScalaJS.i.sjsr_RuntimeString$class__length__sjsr_RuntimeString__I(this.self$4) : until);
   return new ScalaJS.c.sci_WrappedString().init___T(ScalaJS.i.sjsr_RuntimeString$class__substring__sjsr_RuntimeString__I__I__T(ScalaJS.m.s_Predef().unwrapString__sci_WrappedString__T(this), start, end))
-});
-ScalaJS.c.sci_WrappedString.prototype.toArray__s_reflect_ClassTag__O = (function(evidence$1) {
-  return ScalaJS.i.sjsr_RuntimeString$class__toCharArray__sjsr_RuntimeString__AC(this.self$4)
 });
 ScalaJS.c.sci_WrappedString.prototype.newBuilder__scm_Builder = (function() {
   return ScalaJS.m.sci_WrappedString().newBuilder__scm_Builder()
@@ -22767,17 +22790,14 @@ ScalaJS.c.scm_ArraySeq.prototype.sameElements__sc_GenIterable__Z = (function(tha
 ScalaJS.c.scm_ArraySeq.prototype.isEmpty__Z = (function() {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__isEmpty__sc_IndexedSeqOptimized__Z(this)
 });
-ScalaJS.c.scm_ArraySeq.prototype.thisCollection__sc_Traversable = (function() {
-  return this
-});
 ScalaJS.c.scm_ArraySeq.prototype.update__I__O__V = (function(idx, elem) {
   if ((idx >= this.length$5)) {
     throw new ScalaJS.c.jl_IndexOutOfBoundsException().init___T(ScalaJS.objectToString(idx))
   };
   this.array$5.u[idx] = elem
 });
-ScalaJS.c.scm_ArraySeq.prototype.forall__F1__Z = (function(p) {
-  return ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z(this, p)
+ScalaJS.c.scm_ArraySeq.prototype.thisCollection__sc_Traversable = (function() {
+  return this
 });
 ScalaJS.c.scm_ArraySeq.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.scm_ArraySeq()
@@ -23255,13 +23275,13 @@ ScalaJS.c.scm_StringBuilder.prototype.apply__I__O = (function(idx) {
 ScalaJS.c.scm_StringBuilder.prototype.lengthCompare__I__I = (function(len) {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__lengthCompare__sc_IndexedSeqOptimized__I__I(this, len)
 });
+ScalaJS.c.scm_StringBuilder.prototype.sameElements__sc_GenIterable__Z = (function(that) {
+  return ScalaJS.i.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
+});
 ScalaJS.c.scm_StringBuilder.prototype.apply__O__O = (function(v1) {
   var index = ScalaJS.uI(v1);
   var this$1 = this.underlying$5;
   return ScalaJS.bC(ScalaJS.i.sjsr_RuntimeString$class__charAt__sjsr_RuntimeString__I__C(this$1.content$1, index))
-});
-ScalaJS.c.scm_StringBuilder.prototype.sameElements__sc_GenIterable__Z = (function(that) {
-  return ScalaJS.i.sc_IndexedSeqOptimized$class__sameElements__sc_IndexedSeqOptimized__sc_GenIterable__Z(this, that)
 });
 ScalaJS.c.scm_StringBuilder.prototype.isEmpty__Z = (function() {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__isEmpty__sc_IndexedSeqOptimized__Z(this)
@@ -23278,9 +23298,6 @@ ScalaJS.c.scm_StringBuilder.prototype.$$plus$plus$eq__T__scm_StringBuilder = (fu
 });
 ScalaJS.c.scm_StringBuilder.prototype.$$plus$eq__O__scg_Growable = (function(elem) {
   return this.$$plus$eq__C__scm_StringBuilder(ScalaJS.uC(elem))
-});
-ScalaJS.c.scm_StringBuilder.prototype.forall__F1__Z = (function(p) {
-  return ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z(this, p)
 });
 ScalaJS.c.scm_StringBuilder.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.scm_IndexedSeq()
@@ -23467,9 +23484,6 @@ ScalaJS.c.scm_WrappedArray.prototype.isEmpty__Z = (function() {
 ScalaJS.c.scm_WrappedArray.prototype.thisCollection__sc_Traversable = (function() {
   return this
 });
-ScalaJS.c.scm_WrappedArray.prototype.forall__F1__Z = (function(p) {
-  return ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z(this, p)
-});
 ScalaJS.c.scm_WrappedArray.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.scm_IndexedSeq()
 });
@@ -23618,9 +23632,6 @@ ScalaJS.c.sjs_js_WrappedArray.prototype.isEmpty__Z = (function() {
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.thisCollection__sc_Traversable = (function() {
   return this
-});
-ScalaJS.c.sjs_js_WrappedArray.prototype.forall__F1__Z = (function(p) {
-  return ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z(this, p)
 });
 ScalaJS.c.sjs_js_WrappedArray.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.scm_IndexedSeq()
@@ -24389,11 +24400,11 @@ ScalaJS.c.scm_ArrayBuffer.prototype.$$plus$eq__O__scm_ArrayBuffer = (function(el
   this.size0$6 = ((this.size0$6 + 1) | 0);
   return this
 });
-ScalaJS.c.scm_ArrayBuffer.prototype.init___ = (function() {
-  return (ScalaJS.c.scm_ArrayBuffer.prototype.init___I.call(this, 16), this)
-});
 ScalaJS.c.scm_ArrayBuffer.prototype.head__O = (function() {
   return ScalaJS.i.sc_IndexedSeqOptimized$class__head__sc_IndexedSeqOptimized__O(this)
+});
+ScalaJS.c.scm_ArrayBuffer.prototype.init___ = (function() {
+  return (ScalaJS.c.scm_ArrayBuffer.prototype.init___I.call(this, 16), this)
 });
 ScalaJS.c.scm_ArrayBuffer.prototype.apply__I__O = (function(idx) {
   return ScalaJS.i.scm_ResizableArray$class__apply__scm_ResizableArray__I__O(this, idx)
@@ -24416,9 +24427,6 @@ ScalaJS.c.scm_ArrayBuffer.prototype.thisCollection__sc_Traversable = (function()
 });
 ScalaJS.c.scm_ArrayBuffer.prototype.$$plus$eq__O__scg_Growable = (function(elem) {
   return this.$$plus$eq__O__scm_ArrayBuffer(elem)
-});
-ScalaJS.c.scm_ArrayBuffer.prototype.forall__F1__Z = (function(p) {
-  return ScalaJS.i.sc_IndexedSeqOptimized$class__forall__sc_IndexedSeqOptimized__F1__Z(this, p)
 });
 ScalaJS.c.scm_ArrayBuffer.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.scm_ArrayBuffer()
@@ -24660,10 +24668,6 @@ ScalaJS.c.scm_ListBuffer.prototype.mkString__T__T__T__T = (function(start, sep, 
 });
 ScalaJS.c.scm_ListBuffer.prototype.$$plus$eq__O__scg_Growable = (function(elem) {
   return this.$$plus$eq__O__scm_ListBuffer(elem)
-});
-ScalaJS.c.scm_ListBuffer.prototype.forall__F1__Z = (function(p) {
-  var this$1 = this.scala$collection$mutable$ListBuffer$$start$6;
-  return ScalaJS.i.sc_LinearSeqOptimized$class__forall__sc_LinearSeqOptimized__F1__Z(this$1, p)
 });
 ScalaJS.c.scm_ListBuffer.prototype.companion__scg_GenericCompanion = (function() {
   return ScalaJS.m.scm_ListBuffer()
