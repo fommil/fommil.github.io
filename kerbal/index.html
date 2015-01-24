@@ -35,50 +35,100 @@
       <h2>Kerbal Engine Calculator</h2>
       <p>by <a href="http://github.com/fommil/kerbal-calculator">@fommil</a></p>
 
-      <form id="input" role="form" data-parsley-validate>
-        <div class="input-group" data-toggle="tooltip"
-             data-original-title="Delta V: change in velocity required to perform the manoeuvre.">
-          <span class="input-group-addon input-group-left">Δv</span>
-          <input data-parsley-type="number" min="0" class="form-control" id="dv"
-                 data-parsley-trigger="change" required/>
-          <span class="input-group-addon input-group-right">ms<sup>-1</sup></span>
-        </div>
-        <div class="input-group" data-toggle="tooltip"
-             data-original-title="Mass of your payload (including engine stage accessories / decouplers).">
-          <span class="input-group-addon input-group-left">Payload</span>
-          <input data-parsley-type="number" min="0" class="form-control" id="M"
-                 data-parsley-trigger="change" required/>
+      <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#design">Design</a></li>
+        <li><a data-toggle="tab" href="#ops">Ops</a></li>
+      </ul>
 
-          <span class="input-group-addon input-group-right">t</span>
-        </div>
-        <div class="input-group" data-toggle="tooltip"
-             data-original-title="Desired acceleration at full throttle (will increase as fuel depletes).">
-          <span class="input-group-addon input-group-left">Acceleration</span>
-          <input data-parsley-type="number" min="0" class="form-control" id="a"
-                 data-parsley-trigger="change" required/>
-          <span class="input-group-addon input-group-right">ms<sup>-2</sup></span>
-        </div>
-        <div class="input-group" data-toggle="tooltip"
-             data-original-title="The adapter size of the payload.">
-          <span class="input-group-addon input-group-left">Size</span>
-          <select class="form-control" id="size">
-          </select>
-        </div>
-        <div class="checkbox" data-toggle="tooltip"
-             data-original-title="Is the manoeuvre to be performed in an atmosphere?">
-          <label>
-            <input type="checkbox" id="atm">Atmosphere</input>
-          </label>
-        </div>
-        <div>
-          <button id="submit" type="button" class="btn btn-primary">
-            <i id="spinner" class="fa fa-spinner fa-spin" style="display: none;"></i>
-            Submit
-          </button>
-        </div>
-      </form>
+      <div class="tab-content">
+        <div id="design" class="tab-pane fade in active">
+          <form id="input" role="form" data-parsley-validate>
+            <div class="input-group" data-toggle="tooltip"
+                 data-original-title="Delta V: change in velocity required to perform the manoeuvre.">
+              <span class="input-group-addon input-group-left">Δv</span>
+              <input data-parsley-type="number" min="0" class="form-control" id="dv"
+                     data-parsley-trigger="change" required/>
+              <span class="input-group-addon input-group-right">ms<sup>-1</sup></span>
+            </div>
 
-      <div id="results"></div>
+            <div class="input-group" data-toggle="tooltip"
+                 data-original-title="Mass of your payload (including engine stage accessories / decouplers).">
+              <span class="input-group-addon input-group-left">Payload</span>
+              <input data-parsley-type="number" min="0" class="form-control" id="M"
+                     data-parsley-trigger="change" required/>
+              <span class="input-group-addon input-group-right">t</span>
+            </div>
+
+            <div class="input-group" data-toggle="tooltip"
+                 data-original-title="Desired acceleration at full throttle (will increase as fuel depletes).">
+              <span class="input-group-addon input-group-left">Acceleration</span>
+              <input data-parsley-type="number" min="0" class="form-control" id="a"
+                     data-parsley-trigger="change" required/>
+              <span class="input-group-addon input-group-right">ms<sup>-2</sup></span>
+            </div>
+
+            <div class="input-group" data-toggle="tooltip"
+                 data-original-title="The adapter size of the payload.">
+              <span class="input-group-addon input-group-left">Size</span>
+              <select class="form-control" id="size">
+              </select>
+            </div>
+
+            <div class="checkbox" data-toggle="tooltip"
+                 data-original-title="Is the manoeuvre to be performed in an atmosphere?">
+              <label>
+                <input type="checkbox" id="atm">Atmosphere</input>
+              </label>
+            </div>
+
+            <div>
+              <button id="submit" type="button" class="btn btn-primary">
+                <i id="spinner" class="fa fa-spinner fa-spin" style="display: none;"></i>
+                Submit
+              </button>
+            </div>
+          </form>
+
+          <div id="results"></div>
+        </div>
+
+        <div id="ops" class="tab-pane fade">
+          <form id="input2" role="form" data-parsley-validate>
+            <div class="input-group" data-toggle="tooltip"
+                 data-original-title="Engine of the current stage (number of engines is irrelevant).">
+              <span class="input-group-addon input-group-left">Engine</span>
+              <select class="form-control" id="engine">
+              </select>
+            </div>
+
+            <div class="input-group" data-toggle="tooltip"
+                 data-original-title="Current mass (available in the 'i' information menu)">
+              <span class="input-group-addon input-group-left">Current Mass</span>
+              <input data-parsley-type="number" min="0" class="form-control" id="currentM"
+                     data-parsley-trigger="change" required/>
+              <span class="input-group-addon input-group-right">t</span>
+            </div>
+
+            <div class="input-group" data-toggle="tooltip"
+                 data-original-title="Fuel (ignoring oxidiser) available in this stage, using the natural unit of the engine.">
+              <span class="input-group-addon input-group-left">Stage Fuel</span>
+              <input data-parsley-type="number" min="0" class="form-control" id="stageFuel"
+                     data-parsley-trigger="change" required/>
+            </div>
+
+            <div>
+              <button id="submit2" type="button" class="btn btn-primary">
+                <i id="spinner2" class="fa fa-spinner fa-spin" style="display: none;"></i>
+                Submit
+              </button>
+            </div>
+
+          </form>
+
+          <div id="results2"></div>
+        </div>
+      </div>
+
     </div>
 
     <!-- Prefer deps at the end -->
@@ -103,6 +153,6 @@
       ga('create', 'UA-6330807-10', 'auto');
       ga('send', 'pageview');
     </script>
-</div>
+  </div>
 </body>
 </html>
