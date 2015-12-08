@@ -6,4 +6,4 @@
 	url = https://github.com/mathjax/MathJax.git
 [submodule "scalax15"]
 	path = scalax15
-	url = git@github.com:fommil/scalax-shapeless-mortals.git
+	url = https://github.com/fommil/scalax-shapeless-mortals.git
