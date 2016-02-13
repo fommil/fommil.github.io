@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Sam Halliday">
+  <title>Free, Libre and Open Source</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="http://lab.hakim.se/reveal-js//css/reveal.css">
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="http://lab.hakim.se/reveal-js//css/theme/beige.css" id="theme">
+  <link rel="stylesheet" href="overrides.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'http://lab.hakim.se/reveal-js//css/print/pdf.css' : 'http://lab.hakim.se/reveal-js//css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="http://lab.hakim.se/reveal-js//lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div id="presentation-copyright">
+  &copy; 2016 Sam Halliday<br/>
+  Content: <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a><br/>
+  Theme: <a href="http://directory.fsf.org/wiki/License:Expat">MIT</a>
+</div>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+  <h1 class="title">Free, Libre and Open Source</h1>
+  <h2 class="author">Sam Halliday</h2>
+  <h3 class="date">Scala Sphere 2016</h3>
+</section>
+
+<section><section id="introduction" class="titleslide slide level1"><h1>Introduction</h1></section><section id="about-me" class="slide level2">
+<h1>About Me</h1>
+<ul>
+<li class="fragment">ENSIME contributor</li>
+<li class="fragment">FSF Contributing Member</li>
+<li class="fragment">Was founder of IPR-heavy company</li>
+</ul>
+<aside class="notes">
+<p>Hi, I’m Sam and I’ll be talking again tomorrow about ENSIME so I shall keep it brief today.</p>
+<p>Why am I talking about licencing? Well, I’m a Free Software Foundation Contributing Member and free / libre software is something that I feel passionately about.</p>
+<p>Why should I be talking about this? I used to run a company that was very heavy on Intellectual Property Right (IPR) and in those years I had a lot of discussions with lawyers about copyright and licencing, including how we could use and distribute Free Software in our products and services. So I’m hopefully going to pass on what I learnt in this talk.</p>
+</aside>
+</section></section>
+<section><section id="licences" class="titleslide slide level1"><h1>Licences</h1></section><section id="software-licence" class="slide level2">
+<h1>Software Licence</h1>
+<p>Legal instrument governing <strong>use</strong> and <strong>redistribution</strong></p>
+</section><section id="libre-software" class="slide level2">
+<h1>Libre Software</h1>
+<ul>
+<li class="fragment">run the program as you wish, for any purpose</li>
+<li class="fragment">study how the program works, and change it</li>
+<li class="fragment">redistribute copies</li>
+<li class="fragment">distribute copies of your modified versions to others</li>
+</ul>
+<aside class="notes">
+<p><a href="http://www.gnu.org/philosophy/free-sw.en.html" class="uri">http://www.gnu.org/philosophy/free-sw.en.html</a></p>
+</aside>
+</section><section id="open-source" class="slide level2">
+<h1>Open Source</h1>
+<ul>
+<li class="fragment">can view the source code</li>
+<li class="fragment">no common rules for use / redistribution</li>
+</ul>
+</section><section id="example-nasa-open-source" class="slide level2">
+<h1>Example: NASA Open Source</h1>
+<blockquote>
+<p>G. Each Contributor represents that its Modification <strong>is believed to be the Contributor’s original creation</strong> and does not violate any existing agreements, regulations, statutes or rules, and further that Contributor has sufficient rights to grant the rights conveyed by this Agreement.</p>
+</blockquote>
+<ul>
+<li class="fragment">study how the program works, and change it ❌</li>
+<li class="fragment">distribute copies of your modified versions to others ❌</li>
+<li class="fragment"><strong>Not a Libre Software Licence</strong></li>
+</ul>
+</section><section id="example-mit" class="slide level2">
+<h1>Example: MIT</h1>
+<aside class="notes">
+<p>Who here uses MIT in one of their projects?</p>
+</aside>
+<blockquote>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the <strong>rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software</strong>, and to permit persons to whom the Software is furnished to do so, <strong>subject to the following conditions</strong>:</p>
+</blockquote>
+</section><section class="slide level2">
+
+<blockquote>
+<p>The copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+</blockquote>
+</section><section class="slide level2">
+
+<blockquote>
+<p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+</blockquote>
+</section><section class="slide level2">
+
+<p>Is it libre?</p>
+<ul>
+<li class="fragment">run the program as you wish, for any purpose ✔</li>
+<li class="fragment">study how the program works, and change it ✔</li>
+<li class="fragment">redistribute copies ✔</li>
+<li class="fragment">distribute copies of your modified versions to others ✔</li>
+</ul>
+</section><section class="slide level2">
+
+<p>But you can sublicence or receive a modified version:</p>
+<ul>
+<li class="fragment">run the program as you wish, for any purpose ❌</li>
+<li class="fragment">study how the program works, and change it ❌</li>
+<li class="fragment">redistribute copies ❌</li>
+<li class="fragment">distribute copies of your modified versions to others ❌</li>
+<li class="fragment"><strong>Libre Software can become Proprietary</strong></li>
+</ul>
+</section><section id="example-json" class="slide level2">
+<h1>Example: JSON</h1>
+<blockquote>
+<p>The Software shall be used for Good, not Evil.</p>
+</blockquote>
+<ul>
+<li class="fragment">run the program as you wish, for any purpose ❌</li>
+<li class="fragment">Douglas Crockford, PayPal, can sue you for “Evil”</li>
+<li class="fragment"><strong>Not a Libre Software Licence</strong></li>
+<li class="fragment">FSF, IBM, Google, Redhat all agree</li>
+<li class="fragment">some companies consider it unenforceable</li>
+<li class="fragment">don’t try to be funny with your licence</li>
+<li class="fragment">don’t add restrictions (“no military use” was once popular)</li>
+</ul>
+<aside class="notes">
+<p><a href="https://www.youtube.com/watch?v=-hCimLnIsDA" class="uri">https://www.youtube.com/watch?v=-hCimLnIsDA</a></p>
+</aside>
+</section><section id="copyleft" class="slide level2">
+<h1>Copyleft</h1>
+<p>Requires all modified and extended versions to be libre.</p>
+<ul>
+<li class="fragment">GPL (strong)</li>
+<li class="fragment">LGPL</li>
+<li class="fragment">MPL (weak)</li>
+</ul>
+</section></section>
+<section><section id="copyright" class="titleslide slide level1"><h1>Copyright</h1></section><section id="section" class="slide level2">
+<h1>©</h1>
+<p>Creator has exclusive rights for <strong>use</strong> and <strong>distribution</strong></p>
+<aside class="notes">
+<p><a href="https://en.wikipedia.org/wiki/List_of_countries%27_copyright_lengths">https://en.wikipedia.org/wiki/List_of_countries%27_copyright_lengths</a></p>
+<p><a href="https://www.gov.uk/guidance/exceptions-to-copyright" class="uri">https://www.gov.uk/guidance/exceptions-to-copyright</a></p>
+</aside>
+</section><section class="slide level2">
+
+<p>If you are the copyright owner, you can release the same software under multiple licences.</p>
+</section><section id="asserting-your-ownership" class="slide level2">
+<h1>Asserting your ownership</h1>
+<pre><code>// Copyright 2010 - 2016 Sam Halliday
+// Licence: http://www.gnu.org/licenses/gpl-3.0.en.html
+</code></pre>
+<p>Include the full licence in a <code>LICENSE</code> file.</p>
+<ul>
+<li class="fragment"><a href="https://github.com/sbt/sbt-header" class="uri">https://github.com/sbt/sbt-header</a></li>
+<li class="fragment"><a href="https://github.com/mineo/yatemplate" class="uri">https://github.com/mineo/yatemplate</a></li>
+</ul>
+</section></section>
+<section><section id="copyright-transfer-contributor-licence-agreement" class="titleslide slide level1"><h1>Copyright Transfer / Contributor Licence Agreement</h1></section><section id="copyright-transfer" class="slide level2">
+<h1>Copyright Transfer</h1>
+<ul>
+<li class="fragment">you give the copyright away</li>
+<li class="fragment">you no longer have exclusive rights</li>
+<li class="fragment">most employers require transfer</li>
+<li class="fragment">some projects require transfer
+<ul>
+<li class="fragment">they can relicence: selling exceptions</li>
+<li class="fragment">they can enforce violations (FSF’s motivation)</li>
+<li class="fragment"><a href="http://gnu.org/philosophy/assigning-copyright.html" class="uri">http://gnu.org/philosophy/assigning-copyright.html</a></li>
+</ul></li>
+</ul>
+</section><section id="deutsches-urhebergesetz" class="slide level2">
+<h1>Deutsches Urhebergesetz</h1>
+<aside class="notes">
+<p>Do we have any Germans who can pronounce this for me?</p>
+<p>In Germany…</p>
+</aside>
+<ul>
+<li class="fragment">cannot transfer status as a creator, nor complete rights</li>
+<li class="fragment">“exclusive licences” achieve effective copyright transfer</li>
+</ul>
+</section><section id="contributor-licence-agreement-cla" class="slide level2">
+<h1>Contributor Licence Agreement (CLA)</h1>
+<ul>
+<li class="fragment">Copyright owner grants a special licence to one entity</li>
+<li class="fragment">Be suspicious of projects where the CLA ≠ Licence</li>
+<li class="fragment">Be very careful that you are not taking on liabilities</li>
+</ul>
+</section></section>
+<section><section id="patents" class="titleslide slide level1"><h1>Patents</h1></section><section id="patent" class="slide level2">
+<h1>Patent</h1>
+<p>Exclusive rights granted to an inventor in exchange for detailed public disclosure of an invention.</p>
+<ul>
+<li class="fragment">need a patent licence to run software that uses it</li>
+<li class="fragment">run the program as you wish, for any purpose ❌</li>
+<li class="fragment">GPL, LGPL, MPL, Apache include a patent licence</li>
+<li class="fragment">MIT, BSD do not include a patent clause</li>
+<li class="fragment"><strong>prefer Apache 2.0 to BSD or MIT</strong></li>
+</ul>
+</section></section>
+<section><section id="trademarks" class="titleslide slide level1"><h1>Trademarks</h1></section><section id="section-1" class="slide level2">
+<h1>®™</h1>
+<p>Recognisable symbol or name which identifies products or services of a particular source.</p>
+<ul>
+<li class="fragment">Each Trademark comes with its own set of guidelines.</li>
+<li class="fragment">Be very careful when using Trademarks.</li>
+</ul>
+</section><section id="examples" class="slide level2">
+<h1>Examples™</h1>
+<p><img src="./images/scala.svg" /> <img src="./images/typesafe.png" /> <img src="./images/akka.svg" /> <img src="./images/play.svg" /> <img src="./images/eclipse.svg" /> <img src="./images/twitter.svg" /> <img src="./images/apache.svg" /> <img src="./images/github.svg" /> <img src="./images/bass.svg" /> <img src="./images/apple.svg" /></p>
+</section><section id="example-apple" class="slide level2">
+<h1>Example: Apple</h1>
+<ul>
+<li class="fragment"><a href="http://www.apple.com/legal/intellectual-property/guidelinesfor3rdparties.html" class="uri">http://www.apple.com/legal/intellectual-property/guidelinesfor3rdparties.html</a></li>
+<li class="fragment">Grammar guidelines</li>
+<li class="fragment">Photograph lighting guidelines</li>
+<li class="fragment">I am now legally obliged to say:
+<ul>
+<li class="fragment">the Apple logo® is a registered trademark of Apple Inc.</li>
+<li class="fragment">there is a guideline for the capitalisation and exact UTF-8 character I just had to use</li>
+<li class="fragment"><a href="http://www.apple.com/legal/intellectual-property/trademark/appletmlist.html" class="uri">http://www.apple.com/legal/intellectual-property/trademark/appletmlist.html</a></li>
+</ul></li>
+</ul>
+</section><section id="example-scala-logo" class="slide level2">
+<h1>Example: Scala Logo</h1>
+<p><img src="./images/amsterdam.png" /> <img src="./images/ksug.png" /> <img src="./images/moscow.png" /> <img src="./images/scalasphere.png" /> <img src="./images/ensime-emacs-logo.svg" /> <img src="./images/scalaworld.png" /></p>
+</section><section id="example-scala-logo-1" class="slide level2">
+<h1>Example: Scala Logo</h1>
+<blockquote>
+<p>We are happy for people to use derivations of it for their open source projects and events. There’s no official policy, just an informal “go for it!” when anyone asks us.</p>
+<p>– Heather Miller, EPFL</p>
+</blockquote>
+<ul>
+<li class="fragment">generous but <strong>not a Libre Licence</strong></li>
+<li class="fragment">Technology Transfer Office: <a href="http://tto.epfl.ch/" class="uri">http://tto.epfl.ch/</a></li>
+</ul>
+</section><section id="thanks" class="slide level2">
+<h1>Thanks</h1>
+<p>And on that note… <img src="./images/java.svg" /></p>
+<aside class="notes">
+<p>… lets get some tea or coffee.</p>
+</aside>
+</section></section>
+    </div>
+  </div>
+
+  <script src="http://lab.hakim.se/reveal-js//lib/js/head.min.js"></script>
+  <script src="http://lab.hakim.se/reveal-js//js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1024,
+        height: 768,
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'http://lab.hakim.se/reveal-js//lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'http://lab.hakim.se/reveal-js//plugin/zoom-js/zoom.js', async: true },
+          { src: 'http://lab.hakim.se/reveal-js//plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>
