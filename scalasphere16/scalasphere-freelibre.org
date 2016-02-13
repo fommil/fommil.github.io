@@ -1,0 +1,263 @@
+#+TITLE: Free, Libre and Open Source
+#+AUTHOR: Sam Halliday
+#+DATE: Scala Sphere 2016
+
+#+TODO: TODO | RESEARCH | NOTES | CHART | DIAGRAM | DRAWING | CODE | VIDEO
+
+* Introduction
+** About Me
+
+- ENSIME contributor
+- FSF Contributing Member
+- Was founder of IPR-heavy company
+
+#+BEGIN_NOTES
+Hi, I'm Sam and I'll be talking again tomorrow about ENSIME so I shall keep it brief today.
+
+Why am I talking about licencing? Well, I'm a Free Software Foundation Contributing Member and free / libre software is something that I feel passionately about.
+
+Why should I be talking about this? I used to run a company that was very heavy on Intellectual Property Right (IPR) and in those years I had a lot of discussions with lawyers about copyright and licencing, including how we could use and distribute Free Software in our products and services. So I'm hopefully going to pass on what I learnt in this talk.
+#+END_NOTES
+
+* Licences
+** Software Licence
+
+Legal instrument governing *use* and *redistribution*
+
+** Libre Software
+
+- run the program as you wish, for any purpose
+- study how the program works, and change it
+- redistribute copies
+- distribute copies of your modified versions to others
+
+#+BEGIN_NOTES
+http://www.gnu.org/philosophy/free-sw.en.html
+#+END_NOTES
+
+** Open Source
+
+- can view the source code
+- no common rules for use / redistribution
+
+** Example: NASA Open Source
+
+#+BEGIN_QUOTE
+G. Each Contributor represents that its Modification *is believed to
+be the Contributor's original creation* and does not violate any
+existing agreements, regulations, statutes or rules, and further that
+Contributor has sufficient rights to grant the rights conveyed by this
+Agreement.
+#+END_QUOTE
+
+- study how the program works, and change it ❌
+- distribute copies of your modified versions to others ❌
+- *Not a Libre Software Licence*
+
+** Example: MIT
+
+#+BEGIN_NOTES
+Who here uses MIT in one of their projects?
+#+END_NOTES
+
+
+#+BEGIN_QUOTE
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the *rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software*, and to
+permit persons to whom the Software is furnished to do so, *subject to
+the following conditions*:
+#+END_QUOTE
+
+-----
+
+#+BEGIN_QUOTE
+The copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+#+END_QUOTE
+
+-----
+
+#+BEGIN_QUOTE
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#+END_QUOTE
+
+-----
+
+Is it libre?
+
+- run the program as you wish, for any purpose ✔
+- study how the program works, and change it ✔
+- redistribute copies ✔
+- distribute copies of your modified versions to others ✔
+
+-----
+
+But you can sublicence or receive a modified version:
+
+- run the program as you wish, for any purpose ❌
+- study how the program works, and change it ❌
+- redistribute copies ❌
+- distribute copies of your modified versions to others ❌
+- *Libre Software can become Proprietary*
+
+** Example: JSON
+
+#+BEGIN_QUOTE
+The Software shall be used for Good, not Evil.
+#+END_QUOTE
+
+- run the program as you wish, for any purpose ❌
+- Douglas Crockford, PayPal, can sue you for "Evil"
+- *Not a Libre Software Licence*
+- FSF, IBM, Google, Redhat all agree
+- some companies consider it unenforceable
+- don't try to be funny with your licence
+- don't add restrictions ("no military use" was once popular)
+
+#+BEGIN_NOTES
+https://www.youtube.com/watch?v=-hCimLnIsDA
+#+END_NOTES
+
+** Copyleft
+
+Requires all modified and extended versions to be libre.
+
+- GPL (strong)
+- LGPL
+- MPL (weak)
+
+* Copyright
+** ©
+
+Creator has exclusive rights for *use* and *distribution*
+
+#+BEGIN_NOTES
+https://en.wikipedia.org/wiki/List_of_countries%27_copyright_lengths
+
+https://www.gov.uk/guidance/exceptions-to-copyright
+#+END_NOTES
+
+-----
+
+If you are the copyright owner, you can release the same software under multiple licences.
+
+** Asserting your ownership
+
+#+BEGIN_SRC
+// Copyright 2010 - 2016 Sam Halliday
+// Licence: http://www.gnu.org/licenses/gpl-3.0.en.html
+#+END_SRC
+
+Include the full licence in a =LICENSE= file.
+
+- https://github.com/sbt/sbt-header
+- https://github.com/mineo/yatemplate
+
+* Copyright Transfer / Contributor Licence Agreement
+** Copyright Transfer
+
+- you give the copyright away
+- you no longer have exclusive rights
+- most employers require transfer
+- some projects require transfer
+    - they can relicence: selling exceptions
+    - they can enforce violations (FSF's motivation)
+    - http://gnu.org/philosophy/assigning-copyright.html
+
+** Deutsches Urhebergesetz
+
+#+BEGIN_NOTES
+Do we have any Germans who can pronounce this for me?
+
+In Germany...
+#+END_NOTES
+
+- cannot transfer status as a creator, nor complete rights
+- "exclusive licences" achieve effective copyright transfer
+
+** Contributor Licence Agreement (CLA)
+
+- Copyright owner grants a special licence to one entity
+- Be suspicious of projects where the CLA ≠ Licence
+- Be very careful that you are not taking on liabilities
+
+* Patents
+** Patent
+
+Exclusive rights granted to an inventor in exchange for detailed public disclosure of an invention.
+
+- need a patent licence to run software that uses it
+- run the program as you wish, for any purpose ❌
+- GPL, LGPL, MPL, Apache include a patent licence
+- MIT, BSD do not include a patent clause
+- *prefer Apache 2.0 to BSD or MIT*
+
+* Trademarks
+** ®™
+
+Recognisable symbol or name which identifies products or services of a particular source.
+
+- Each Trademark comes with its own set of guidelines.
+- Be very careful when using Trademarks.
+
+** Examples™
+
+[[./images/scala.svg]]
+[[./images/typesafe.png]]
+[[./images/akka.svg]]
+[[./images/play.svg]]
+[[./images/eclipse.svg]]
+[[./images/twitter.svg]]
+[[./images/apache.svg]]
+[[./images/github.svg]]
+[[./images/bass.svg]]
+[[./images/apple.svg]]
+
+** Example: Apple
+
+- http://www.apple.com/legal/intellectual-property/guidelinesfor3rdparties.html
+- Grammar guidelines
+- Photograph lighting guidelines
+- I am now legally obliged to say:
+    - the Apple logo® is a registered trademark of Apple Inc.
+    - there is a guideline for the capitalisation and exact UTF-8 character I just had to use
+    - http://www.apple.com/legal/intellectual-property/trademark/appletmlist.html
+
+** Example: Scala Logo
+
+[[./images/amsterdam.png]]
+[[./images/ksug.png]]
+[[./images/moscow.png]]
+[[./images/scalasphere.png]]
+[[./images/ensime-emacs-logo.svg]]
+[[./images/scalaworld.png]]
+
+** Example: Scala Logo
+
+#+BEGIN_QUOTE
+We are happy for people to use derivations of it for their open source
+projects and events. There's no official policy, just an informal "go
+for it!" when anyone asks us.
+
+-- Heather Miller, EPFL
+#+END_QUOTE
+
+- generous but *not a Libre Licence*
+- Technology Transfer Office: http://tto.epfl.ch/
+
+** Thanks
+
+And on that note... [[./images/java.svg]]
+
+#+BEGIN_NOTES
+... lets get some tea or coffee.
+#+END_NOTES

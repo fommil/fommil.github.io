@@ -1,0 +1,33 @@
+#!/bin/bash
+
+INPUT=scalasphere-freelibre.org
+TALK=index.html
+NOTES=notes.html
+
+echo "creating $TALK"
+pandoc --standalone \
+       --smart \
+       --parse-raw \
+       --write=revealjs \
+       --slide-level=2 \
+       --incremental \
+       --include-before-body=copyright.html \
+       --variable revealjs-url:http://lab.hakim.se/reveal-js/ \
+       --variable theme:beige \
+       --variable width:1024 \
+       --variable height:768 \
+       --css overrides.css \
+       --from org \
+       --highlight-style=kate \
+       --output $TALK \
+       $INPUT
+
+echo "creating $NOTES"
+pandoc --standalone \
+       --smart \
+       --write=html \
+       --from org \
+       --highlight-style=kate \
+       --include-after-body=speaker-notes.js \
+       --output $NOTES \
+       $INPUT

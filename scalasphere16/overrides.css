@@ -1,0 +1,68 @@
+.reveal img {
+  max-height: 500px;
+}
+
+.reveal h1 {
+    font-size: 1.4em;
+    text-shadow: 2px 2px 8px white;
+}
+.reveal h2 { font-size: 1.2em; }
+.reveal h3 { font-size: 1.1em; }
+.reveal table {
+    font-size: large; /* reveal.js uses xx-large */
+    line-height:normal;
+    margin: 0px auto;
+}
+.reveal section img {
+    margin: 0px 0px;
+    border: 0px;
+    box-shadow: none;
+}
+.reveal blockquote {
+    text-align: justify;
+    box-shadow: none;
+    background: none;
+}
+.reveal pre code {
+    font-family: Inconsolata, Consolas;
+    /** Annoyingly reveal.js sets these explicitly, overriding our pandoc theme */
+    background: white;
+    color: black;
+    min-width: 0px;
+}
+
+.reveal ol li ul li {
+    list-style-type: none;
+}
+
+.reveal ul li ul li {
+    list-style-type: none;
+}
+
+#presentation-copyright {
+    font-family: Helvetica;
+    position: fixed;
+    font-size: small;
+    bottom: 5%;
+    left: 5%;
+    z-index: 1000;
+}
+#presentation-copyright a {
+    font-weight: bold;
+    color: inherit;
+    text-decoration: none;
+}
+#presentation-copyright a:hover, a:focus {
+    text-decoration: underline;
+}
+
+#examples img {
+    max-height: 200px;
+    max-width: 200px;
+    padding: 20px;
+}
+#example-scala-logo img {
+    max-height: 150px;
+    max-width: 150px;
+    padding: 50px;
+}
