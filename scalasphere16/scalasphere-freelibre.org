@@ -1,6 +1,6 @@
 #+TITLE: Free, Libre and Open Source
 #+AUTHOR: Sam Halliday
-#+DATE: Scala Sphere 2016
+#+DATE: [[https://www.youtube.com/watch?v=6pEQ4xT1LMQ][Scala Sphere 2016 - Click for YouTube Video]]
 
 #+TODO: TODO | RESEARCH | NOTES | CHART | DIAGRAM | DRAWING | CODE | VIDEO
 
