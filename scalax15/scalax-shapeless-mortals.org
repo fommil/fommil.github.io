@@ -1,0 +1,1518 @@
+#+TITLE: Shapeless for Mortals
+#+AUTHOR: Sam Halliday
+#+DATE: Scala eXchange 2015
+
+#+TODO: TODO | RESEARCH | NOTES | CHART | DIAGRAM | DRAWING | CODE | VIDEO
+
+* Introduction
+** Sam Halliday =@fommil=
+
+#+BEGIN_NOTES
+I am really an applied mathematician by training, this software thing is really just a hobby that pays the bills.
+
+Before the crash, I did industrial research in digital signal processing, multi-high-dimensional optimisation, quantum mechanics, machine learning and a bunch of other stuff that I could just talk about forever.
+
+I'm really into Free or Libre education and software. When I was a student in Cape Town I was one of the founders of an initiative that eventually became Siyavula and has printed 5 million Free textbooks to students in South Africa.
+
+I'm a fellow of the Free Software Foundation. I believe they do really great things and I'd encourage you to join up even if you don't believe in the GPL. They are doing some great lobbying for all of us against legislation that seeks to undermine our right to use or write Free software, which includes the Apache 2.0 and BSD licenses.
+
+My most used free software project is =netlib-java=, which I spoke about at last year's Scala eXchange. It's included in the Spark Machine Learning library.
+
+But my favourite project is ENSIME, which is an alternative development environment to Eclipse and IntelliJ for Scala and now Java.
+
+#+END_NOTES
+
+
+- Chartered Mathematician
+  - DSP, optimisation, quantum, machine learning, etc
+- Free (Libre) Education and Software
+  - 5mil textbooks in South Africa (Siyavula)
+  - FSF Fellow (they fight for BSD / Apache too!)
+  - =netlib-java= (underpinning Spark ML)
+  - ENSIME core developer
+
+** Raise your hand if...
+
+#+BEGIN_NOTES
+Enough about me, I'd like to know more about you. So if we could have a show of hands and shout out any thoughts if...
+
+You use ENSIME? Oh nice, you know we have a hack day tomorrow so please come and join us and make it better.
+
+You have knowingly used the type class pattern. I say knowingly because you have probably all used it, but if you're not up on the lingo you might not know that you've used it.
+
+You have used shapeless. And I don't mean including it as a transitive dependency, I mean if you have actually written something with Shapeless. How advanced was it?
+
+Do you understand this quote? Well, fear not Mere Mortal, this talk is for you!
+#+END_NOTES
+
+- you use ENSIME
+  - hack day tomorrow!
+- you have knowingly used the type class pattern
+- you have used Shapeless
+  - experienced users, see me after class
+- you understand:
+  - "/A free monad is a free object relative to a forgetful functor whose domain is a category of minds./"
+  - *Mere Mortal*, this talk is for you!
+
+** Workshop Format
+
+#+BEGIN_NOTES
+Just to be clear, this talk requires no shapeless experience. In fact, you don't even need to know what a type class is.
+
+We'll start by having a look at our example project, =spray-json-shapeless=. My first experience of Scala was manually creating marshallers for =spray-json= and I was really annoyed because Java has frameworks to automatically do this. So it was a real milestone for me to be able to write this library with Mile's help, as it closed off a major complaint that I had.
+
+Then we'll introduce the fundamentals of shapeless. We can't possibly cover everything that it has to offer, but from here hopefully you'll have the confidence to explore further into what it has to offer.
+
+Then we're going to learn about some bugs in the scala compiler that are probably never going to get fixed in the mainline, but you could make a real difference by joining the Typelevel Scala initiative who have a vested interest in fixing these sorts of things.
+
+Then we're going to look at how to write something like =spray-json-shapeless= from the ground up, and understand every step.
+
+There are going to be several exercises to choose from. If you haven't already cloned the =shapeless-for-mortals= repository, I would suggest that you do so now because then we stand a chance of an =sbt updateClassifiers= being finished in about an hour. Please vote for sbt #1930 if you agree!
+
+The point of this exercise is so that you can build something *useful* when you go back to work on Monday. Shapeless is not just a toy library, generic programming is a real time saver.
+
+We'll then discuss and compare our various solutions and if we have time, I'll show you some of my other favourite bits of shapeless.
+#+END_NOTES
+
+*No shapeless experience required*
+
+1. Running example: =spray-json=
+  - https://github.com/spray/spray-json
+  - https://github.com/fommil/spray-json-shapeless
+2. Shapeless fundamentals
+3. =scala-compiler= workarounds
+  - https://github.com/typelevel/scala
+4. =spray-json-shapeless= step by step
+5. Exercise!
+  - https://github.com/fommil/shapeless-for-mortals
+6. Discuss solutions
+7. More shapeless
+
+* Running Example
+** spray-json
+
+#+BEGIN_NOTES
+Maybe you are aware of the recent controversy surrounding JSON ASTs in the scala standard library. Well, here are the 8 core lines of code that =spray-json= uses to define its AST.
+
+The real AST is a little larger than this we're not showing various convenience methods on the companions and suchlike.
+
+Importantly =JsValue= is a =sealed= trait, which means that all of its implementations are defined in this file and known at compile time, and those implementations are all =case class= or =case object=.
+
+It's worth noting that this is what is called a *recursive* data structure: implementations can contain elements that are roots of tree. Looking just at the types, a =JsValue= could be infinitely nested although we know in practice that there are only so many nested =JsValue=s. We will see later that the compiler is not as convinced as we are!
+#+END_NOTES
+
+#+BEGIN_SRC scala
+// note "sealed"
+sealed abstract class JsValue
+
+// note case classes or case objects
+// note recursive types
+case class JsObject(fields: Map[String, JsValue]) extends JsValue
+case class JsArray(elements: Vector[JsValue]) extends JsValue
+case class JsString(value: String) extends JsValue
+case class JsNumber(value: BigDecimal) extends JsValue
+
+sealed trait JsBoolean extends JsValue
+case object JsTrue extends JsBoolean
+case object JsFalse extends JsBoolean
+
+case object JsNull extends JsValue
+#+END_SRC
+
+** JsonFormat
+
+#+BEGIN_NOTES
+Again, I am paraphrasing (in reality this is split into two parts and the implicit classes don't look exactly like this) but this is more or less what the formatting API looks like.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+@implicitNotFound(msg = "Cannot find JsonFormat type class for ${T}")
+trait JsonFormat[T] {
+  def read(json: JsValue): T
+  def write(obj: T): JsValue
+}
+
+implicit class EnrichedAny[T](any: T) {
+  def toJson(implicit f: JsonFormat[T]): JsValue = f.write(any)
+}
+
+implicit class EnrichedJsValue(v: JsValue) {
+  def convertTo[T](implicit f: JsonFormat[T]): T = f.read(v)
+}
+#+END_SRC
+
+* Fundamentals
+** Shapeless
+
+# WORKAROUND https://github.com/jgm/pandoc/issues/1877
+# or         https://github.com/jgm/pandoc/issues/1906
+#+BEGIN_HTML
+<script type="text/javascript">
+document.getElementById('shapeless').setAttribute("data-background-image", "./images/brucelee.jpg");
+</script>
+#+END_HTML
+
+#+BEGIN_NOTES
+https://upload.wikimedia.org/wikipedia/commons/c/cb/Hong_kong_bruce_lee_statue_2.jpg
+
+As far as I am aware, this is the origin of the name shapeless.
+#+END_NOTES
+
+#+BEGIN_VERSE
+"Empty your mind, be formless.
+ *Shapeless*, like water.
+ If you put water into a cup, it becomes the cup.
+ If you put water into a bottle, it becomes the bottle.
+ If you put water into a teapot, it becomes the teapot.
+ Water can flow and it can crash.
+ Become like water my friend."
+            -- Bruce Lee
+#+END_VERSE
+
+** WARNING: Idealised
+
+#+BEGIN_NOTES
+Before we start, this is a disclaimer. For this entire section, we're going to write some code that just simply doesn't compile because of bugs or non-obvious limitations in the scala compiler.
+
+For ten minutes, let's pretend we're running on the perfect TypeLevel compiler.
+
+Once we cover the basics, we're going to revisit every lie and introduce the workarounds.
+
+I know its a weird way to do it, but I want you to get generic programming first, and then the implementation details later.
+#+END_NOTES
+
+- some code does *not* compile
+- bugs / limitations of =scala-compiler=
+- for 10 mins, we're running TypeLevel =scalac= 3.0
+- coming next: workarounds
+
+. . .
+
+#+BEGIN_NOTES
+And for everything that you're going to see from here, we're using these global import rules.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+
+import shapeless._, labelled._, syntax.singleton._
+
+#+END_SRC
+
+** Type Classes
+
+#+BEGIN_NOTES
+What is a typeclass?
+
+We've already seen a typeclass, its just a trait that has a type parameter. In the typeclass pattern, we call this the interface.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+trait JsonFormat[T] {
+  def read(json: JsValue): T
+  def write(obj: T): JsValue
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+And specific implementations are, unsurprisingly, known as implementations. Typically there is only one implementation for each type. Here we can see an implementation for =String=. Although, hopefully the potential for mocking during testing is obvious.
+
+Its worth noting that =spray-json= throws exceptions in the case of failure, e.g. if the JSON is the wrong shape, which is possible because there is no validation of the JSON. This is actually bad practice, primarily because of the performance overhead --- it's quite costly to generate an exception. It would have been higher performance if the type signature of read was to return an =Either=.
+
+The biggest practical benefit of the typeclass pattern, as I see it, is that the implementation for a type is kept separate from the type's source code. This is particularly important for objects that you do not own, like standard library objects, but it also helps you to keep your own domain model extremely clean.
+
+Since I've started writing Scala, without a doubt the best thing I've ever done in a codebase was to put the domain model --- the messages in and out of the system --- into a single file of sealed traits and case classes. That file becomes the public API, it is heavily documented and discussed / agreed with the downstream consumers and the business / data modellers. It is extremely valuable for everybody involved to have a *codex*.
+#+END_NOTES
+
+
+#+BEGIN_SRC scala
+implicit object StringJsonFormat extends JsonFormat[String] {
+  def read(value: JsValue) = value match {
+    case JsString(x) => x
+    case other => throw new DeserializationError(other) // sic
+  } // Either[String, T]
+  def write(x: String) = JsString(x)
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+And then we have the optional "syntax", which is really just style. Some people don't like using the implicit syntax.
+
+Importantly, if the =implicit class= =extends AnyVal= then there is no runtime performance overhead to using the enriched syntax. But it may slow down your compiles a little bit.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+implicit class EnrichedAny[T](val any: T) extends AnyVal {
+  def toJson(implicit f: JsonFormat[T]): JsValue = f.write(any)
+}
+
+implicit class EnrichedJsValue(val v: JsValue) extends AnyVal {
+  def convertTo[T](implicit f: JsonFormat[T]): T = f.read(v)
+}
+#+END_SRC
+** Singleton Types
+
+#+BEGIN_NOTES
+You've probably heard of "the typelevel", well what is meant by that is that things are done with types instead of values.
+
+Shapeless introduces the concept of a singleton type, which is like a bridge between *constant* values and types. The scala compiler has supported this for a long time internally, but there is no syntactic way to get at it without shapeless (or your own macro / compiler plugin).
+
+In these examples, we create primitive values and /narrow/ them. The type of the value is a subtype of the original value, but it is refined with a singleton instance of the type. So =42= has a type that is loosely "the 42nd Int".
+
+All these narrowings get erased at runtime, which is why we're allowed to talk about subtypes of types that are explicitly =final= or primitive in the Java standard library.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+"bar".narrow : String("bar") // <: String
+42.narrow    : Int(42)       // <: Int
+'foo.narrow  : Symbol('foo)  // <: Symbol
+true.narrow  : Boolean(true) // <: Boolean
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+Incidentally, you already know what this concept is.
+
+Think about =objects= , like the empty List =Nil=. Their singleton type is just their own type.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+Nil.narrow   : Nil.type
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+Shapeless also lets you assign a singleton type to a value with this "labelled" syntax. Here the "bar", =42= and =true= are still String, Int and Boolean respectively, but their type also mixes in a singleton symbol.
+
+Actually, you don't have to use =Symbol= on the left hand side, but it is the only thing we're going to use for the remainder of the lesson.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+'a ->> "bar" : String  with KeyTag[Symbol('a), String]
+'b ->> 42    : Int     with KeyTag[Symbol('b), Int]
+'c ->> true  : Boolean with KeyTag[Symbol('c), Boolean]
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+And it works the other way too, we can start from the typelevel and move to the value level. We do that via a =Witness=. If we have a witness for a singleton type in scope, we can grab it and ask for its value.
+
+Thankfully, shapeless creates witnesses for us automatically.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+val foo    = implicitly[Witness[String("foo")]].value  : String("foo")
+val answer = implicitly[Witness[Int(42]]].value        : Int(42)
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+Using typelevel keys is so popular that there is a convenience method that uses the singleton type rather than the value to create a type called a =FieldType=, which is actually just a type alias to the =KeyTag= mixin above, but avoids the repetition.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+field[Symbol('a)]("bar") : FieldType[Symbol('a), String]  // <: String
+field[Symbol('b)](42)    : FieldType[Symbol('b), Int]     // <: Int
+field[Symbol('c)](true)  : FieldType[Symbol('c), Boolean] // <: Boolean
+#+END_SRC
+
+# WORKAROUND https://github.com/jgm/pandoc/issues/2504
+** ​ +Product+ HList
+
+#+BEGIN_NOTES
+The name =Product= is already taken by the standard library, so shapeless uses the name =HList= instead, short for "heterogeneous list".
+
+This is basically exactly the same data structure as a normal list, except each element type can be different and both the types of the elements and the size of the list are known at compile time.
+
+Here we have an instance of an =HList= with =String=, =Int= and =Boolean= elements, which has type =String :: Int :: Boolean :: HNil=. You'll note that the type signature is extremely verbose, but contains everything that you'd want. The syntax for constructing the instance is almost identical to a normal =List=.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+"hello" :: 13 :: true :: HNil
+                              : String :: Int :: Boolean :: HNil
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+We can have more complex data structures. Let's say we have a data structure that is more like this, using the labelled values from the previous slide.
+
+This is now starting to look more like the contents of a case class, right?
+
+It's also a subtype of the unlabelled =HList= above.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+('a ->> "hello") :: ('b ->> 13) :: ('c ->> true) :: HNil
+                              : FieldType[Symbol('a), String] ::
+                                FieldType[Symbol('b), Int] ::
+                                FieldType[Symbol('c), Boolean] ::
+                                HNil
+                          // <: String :: Int :: Boolean :: HNil
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+Our =HList= is the water that becomes the teapot...
+#+END_NOTES
+
+#+BEGIN_SRC scala
+case class Teapot(a: String, b: Int, c: Boolean)
+#+END_SRC
+
+-----
+
+#+BEGIN_NOTES
+Let's do something useful. Let's write a =spray-json= marshaller for *all* =HLists= of =FieldType=. Completely independent of shape, the =HList= is our teapot and we are becoming the teapot.
+
+We'll start with the empty HList, =HNil=, because we'll need it later. Let's make it implicit so that we don't need to pass it explicitly when needed.
+
+We could do some validation here if we wanted, to make sure that the =JsValue= is empty, but here we're deciding that we're ignoring irrelevant information.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+implicit object HNilFormat extends JsonFormat[HNil] {
+  def read(j: JsValue) = HNil
+  def write(n: HNil) = JsObject()
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+This is starting to look scary. So lets break it down. We'll start with the type parameters, we're defining three types here: =Key= is the singleton symbol part of the head of the =HList= with corresponding =Value=. The =Remaining= type is an =HList= for the tail.
+
+In the implicit parameter list we're saying that we'd like the compiler to provide us with the key (a witness is a mechanism to resolve singletons, i.e. this exact symbol), the =JsonFormat= for the head value, and a =JsonFormat= for the tail.
+
+We then declare that we can return a =JsonFormat= for the full =HList=.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+implicit def hListFormat[Key <: Symbol, Value, Remaining <: HList](
+  implicit
+  key: Witness[Key],
+  jfh: JsonFormat[Value],
+  jft: JsonFormat[Remaining]
+): JsonFormat[FieldType[Key, Value] :: Remaining] = new JsonFormat {
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+The rest is just simple machinery, but I hope you'll forgive me for some shortcuts in dealing with error conditions to keep the code simple.
+
+Firstly, we use the =JsonFormat= for the tail on the tail, expecting a =JsObject=. Then we simply append the key's name and the rendered value. 
+#+END_NOTES
+
+#+BEGIN_SRC scala
+  def write(hlist: FieldType[Key, Value] :: Remaining) =
+    jft.write(hlist.tail).asJsObject :+
+      (key.value.name -> jfh.write(hlist.head))
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+The reader is equally simple, we start by rendering the tail of the =HList= by simply passing through the entire =JsValue=. Then we use the key to get the value out of the JSON, and render it.
+
+We have to return an =HList= so we simply cat this =FieldType= onto the existing =HList= using this =field= syntax which takes the singleton =Key= type as a type parameter.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+  def read(json: JsValue) = {
+     val fields = json.asJsObject.fields
+     val head = jfh.read(fields(key.value.name))
+     val tail = jft.read(json)
+     field[Key](head) :: tail
+  }
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_NOTES
+That's it! We've done it. We've written a =JsonFormat= for *all* =HLists= of =FieldType=.
+
+Let's take a look at an example, our teapot had this type, and we can now just =implicitly= derive a =JsonFormat=.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+val f = implicitly[JsonFormat[
+          FieldType[Symbol('a), String] ::
+          FieldType[Symbol('b), Int] ::
+          FieldType[Symbol('c), Boolean] ::
+          HNil]]
+
+val teapot = ('a ->> "hello") :: ('b ->> 13) :: ('c ->> true) :: HNil
+val expected = "{'a': 'hello', 'b': 13, 'c': true}".parseJson
+
+f.write(teapot) shouldBe expected
+f.read(expected) shouldBe teapot 
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+So how does implicit resolution work?
+
+When you ask for the implicit =JsonFormat= of the teapot's =HList=.
+
+The typeclass for =String= is obtained, and the typeclass for the tail of the =HList=.
+
+Then the typeclass for =Int= is obtained, along with the increasingly smaller tail.
+
+Then finally the =Boolean= typeclass and the list terminator, =HNil=.
+
+So to build the typeclass for the entire teapot, 6 other typeclasses are derived and their references stored in the resulting object.
+#+END_NOTES
+
+
+#+BEGIN_SRC
+=> JsonFormat[String]
+ + JsonFormat[FieldType[Symbol('b), Int] ::
+              FieldType[Symbol('c), Boolean] ::
+              HNil]
+=> JsonFormat[Int]
+ + JsonFormat[FieldType[Symbol('c), Boolean] ::
+              HNil]
+=> JsonFormat[Boolean]
+ + JsonFormat[HNil]
+#+END_SRC
+
+** LabelledGeneric
+
+#+BEGIN_NOTES
+Well, that's great if you rewrite your application to use =HList= everywhere, but in the real world people use =case class= a lot.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+val hlist = ('a ->> "hello") :: ('b ->> 1) :: ('c ->> true) :: HNil
+#+END_SRC
+
+. . .
+
+#+BEGIN_SRC scala
+case class Teapot(a: String, b: Int, c: Boolean)
+
+val teapot = Teapot("hello", 1, true)
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+Thankfully, those smart chaps at shapeless figured this would be the case and they created =LabelledGeneric= so that for any =case class= you can come up with, you can convert between them.
+
+The generic has a type field called =Repr= (short for representation) which gives us the equivalent =HList= type that we should now be familiar with.
+
+Remember that the type information is erased at runtime, so when you convert the =case class= into an =HList=, at runtime it will not have the labels... the labels are a purely compile time thing and are accessed via witnesses, like we seen earlier.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+val generic = LabelledGeneric[Teapot]
+
+generic.Repr : FieldType[Symbol('a), String] ::
+               FieldType[Symbol('b), Int] ::
+               FieldType[Symbol('c), Boolean] ::
+               HNil
+
+generic.from(hlist) shouldBe teapot
+
+generic.to(teapot) shouldBe hlist
+#+END_SRC
+
+-----
+
+#+BEGIN_NOTES
+This means we can trivially turn our =HList= marshaller into a =case class= marshaller!
+
+Just for fun, I've introduced another neat feature of shapeless. Even if you don't use any of this type class derivation, I would encourage you to start using =Typeable=. It's a very simple thing, shapeless always makes one available if you ask for it and all it does is give you a way of getting the name of the compile-time type. Here, we're using it to log out when an instance of the =familyFormat= is instantiated. This can be useful for help track down what you need to cache for performance.
+
+All we do in the implementation is go from/to case classes and HLists, passing off to the =HList= implementation that we wrote earlier.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+implicit def familyFormat[T](
+  implicit
+  gen: LabelledGeneric[T],
+  sg: JsonFormat[T.Repr],
+  tpe: Typeable[T]
+): JsonFormat[T] = new JsonFormat[T] {
+  if (log.isTraceEnabled)
+    log.trace(s"creating ${tpe.describe}")
+
+  def read(j: JsValue): T = gen.from(sg.read(j))
+  def write(t: T): JsValue = sg.write(gen.to(t))
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+And speaking of caching, we can use another little shapeless feature called =cachedImplicit= to obtain and cache an implicit value, thereby avoiding needless object creation. Otherwise, this method is called, and all its dependencies calculated afresh, every time it is invoked.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+implicit val TeapotJsonFormat: JsonFormat[Teapot] = cachedImplicit
+
+teapot.toJson // {"a": "hello", "b": 1, "c": true}
+#+END_SRC
+
+** ​ +CoHList+ Coproduct
+
+#+BEGIN_NOTES
+But that's not all that =LabelledGeneric= can do, it also works for sealed traits...
+
+Here we create a simple sealed trait with two implementations. Remember that sealing a trait means that all the implementations are known at compile time.
+
+And if we ask for the =LabelledGeneric= for the sealed trait, we get this new thing that we've not seen before.
+
+Instead of being an =HList= this is a =Coproduct=, with the terminating element being =CNil= and the cons operator of =:+:=.
+
+Coproducts are mutually exclusive, only one of the elements is going to be present at runtime. It's basically a generalised =Either=.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+sealed trait Receptacle
+case class Glass(a: String) extends Receptacle
+case class Bottle(a: Int) extends Receptacle
+case class Teapot(a: Boolean) extends Receptacle
+
+val generic = LabelledGeneric[Receptacle]
+generic.Repr: FieldType[Symbol('Glass),   Glass] :+:
+              FieldType[Symbol('Bottle), Bottle] :+:
+              FieldType[Symbol('Teapot), Teapot] :+:
+              CNil
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+The way =Coproduct= is implemented is like this, we have the terminating =CNil= and then the cons cells which either contain a value or don't, instead deferring to their tail.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+sealed trait Coproduct
+sealed trait CNil extends Coproduct
+sealed trait :+:[+H, +T <: Coproduct] extends Coproduct
+final case class Inl[+H, +T <: Coproduct](head : H) extends :+:[H, T]
+final case class Inr[+H, +T <: Coproduct](tail : T) extends :+:[H, T]
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+You wouldn't typically explicitly create a =Coproduct= yourself, you would have some instance of a sealed trait and then you would convert it into the generic form. Once in the generic form, we can then pattern match each cell.
+
+Note that as soon as you hit a =head= element, that's it... there is nothing else to do. In fact, this is how uniqueness is guaranteed (although there is no type guarantee that there is an =Inl=, just that there is not more than one).
+
+Here we define a simple method that prints out any =Coproduct= as an S-Expression.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+def show(o: Coproduct): String = o match {
+  case Inl(head) => "\"" + head + "\""
+  case Inr(tail) => "(nil . " + show(tail) + ")"
+}
+
+show(generic.to(Glass("foo"))) // "Glass(foo)"
+show(generic.to(Bottle(99)))   // (nil . "Bottle(99)")
+show(generic.to(Teapot(true))) // (nil . (nil . "Teapot(true)"))
+#+END_SRC
+
+-----
+
+#+BEGIN_NOTES
+So lets get back to business and extend our JSON marshaller so that it can handle sealed traits! Bizarrely we have to start with something that is never called, which is the =CNil= terminator.
+
+The reason this is never called is because we never actually get to the end of non-empty =Coproducts=, it'll always terminate somewhere. However, the definition of the types certainly makes it look like its needed, so we have to provide one.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+implicit object CNilFormat extends JsonFormat[CNil] {
+  def read(j: JsValue) = throw new GuruMeditationFailure
+  def write(n: CNil)   = throw new GuruMeditationFailure
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+Again, we'll go through this bit at a time, starting with the scary type signature.
+
+The most important thing here is that we're returning a =JsonFormat= for the coproduct of the Head, which has a head that is a FieldType, so it has value Head and key Name (a singleton type). We require the formatter for the head instance, and also one for the tail (which will be provided by another call to this method but with different type parameters).
+#+END_NOTES
+
+#+BEGIN_SRC scala
+implicit def coproductFormat[Name <: Symbol, Head, Tail <: Coproduct](
+  implicit
+  key: Witness[Name],
+  jfh: JsonFormat[Head],
+  jft: JsonFormat[Tail]
+): JsonFormat[FieldType[Name, Head] :+: Tail] = new JsonFormat {
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+For reading, we first turn the JSON object into a key/value map and get the value in the "type" field. If it matches the instance that we're creating, then we unmarshal in as an =Head=, otherwise we pass it through to the next formatter.
+
+This is kind of weird, we're not reading the type from the JSON and immediately deciding what to do with it, we're letting one of the many Coproduct implementations to declare "I can handle this!".
+#+END_NOTES
+
+#+BEGIN_SRC scala
+  def read(j: JsValue) =
+    if (j.asJsObject.fields("type") == JsString(key.value.name))
+      Inl(field[Name](jfh.read(j)))
+    else
+      Inr(jft.read(j))
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+And for the writing, we do much the same thing.
+
+This time we pattern match on =Inl= vs =Inr= as we seen earlier, using the head formatter if the instance is an =Inl=, otherwise passing it off to the tail.
+
+And that's it!
+#+END_NOTES
+
+#+BEGIN_SRC scala
+  def write(lr: FieldType[Name, Head] :+: Tail) = lr match {
+    case Inl(found) =>
+      jfh.write(found).asJsObject :+ ("type" -> JsString(key.value.name))
+
+    case Inr(tail) =>
+      jft.write(tail)
+  }
+}
+#+END_SRC
+
+** ✨ Shapeless Magic ✨
+
+#+BEGIN_NOTES
+Now we can do this kind of crazy stuff, using shapeless magic...
+#+END_NOTES
+
+#+BEGIN_SRC scala
+Glass("foo").toJson  // { "a":"foo" }
+Bottle(99).toJson    // { "a":99    }
+Teapot(true).toJson  // { "a":true  }
+
+(Glass("foo"):Receptacle).toJson // { "type":"Glass",  "a":"foo" }
+(Bottle(99)  :Receptacle).toJson // { "type":"Bottle", "a":99    }
+(Teapot(true):Receptacle).toJson // { "type":"Teapot", "a":true  }
+#+END_SRC
+
+* Enter the Dragon
+** Singleton Symbols
+
+# can't put this in the section before as its ignored
+#+BEGIN_HTML
+<script type="text/javascript">
+document.getElementById('enter-the-dragon').setAttribute("data-background-image","./images/dragon.jpg");
+</script>
+#+END_HTML
+
+#+BEGIN_NOTES
+Now we get to find out the horrible reality of the scala compiler's limitations.
+
+First up, I lied to you about singleton types.
+
+If you type this, you'll get a compile failure because the entire concept of singleton types is internal compiler detail and is not supported at the language level.
+#+END_NOTES
+
+
+# would be nice to have red squiggles, but probably requires HTML_ATTR
+#  http://stackoverflow.com/questions/6821365
+#  https://groups.google.com/d/msg/pandoc-discuss/QPtM0PDrAGA/jXHeKFKjDgAJ
+#+BEGIN_SRC scala
+"bar".narrow : String("bar") // CRASH!
+42.narrow    : Int(42)       // BANG!
+true.narrow  : Boolean(true) // POWIE!
+#+END_SRC
+
+. . .
+
+#+BEGIN_SRC
+scala> "bar".narrow
+res0: String("bar") = bar
+
+scala> 42.narrow
+res1: Int(42) = 42
+
+scala> true.narrow
+res2: Boolean(true) = true
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+And worse, there isn't even such a thing as a singleton symbol, they only exist for primitive types
+#+END_NOTES
+
+#+BEGIN_SRC
+scala> 'foo.narrow
+res3: Symbol with Tagged[String("foo")] = 'foo
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+Importantly, that means you can't write this sort of thing.
+#+END_NOTES
+
+#+BEGIN_SRC
+field[Symbol('a)]("bar")  // KERPLOP!
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+The workaround is that you can construct the witness from the value, and then use its type and if it is the parameter to a method, you have to take an implicit witness object.
+#+END_NOTES
+
+#+BEGIN_SRC
+implicit val a = Witness('a)
+scala> field[a.T]("bar")
+res4: FieldType[a.T,String] = bar
+#+END_SRC
+
+** Hipster.Aux (SI-823)
+
+# https://issues.scala-lang.org/browse/SI-823
+# https://github.com/typelevel/scala/issues/8
+# https://github.com/milessabin/shapeless/blob/master/core/src/main/scala/shapeless/generic.scala#L148
+# https://github.com/ensime/ensime-server/blob/master/sexpress/src/main/scala/org/ensime/sexp/formats/ProductFormats.scala#L55
+# https://gist.github.com/milessabin/cadd73b7756fe4097ca0
+# http://ivan-gandhi.livejournal.com/2345366.html
+#+BEGIN_NOTES
+Turns out, this doesn't compile.
+
+scalac doesn't allow you to reference types in the same parameter block.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+trait A { type T }
+
+def f(a: A, t: a.T) = ...
+// parameter a must appear in a parameter list
+// that precedes dependent parameter type a.T
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+This is how you can fix it.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+def f(a: A)(t: a.T) = ...
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+But this is no use for implicit parameter blocks, because we can't split them up.
+
+This is one of the features that Typelevel Scala plans to implement.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+def f(implicit a: A)(implicit t: a.T) = ... // THWAPP!
+// TODO https://github.com/typelevel/scala/issues/8
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+So shapeless introduces the =Aux= pattern to deal with this.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+trait Hipster[T] { type Repr }
+object Hipster {
+  type Aux[T, Repr0] = Hipster[T] { type Repr = Repr0 }
+}
+
+def f[T, Repr](implicit hip: Hipster.Aux[T, Repr]) = ...
+#+END_SRC
+
+-----
+
+#+BEGIN_NOTES
+The implications for our JSON marshaller is that we have to change all the implicit parameters to use the =Aux= pattern
+#+END_NOTES
+
+#+BEGIN_SRC scala
+implicit def hListFormat[Key <: Symbol, Value, Remaining <: HList](
+  implicit
+  key: Witness.Aux[Key],
+  jfh: JsonFormat[Value],
+  jft: JsonFormat[Remaining]
+): JsonFormat[FieldType[Key, Value] :: Remaining] = ...
+#+END_SRC
+
+. . .
+
+#+BEGIN_SRC scala
+implicit def coproductFormat[Name <: Symbol, Head, Tail <: Coproduct](
+  implicit
+  key: Witness.Aux[Name],
+  jfh: JsonFormat[Head],
+  jft: JsonFormat[Tail]
+): JsonFormat[FieldType[Name, Head] :+: Tail] = ...
+#+END_SRC
+
+. . .
+
+#+BEGIN_SRC scala
+implicit def familyFormat[T, Repr](
+  implicit
+  gen: LabelledGeneric.Aux[T, Repr],
+  sg: JsonFormat[Repr],
+  tpe: Typeable[T]
+): JsonFormat[T] = ...
+#+END_SRC
+
+-----
+
+Hipster??
+
+#+BEGIN_NOTES
+And where does the Hipster come from?
+
+Somebody posted this lovely code on livejournal, for which it was mocked thoroughly. It has since become an inside joke, of which I hope you are all now a part of.
+
+I have no idea what this code is doing, maybe my beard is not long enough.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+def validate[F[_], G, H, V <: HList, I <: HList, M <: HList, A <: HList, R]
+  (g: G)(v: V)(implicit
+  hlG: FnHListerAux[G, A => R],
+  zip: ZipApplyAux[V, I, M],
+  mapped: MappedAux[A, F, M],
+  unH: FnUnHListerAux[I => F[R], H],
+  folder: LeftFolderAux[M, F[A => R], applier.type, F[HNil => R]],
+  appl: Applicative[F]
+) = unH((in: I) => folder(zip(v, in), hlG(g).point[F]).map(_(HNil)))
+#+END_SRC
+
+[[./images/hipsteraux.png]]
+
+** Higher Order Unification (SI-2712)
+
+# Not directly shapeless related, but it is definitely worth knowing about this if you're doing any generic programming.
+# (droppable if running slowly)
+# https://github.com/ensime/ensime-server/blob/master/sexpress/src/main/scala/org/ensime/sexp/formats/CollectionFormats.scala#L20
+# https://github.com/spray/spray-json/blob/master/src/main/scala/spray/json/CollectionFormats.scala
+# https://meta.plasm.us/posts/2015/07/11/roll-your-own-scala/
+
+#+BEGIN_NOTES
+The stock implementation of =JsonFormat= from Collection types is hand written and quite verbose. We can do better with shapeless.
+
+We'd ideally want to start writing the code like this. But we can't because scala doesn't have higher order unification.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+implicit def getTraversableformat[E, T <: GenTraversable[E]]( // WHAMMM!!!
+  implicit
+  cbf: CanBuildFrom[T, E, T],
+  ef:  JsonFormat[E]
+): JsonFormat[T] = ...
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+The "kindedness" of a type parameter restricts what it can be equated
+to. A no-param type such as =T= cannot be equated to a one-param type
+such as =T[E]=, etc.
+#+END_NOTES
+
+- =T= has kind =★=
+- =GenTraversable[E]= has kind =★→★=
+- =scalac= can't equate =★= to a =★→★=
+
+. . .
+
+#+BEGIN_NOTES
+There are several workarounds, all tedious. The most popular one involves a trick known as providing "evidence" and using the =<:<= infix type, which will be implicitly available if the left is a subtype of the right.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+import scala.language.higherKinds
+
+implicit def genTraversableFormat[T[_], E](
+  implicit
+  evidence: T[E] <:< GenTraversable[E], // both of kind *->*
+  cbf: CanBuildFrom[T[E], E, T[E]],
+  ef: JsonFormat[E]
+): JsonFormat[T[E]] = ...
+#+END_SRC
+
+-----
+
+#+BEGIN_NOTES
+Just to let you know how much this impacts people, the ticket was accidentally closed and this was the response:
+#+END_NOTES
+
+[[./images/unification.png]]
+
+** Implicit Resolution: Recursion
+
+#+BEGIN_NOTES
+This simple data structure is recursive, in that the types of the
+parameters of a =Product= type (i.e. case classes) refers to
+=Coproduct= types (i.e. the sealed trait).
+
+Thinking from a purely type point of view, this data structure is
+potentially infinite.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+sealed trait Tree
+case class Branch(left: Tree, right: Tree) extends Tree
+case object Leaf extends Tree
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+Lets create a toy typeclass, =Smell= and handcraft implementations. The recursion is now really obvious because =branchSmell= requires the output of =treeSmell= which requires the output of =branchSmell=.
+
+Basically, the implicit resolver just gives up because it decides not to investigate the infinite rabbit hole.
+
+The weird thing is that the rules for when the compiler "gives up" are not defined, its defined by the implementation of the scala compiler, so it's hard to know exactly when you need to workaround this.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+trait Smell[T]
+
+implicit def leafSmell: Smell[Leaf] = ???
+
+// recursive
+implicit def treeSmell(implicit
+  branch: Smell[Branch],
+  leaf: Smell[Leaf]): Smell[Tree] = ...
+implicit def branchSmell(implicit
+  tree: Smell[Tree]): Smell[Branch] = ...
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+The workaround is to introduce =Lazy= which effectively tells the compiler to try a little harder and is lazily loaded, so can be used recursively.
+
+To obtain the contents of a =Lazy= wrapped parameter, just call =value= on it.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+implicit def treeSmell(implicit
+  lazyBranch: Lazy[Smell[Branch]],
+  leaf: Smell[Leaf]): Smell[Tree] = {
+  val branch = lazyBranch.value
+  ...
+}
+implicit def branchSmell(implicit
+  lazyTree: Lazy[Smell[Tree]]): Smell[Branch] = {
+  val tree = lazyTree.value
+  ...
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_NOTES
+So how does this affect our implementation?
+
+Well everywhere there could be a recursive call, we have to use =Lazy=
+#+END_NOTES
+
+#+BEGIN_SRC scala
+implicit def hListFormat[Key <: Symbol, Value, Remaining <: HList](
+  implicit
+  key: Witness.Aux[Key],
+  lazyJfh: Lazy[JsonFormat[Value]],
+  lazyJft: Lazy[JsonFormat[Remaining]]
+): JsonFormat[FieldType[Key, Value] :: Remaining] = new JsonFormat {
+  val jfh = lazyJfh.value
+  val jft = lazyJft.value
+  ...
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_SRC scala
+implicit def coproductFormat[Name <: Symbol, Head, Tail <: Coproduct](
+  implicit
+  key: Witness.Aux[Name],
+  lazyJfh: Lazy[JsonFormat[Head]],
+  lazyJft: Lazy[JsonFormat[Tail]]
+): JsonFormat[FieldType[Name, Head] :+: Tail] = new JsonFormat {
+  val jfh = lazyJfh.value
+  val jft = lazyJft.value
+  ...
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_SRC scala
+implicit def familyFormat[T, Repr](
+  implicit
+  gen: LabelledGeneric.Aux[T, Repr],
+  lazySg: Lazy[JsonFormat[Repr]],
+  tpe: Typeable[T]
+): JsonFormat[T] = new JsonFormat {
+  val sg = lazySg.value
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_NOTES
+Also when asking for an implicit implementation of a =JsonFormat= we sometimes have to use =Lazy=
+#+END_NOTES
+
+#+BEGIN_SRC scala
+// a convenience for implicitly[Lazy[JsonFormat[T]]].value
+// but also consider using shapeless' cachedImplicit
+object JsonFormat {
+  def apply[T](implicit f: Lazy[JsonFormat[T]]): JsonFormat[T] = f.value
+}
+#+END_SRC
+
+. . .
+
+Watch out for =Strict= by =@alxarchambault= (shapeless 3.0).
+
+** Implicit Resolution: Cycles
+
+#+BEGIN_NOTES
+Sometimes the implicit resolution just stops working, for no reason.
+
+The only way to fix it is by separating out your code into packages and never calling the derived code from a parent package.
+#+END_NOTES
+
+*Always*
+
+#+BEGIN_SRC scala
+package com.domain.api
+package com.domain.formats
+package com.domain.app
+#+END_SRC
+
+*Never*
+
+Use =com.domain.formats= from =com.domain=
+
+** Implicit Resolution: Priority
+
+#+BEGIN_NOTES
+The scala compiler is supposed to search for implicits using the following rules:
+#+END_NOTES
+
+How it's *supposed* to work:
+
+- *Normal Scope*
+  - Local / outer / ancestors / package object / imports
+- *Implicit Scope*
+  - Given parameter type
+  - Expected parameter type
+  - Type parameter (if there is one)
+
+-----
+
+*IMPLICIT RESOLUTION*
+
+How it *actually* works:
+
+. . .
+
+#+BEGIN_NOTES
+Yup, basically the scalac code is the definition of how it works and sometimes it works the way you expect and sometimes it doesn't.
+
+Apparently =dotty= is going to be far more rigorous.
+#+END_NOTES
+
+
+[[./images/bender.png]]
+
+-----
+
+#+BEGIN_NOTES
+If we try our best to stick to these rules, it means we'll put our =familyFormat= code into an object with this structure to try and make our family formats have lower priority than the ones in spray-json itself:
+#+END_NOTES
+
+#+BEGIN_SRC scala
+trait FamilyFormats extends LowPriorityFamilyFormats {
+  this: StandardFormats =>
+}
+object FamilyFormats extends DefaultJsonProtocol with FamilyFormats
+
+private[sjs] trait LowPriorityFamilyFormats {
+  this: StandardFormats with FamilyFormats =>
+  ...
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+However, even though we've obliged the scala compiler's rules, if we try to ask for the format for something like =Symbol= or =Either= we end up getting the shapeless magic version instead of the higher priority one defined by spray-json.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+implicitly[JsonFormat[Symbol]]            // => familyFormat
+implicitly[JsonFormat[Left[String, Int]]] // => familyFormat
+#+END_SRC
+
+-----
+
+#+BEGIN_NOTES
+The workaround is for the end-user to have to override the spray-json implementation in their format code. I've tried to put this into the =FamilyFormats= object before, but it doesn't work for some weird reason.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+package brucelee.api {
+  sealed trait Receptacle
+  case class Glass(a: String) extends Receptacle
+  case class Bottle(a: Int) extends Receptacle
+  case class Teapot(a: Boolean) extends Receptacle
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+package brucelee.format {
+  object MyFormats extends FamilyFormats {
+    implicit override def eitherFormat[A, B](implicit
+      a: JsonFormat[A],
+      b: JsonFormat[B]) = super.eitherFormat[A, B]
+    implicit val symbolFormat = SymbolJsonFormat
+
+    implicit val ReceptacleF: JsonFormat[Receptacle] = cachedImplicit
+  }
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+package brucelee.app {
+  import spray.json._
+  import brucelee.format.MyFormats.ReceptacleF
+
+  Glass("half").toJson
+}
+#+END_SRC
+
+** Crappy Errors
+
+#+BEGIN_NOTES
+Lets say we have a domain model like this
+#+END_NOTES
+
+#+BEGIN_SRC scala
+sealed trait Dragon
+case object Chinese extends Dragon
+case object Japanese extends Dragon
+case class Khmer(heads: Seq[Head]) extends Dragon
+
+class Head
+#+END_SRC
+
+#+BEGIN_SRC scala
+implicit val DragonF: JsonFormat[Dragon] = cachedImplicit
+#+END_SRC
+
+. . .
+
+We want...
+
+#+BEGIN_SRC
+cannot find implicit for JsonFormat[Head]
+#+END_SRC
+
+. . .
+
+We get...
+
+#+BEGIN_SRC
+cannot find implicit for JsonFormat[Dragon]
+#+END_SRC
+
+* Your Turn!
+** Practicalities
+
+#+BEGIN_NOTES
+Now we're going to have the exercise part of the workshop, so you'll either need to get your laptop out or pair with somebody who has a laptop.
+
+The exercises are in the =shapeless-for-mortals= repository but you also find it instructive to clone the =ensime-server= and =spray-json-shapeless= repositories.
+#+END_NOTES
+
+- https://github.com/fommil/shapeless-for-mortals/
+- https://github.com/ensime/ensime-server/
+- https://github.com/fommil/spray-json-shapeless/
+
+** Stringy Map for Big Data
+
+#+BEGIN_NOTES
+We've all seen this data structure before, it somehow manages to find its way into every large project and is almost impossible to remove.
+
+We're going to try to add some type safety around it with shapeless.
+#+END_NOTES
+
+=java.util.HashMap[String, AnyRef]=
+
+#+BEGIN_SRC scala
+type StringyMap = java.util.HashMap[String, AnyRef]
+type BigResult[T] = Either[String, T]
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait BigDataFormat[T] {
+  def label: String
+  def toProperties(t: T): StringyMap
+  def fromProperties(m: StringyMap): BigResult[T]
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+And just to make it really exciting, you can't *really* put anything in the value of the stringy map, your values should only have typeclasses like this, which can turn them into java types that are really supported by the thing that consumes =Stringy Maps=.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+trait SPrimitive[V] {
+  // e.g. Int => java.lang.Integer
+  def toValue(v: V): AnyRef
+  def fromValue(v: AnyRef): V
+}
+#+END_SRC
+
+- Exercise 1.1: derive =BigDataFormat= for sealed traits.
+
+-----
+
+#+BEGIN_NOTES
+A follow up exercise is to support the concept of identity for the implementations of the sealed traits.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+trait BigDataFormatId[T, P] {
+  def key: String
+  def value(t: T): P
+}
+#+END_SRC
+
+- Exercise 1.2: define identity constraints using singleton types.
+
+** Customise =JsonFormat=
+
+#+BEGIN_NOTES
+So far we've developed a simple JSON format deriver, but in reality people want to have much more control over it. So, starting with what we've covered in this presentation, add the following features:
+#+END_NOTES
+
+- Exercise 3.1: customise product field names
+- Exercise 3.2: customise coproduct (flat vs nested)
+- Exercise 3.3: customise handling of =null= and =Option=
+- Exercise 3.4: handle default values on products
+
+** Go!
+
+#+BEGIN_HTML
+<script type="text/javascript">
+document.getElementById('go').setAttribute("data-background-image", "./images/brucelee-kick.jpg");
+</script>
+#+END_HTML
+
+* More Goodies
+** everywhere
+
+#+BEGIN_NOTES
+Before we wrap up, I wanted to talk about a couple of things that I use all the time. The first is the application of polymorphic functions.
+
+A polymorphic function is one that can act on a polymorphic type, like a collection.
+
+This standard example shows a function that takes Sets and returns Options, regardless of what the contained type is:
+#+END_NOTES
+
+#+BEGIN_SRC scala
+import poly._
+
+object choose extends (Set ~> Option) {
+  def apply[T](s : Set[T]) = s.headOption
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_SRC
+scala> choose(Set(1, 2, 3))
+res0: Option[Int] = Some(1)
+
+scala> choose(Set('a', 'b', 'c'))
+res1: Option[Char] = Some(a)
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+For the example we've just seen, there are probably other ways of doing it so lets look at something that we can't do easily otherwise.
+
+In ENSIME, we have to canonicalize [sic] all the =File= instances that we receive over the wire, or the scala compiler can get confused.
+
+We achieved this by defining a polymorphic function that acts on =File= (and its subtypes).
+#+END_NOTES
+
+#+BEGIN_SRC scala
+object Canon extends Poly1 {
+  implicit def caseFile[F <: File] = at[F](_.getCanonicalFile)
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+The crazy thing is that this then works on case classes and sealed traits which contain =File= fields...
+#+END_NOTES
+
+#+BEGIN_SRC scala
+everywhere(Canon)(List(new File(".."))) // List(File("/home"))
+#+END_SRC
+
+** A better enum
+
+#+BEGIN_NOTES
+Another thing I've used a lot is the typesafe enum pattern.
+
+Contrast to the scala standard library approach:
+#+END_NOTES
+
+#+BEGIN_SRC scala
+// the old way!
+object WeekDay extends Enumeration {
+  type WeekDay = Value
+  val Mon, Tue, Wed, Thu, Fri, Sat, Sun = Value
+}
+
+def isWeekend(d: WeekDay) = d match {
+  case Sat | Sun => true
+  // Oops! Missing case ... still compiles
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+We can get all value implementations of a sealed trait via this =values= method which passes out to the shapeless magic of =Values= if we use variations on this pattern.
+
+The big advantage vs alternatives is that the compiler knows about the instances and will ensure that we've captured everything when we do pattern matches.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+// the new way!
+sealed trait WeekDay
+object WeekDay {
+  val Mon, Tue, Wed, Thu, Fri, Sat, Sun = new WeekDay {}
+  val values: Set[WeekDay] = Values
+}
+
+def isWeekend(d: WeekDay) = d match {
+  case Sat | Sun => true
+  case _         => false // compiler checks for this
+}
+#+END_SRC
+
+. . .
+
+=Values= is in =shapeless/examples/enum.scala=
+
+** Tags
+
+#+BEGIN_NOTES
+This last thing I'm going to show is something very simple that helps me out when dealing with legacy codebases that are full of Stringly typed methods.
+
+We only need to import a very minimal amount of shapeless functionality and we define =traits= and then =tag= them to variables of the same name.
+#+END_NOTES
+
+#+BEGIN_SRC scala
+import shapeless.tag, tag.@@
+
+trait First
+val First = tag[First]
+
+trait Last
+val Last = tag[Last]
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+Now we can use this "tagging" notation on solid parameter types.
+#+END_NOTES
+
+
+#+BEGIN_SRC scala
+def hello(first: String @@ First, last: String @@ Last) = {
+  println(s"hello $first $last")
+  println(s"${first.getClass} ${first.getClass}")
+}
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+which means we'll get a compile time failure if don't use the correct types.
+#+END_NOTES
+
+
+#+BEGIN_SRC scala
+hello("Bruce", "Lee") // ZZZZZWAP!
+#+END_SRC
+
+. . .
+
+#+BEGIN_NOTES
+this is how we create tagged =String= instances, it looks just like we're instantiating value classes, but this is purely compile time.
+
+At runtime, the types are =String=!
+#+END_NOTES
+
+#+BEGIN_SRC scala
+val first = First("Bruce")
+val last = Last("Lee")
+
+hello(first, last)
+// hello Bruce Lee
+// class java.lang.String class java.lang.String
+#+END_SRC
+
+** More...
+
+https://github.com/milessabin/shapeless/tree/shapeless-2.2.5/examples/
+
+* Thank you!
+
+** Bottle
+
+#+BEGIN_NOTES
+What was that about fitting into a bottle?
+#+END_NOTES
+
+#+BEGIN_HTML
+<script type="text/javascript">
+document.getElementById('bottle').setAttribute("data-background-image", "./images/bottles.jpg");
+</script>
+#+END_HTML
+

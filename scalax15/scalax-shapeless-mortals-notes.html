@@ -1,0 +1,1065 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Sam Halliday" />
+  <title>Shapeless for Mortals</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { font-weight: bold; } /* Keyword */
+code > span.dt { color: #800000; } /* DataType */
+code > span.dv { color: #0000ff; } /* DecVal */
+code > span.bn { color: #0000ff; } /* BaseN */
+code > span.fl { color: #800080; } /* Float */
+code > span.ch { color: #ff00ff; } /* Char */
+code > span.st { color: #dd0000; } /* String */
+code > span.co { color: #808080; font-style: italic; } /* Comment */
+code > span.al { color: #00ff00; font-weight: bold; } /* Alert */
+code > span.fu { color: #000080; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #ff0000; font-weight: bold; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #ff00ff; } /* SpecialChar */
+code > span.vs { color: #dd0000; } /* VerbatimString */
+code > span.ss { color: #dd0000; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { } /* Variable */
+code > span.cf { } /* ControlFlow */
+code > span.op { } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { font-weight: bold; } /* Preprocessor */
+code > span.at { } /* Attribute */
+code > span.do { color: #808080; font-style: italic; } /* Documentation */
+code > span.an { color: #808080; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #808080; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Shapeless for Mortals</h1>
+<h2 class="author">Sam Halliday</h2>
+<h3 class="date">Scala eXchange 2015</h3>
+</div>
+<h1 id="introduction">Introduction</h1>
+<h2 id="sam-halliday-fommil">Sam Halliday <code>@fommil</code></h2>
+<div class="notes">
+<p>I am really an applied mathematician by training, this software thing is really just a hobby that pays the bills.</p>
+<p>Before the crash, I did industrial research in digital signal processing, multi-high-dimensional optimisation, quantum mechanics, machine learning and a bunch of other stuff that I could just talk about forever.</p>
+<p>I’m really into Free or Libre education and software. When I was a student in Cape Town I was one of the founders of an initiative that eventually became Siyavula and has printed 5 million Free textbooks to students in South Africa.</p>
+<p>I’m a fellow of the Free Software Foundation. I believe they do really great things and I’d encourage you to join up even if you don’t believe in the GPL. They are doing some great lobbying for all of us against legislation that seeks to undermine our right to use or write Free software, which includes the Apache 2.0 and BSD licenses.</p>
+<p>My most used free software project is <code>netlib-java</code>, which I spoke about at last year’s Scala eXchange. It’s included in the Spark Machine Learning library.</p>
+<p>But my favourite project is ENSIME, which is an alternative development environment to Eclipse and IntelliJ for Scala and now Java.</p>
+</div>
+<ul>
+<li>Chartered Mathematician
+<ul>
+<li>DSP, optimisation, quantum, machine learning, etc</li>
+</ul></li>
+<li>Free (Libre) Education and Software
+<ul>
+<li>5mil textbooks in South Africa (Siyavula)</li>
+<li>FSF Fellow (they fight for BSD / Apache too!)</li>
+<li><code>netlib-java</code> (underpinning Spark ML)</li>
+<li>ENSIME core developer</li>
+</ul></li>
+</ul>
+<h2 id="raise-your-hand-if">Raise your hand if…</h2>
+<div class="notes">
+<p>Enough about me, I’d like to know more about you. So if we could have a show of hands and shout out any thoughts if…</p>
+<p>You use ENSIME? Oh nice, you know we have a hack day tomorrow so please come and join us and make it better.</p>
+<p>You have knowingly used the type class pattern. I say knowingly because you have probably all used it, but if you’re not up on the lingo you might not know that you’ve used it.</p>
+<p>You have used shapeless. And I don’t mean including it as a transitive dependency, I mean if you have actually written something with Shapeless. How advanced was it?</p>
+<p>Do you understand this quote? Well, fear not Mere Mortal, this talk is for you!</p>
+</div>
+<ul>
+<li>you use ENSIME
+<ul>
+<li>hack day tomorrow!</li>
+</ul></li>
+<li>you have knowingly used the type class pattern</li>
+<li>you have used Shapeless
+<ul>
+<li>experienced users, see me after class</li>
+</ul></li>
+<li>you understand:
+<ul>
+<li>“<em>A free monad is a free object relative to a forgetful functor whose domain is a category of minds.</em>”</li>
+<li><strong>Mere Mortal</strong>, this talk is for you!</li>
+</ul></li>
+</ul>
+<h2 id="workshop-format">Workshop Format</h2>
+<div class="notes">
+<p>Just to be clear, this talk requires no shapeless experience. In fact, you don’t even need to know what a type class is.</p>
+<p>We’ll start by having a look at our example project, <code>spray-json-shapeless</code>. My first experience of Scala was manually creating marshallers for <code>spray-json</code> and I was really annoyed because Java has frameworks to automatically do this. So it was a real milestone for me to be able to write this library with Mile’s help, as it closed off a major complaint that I had.</p>
+<p>Then we’ll introduce the fundamentals of shapeless. We can’t possibly cover everything that it has to offer, but from here hopefully you’ll have the confidence to explore further into what it has to offer.</p>
+<p>Then we’re going to learn about some bugs in the scala compiler that are probably never going to get fixed in the mainline, but you could make a real difference by joining the Typelevel Scala initiative who have a vested interest in fixing these sorts of things.</p>
+<p>Then we’re going to look at how to write something like <code>spray-json-shapeless</code> from the ground up, and understand every step.</p>
+<p>There are going to be several exercises to choose from. If you haven’t already cloned the <code>shapeless-for-mortals</code> repository, I would suggest that you do so now because then we stand a chance of an <code>sbt updateClassifiers</code> being finished in about an hour. Please vote for sbt #1930 if you agree!</p>
+<p>The point of this exercise is so that you can build something <strong>useful</strong> when you go back to work on Monday. Shapeless is not just a toy library, generic programming is a real time saver.</p>
+<p>We’ll then discuss and compare our various solutions and if we have time, I’ll show you some of my other favourite bits of shapeless.</p>
+</div>
+<p><strong>No shapeless experience required</strong></p>
+<ol>
+<li>Running example: <code>spray-json</code>
+<ul>
+<li><a href="https://github.com/spray/spray-json" class="uri">https://github.com/spray/spray-json</a></li>
+<li><a href="https://github.com/fommil/spray-json-shapeless" class="uri">https://github.com/fommil/spray-json-shapeless</a></li>
+</ul></li>
+<li>Shapeless fundamentals</li>
+<li><code>scala-compiler</code> workarounds
+<ul>
+<li><a href="https://github.com/typelevel/scala" class="uri">https://github.com/typelevel/scala</a></li>
+</ul></li>
+<li><code>spray-json-shapeless</code> step by step</li>
+<li>Exercise!
+<ul>
+<li><a href="https://github.com/fommil/shapeless-for-mortals" class="uri">https://github.com/fommil/shapeless-for-mortals</a></li>
+</ul></li>
+<li>Discuss solutions</li>
+<li>More shapeless</li>
+</ol>
+<h1 id="running-example">Running Example</h1>
+<h2 id="spray-json">spray-json</h2>
+<div class="notes">
+<p>Maybe you are aware of the recent controversy surrounding JSON ASTs in the scala standard library. Well, here are the 8 core lines of code that <code>spray-json</code> uses to define its AST.</p>
+<p>The real AST is a little larger than this we’re not showing various convenience methods on the companions and suchlike.</p>
+<p>Importantly <code>JsValue</code> is a <code>sealed</code> trait, which means that all of its implementations are defined in this file and known at compile time, and those implementations are all <code>case class</code> or <code>case object</code>.</p>
+<p>It’s worth noting that this is what is called a <strong>recursive</strong> data structure: implementations can contain elements that are roots of tree. Looking just at the types, a <code>JsValue</code> could be infinitely nested although we know in practice that there are only so many nested =JsValue=s. We will see later that the compiler is not as convinced as we are!</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="co">// note &quot;sealed&quot;</span>
+<span class="kw">sealed</span> <span class="kw">abstract</span> <span class="kw">class</span> JsValue
+
+<span class="co">// note case classes or case objects</span>
+<span class="co">// note recursive types</span>
+<span class="kw">case</span> <span class="kw">class</span> <span class="fu">JsObject</span>(fields: Map[String, JsValue]) <span class="kw">extends</span> JsValue
+<span class="kw">case</span> <span class="kw">class</span> <span class="fu">JsArray</span>(elements: Vector[JsValue]) <span class="kw">extends</span> JsValue
+<span class="kw">case</span> <span class="kw">class</span> <span class="fu">JsString</span>(value: String) <span class="kw">extends</span> JsValue
+<span class="kw">case</span> <span class="kw">class</span> <span class="fu">JsNumber</span>(value: BigDecimal) <span class="kw">extends</span> JsValue
+
+<span class="kw">sealed</span> <span class="kw">trait</span> JsBoolean <span class="kw">extends</span> JsValue
+<span class="kw">case</span> <span class="kw">object</span> JsTrue <span class="kw">extends</span> JsBoolean
+<span class="kw">case</span> <span class="kw">object</span> JsFalse <span class="kw">extends</span> JsBoolean
+
+<span class="kw">case</span> <span class="kw">object</span> JsNull <span class="kw">extends</span> JsValue</code></pre></div>
+<h2 id="jsonformat">JsonFormat</h2>
+<div class="notes">
+<p>Again, I am paraphrasing (in reality this is split into two parts and the implicit classes don’t look exactly like this) but this is more or less what the formatting API looks like.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">@<span class="fu">implicitNotFound</span>(msg = <span class="st">&quot;Cannot find JsonFormat type class for ${T}&quot;</span>)
+<span class="kw">trait</span> JsonFormat[T] {
+  <span class="kw">def</span> <span class="fu">read</span>(json: JsValue): T
+  <span class="kw">def</span> <span class="fu">write</span>(obj: T): JsValue
+}
+
+<span class="kw">implicit</span> <span class="kw">class</span> EnrichedAny[T](any: T) {
+  <span class="kw">def</span> <span class="fu">toJson</span>(<span class="kw">implicit</span> f: JsonFormat[T]): JsValue = f.<span class="fu">write</span>(any)
+}
+
+<span class="kw">implicit</span> <span class="kw">class</span> <span class="fu">EnrichedJsValue</span>(v: JsValue) {
+  <span class="kw">def</span> convertTo[T](<span class="kw">implicit</span> f: JsonFormat[T]): T = f.<span class="fu">read</span>(v)
+}</code></pre></div>
+<h1 id="fundamentals">Fundamentals</h1>
+<h2 id="shapeless">Shapeless</h2>
+<script type="text/javascript">
+document.getElementById('shapeless').setAttribute("data-background-image", "./images/brucelee.jpg");
+</script>
+
+<div class="notes">
+<p><a href="https://upload.wikimedia.org/wikipedia/commons/c/cb/Hong_kong_bruce_lee_statue_2.jpg" class="uri">https://upload.wikimedia.org/wikipedia/commons/c/cb/Hong_kong_bruce_lee_statue_2.jpg</a></p>
+<p>As far as I am aware, this is the origin of the name shapeless.</p>
+</div>
+<p>“Empty your mind, be formless.<br />
+<strong>Shapeless</strong>, like water.<br />
+If you put water into a cup, it becomes the cup.<br />
+If you put water into a bottle, it becomes the bottle.<br />
+If you put water into a teapot, it becomes the teapot.<br />
+Water can flow and it can crash.<br />
+Become like water my friend.&quot;<br />
+– Bruce Lee</p>
+<h2 id="warning-idealised">WARNING: Idealised</h2>
+<div class="notes">
+<p>Before we start, this is a disclaimer. For this entire section, we’re going to write some code that just simply doesn’t compile because of bugs or non-obvious limitations in the scala compiler.</p>
+<p>For ten minutes, let’s pretend we’re running on the perfect TypeLevel compiler.</p>
+<p>Once we cover the basics, we’re going to revisit every lie and introduce the workarounds.</p>
+<p>I know its a weird way to do it, but I want you to get generic programming first, and then the implementation details later.</p>
+</div>
+<ul>
+<li>some code does <strong>not</strong> compile</li>
+<li>bugs / limitations of <code>scala-compiler</code></li>
+<li>for 10 mins, we’re running TypeLevel <code>scalac</code> 3.0</li>
+<li>coming next: workarounds</li>
+</ul>
+<p>. . .</p>
+<div class="notes">
+<p>And for everything that you’re going to see from here, we’re using these global import rules.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">
+<span class="kw">import</span> shapeless.<span class="fu">_</span>, labelled.<span class="fu">_</span>, syntax.<span class="fu">singleton</span>.<span class="fu">_</span>
+</code></pre></div>
+<h2 id="type-classes">Type Classes</h2>
+<div class="notes">
+<p>What is a typeclass?</p>
+<p>We’ve already seen a typeclass, its just a trait that has a type parameter. In the typeclass pattern, we call this the interface.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> JsonFormat[T] {
+  <span class="kw">def</span> <span class="fu">read</span>(json: JsValue): T
+  <span class="kw">def</span> <span class="fu">write</span>(obj: T): JsValue
+}</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>And specific implementations are, unsurprisingly, known as implementations. Typically there is only one implementation for each type. Here we can see an implementation for <code>String</code>. Although, hopefully the potential for mocking during testing is obvious.</p>
+<p>Its worth noting that <code>spray-json</code> throws exceptions in the case of failure, e.g. if the JSON is the wrong shape, which is possible because there is no validation of the JSON. This is actually bad practice, primarily because of the performance overhead — it’s quite costly to generate an exception. It would have been higher performance if the type signature of read was to return an <code>Either</code>.</p>
+<p>The biggest practical benefit of the typeclass pattern, as I see it, is that the implementation for a type is kept separate from the type’s source code. This is particularly important for objects that you do not own, like standard library objects, but it also helps you to keep your own domain model extremely clean.</p>
+<p>Since I’ve started writing Scala, without a doubt the best thing I’ve ever done in a codebase was to put the domain model — the messages in and out of the system — into a single file of sealed traits and case classes. That file becomes the public API, it is heavily documented and discussed / agreed with the downstream consumers and the business / data modellers. It is extremely valuable for everybody involved to have a <strong>codex</strong>.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">object</span> StringJsonFormat <span class="kw">extends</span> JsonFormat[String] {
+  <span class="kw">def</span> <span class="fu">read</span>(value: JsValue) = value <span class="kw">match</span> {
+    <span class="kw">case</span> <span class="fu">JsString</span>(x) =&gt; x
+    <span class="kw">case</span> other =&gt; <span class="kw">throw</span> <span class="kw">new</span> <span class="fu">DeserializationError</span>(other) <span class="co">// sic</span>
+  } <span class="co">// Either[String, T]</span>
+  <span class="kw">def</span> <span class="fu">write</span>(x: String) = <span class="fu">JsString</span>(x)
+}</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>And then we have the optional “syntax”, which is really just style. Some people don’t like using the implicit syntax.</p>
+<p>Importantly, if the <code>implicit class</code> <code>extends AnyVal</code> then there is no runtime performance overhead to using the enriched syntax. But it may slow down your compiles a little bit.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">class</span> EnrichedAny[T](<span class="kw">val</span> any: T) <span class="kw">extends</span> AnyVal {
+  <span class="kw">def</span> <span class="fu">toJson</span>(<span class="kw">implicit</span> f: JsonFormat[T]): JsValue = f.<span class="fu">write</span>(any)
+}
+
+<span class="kw">implicit</span> <span class="kw">class</span> <span class="fu">EnrichedJsValue</span>(<span class="kw">val</span> v: JsValue) <span class="kw">extends</span> AnyVal {
+  <span class="kw">def</span> convertTo[T](<span class="kw">implicit</span> f: JsonFormat[T]): T = f.<span class="fu">read</span>(v)
+}</code></pre></div>
+<h2 id="singleton-types">Singleton Types</h2>
+<div class="notes">
+<p>You’ve probably heard of “the typelevel”, well what is meant by that is that things are done with types instead of values.</p>
+<p>Shapeless introduces the concept of a singleton type, which is like a bridge between <strong>constant</strong> values and types. The scala compiler has supported this for a long time internally, but there is no syntactic way to get at it without shapeless (or your own macro / compiler plugin).</p>
+<p>In these examples, we create primitive values and <em>narrow</em> them. The type of the value is a subtype of the original value, but it is refined with a singleton instance of the type. So <code>42</code> has a type that is loosely “the 42nd Int”.</p>
+<p>All these narrowings get erased at runtime, which is why we’re allowed to talk about subtypes of types that are explicitly <code>final</code> or primitive in the Java standard library.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="st">&quot;bar&quot;</span>.<span class="fu">narrow</span> : String(<span class="st">&quot;bar&quot;</span>) <span class="co">// &lt;: String</span>
+<span class="fl">42.</span>narrow    : Int(<span class="dv">42</span>)       <span class="co">// &lt;: Int</span>
+&#39;foo.<span class="fu">narrow</span>  : Symbol(&#39;foo)  <span class="co">// &lt;: Symbol</span>
+<span class="kw">true</span>.<span class="fu">narrow</span>  : Boolean(<span class="kw">true</span>) <span class="co">// &lt;: Boolean</span></code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>Incidentally, you already know what this concept is.</p>
+<p>Think about <code>objects</code> , like the empty List <code>Nil</code>. Their singleton type is just their own type.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">Nil.<span class="fu">narrow</span>   : Nil.<span class="fu">type</span></code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>Shapeless also lets you assign a singleton type to a value with this “labelled” syntax. Here the “bar”, <code>42</code> and <code>true</code> are still String, Int and Boolean respectively, but their type also mixes in a singleton symbol.</p>
+<p>Actually, you don’t have to use <code>Symbol</code> on the left hand side, but it is the only thing we’re going to use for the remainder of the lesson.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">&#39;a -&gt;&gt; <span class="st">&quot;bar&quot;</span> : String  <span class="kw">with</span> KeyTag[Symbol(&#39;a), String]
+&#39;b -&gt;&gt; <span class="dv">42</span>    : Int     <span class="kw">with</span> KeyTag[Symbol(&#39;b), Int]
+&#39;c -&gt;&gt; <span class="kw">true</span>  : Boolean <span class="kw">with</span> KeyTag[Symbol(&#39;c), Boolean]</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>And it works the other way too, we can start from the typelevel and move to the value level. We do that via a <code>Witness</code>. If we have a witness for a singleton type in scope, we can grab it and ask for its value.</p>
+<p>Thankfully, shapeless creates witnesses for us automatically.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> foo    = implicitly[Witness[String(<span class="st">&quot;foo&quot;</span>)]].<span class="fu">value</span>  : String(<span class="st">&quot;foo&quot;</span>)
+<span class="kw">val</span> answer = implicitly[Witness[Int(<span class="dv">42</span>]]].<span class="fu">value</span>        : Int(<span class="dv">42</span>)</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>Using typelevel keys is so popular that there is a convenience method that uses the singleton type rather than the value to create a type called a <code>FieldType</code>, which is actually just a type alias to the <code>KeyTag</code> mixin above, but avoids the repetition.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">field[Symbol(&#39;a)](<span class="st">&quot;bar&quot;</span>) : FieldType[Symbol(&#39;a), String]  <span class="co">// &lt;: String</span>
+field[Symbol(&#39;b)](<span class="dv">42</span>)    : FieldType[Symbol(&#39;b), Int]     <span class="co">// &lt;: Int</span>
+field[Symbol(&#39;c)](<span class="kw">true</span>)  : FieldType[Symbol(&#39;c), Boolean] <span class="co">// &lt;: Boolean</span></code></pre></div>
+<h2 id="product-hlist">​ <del>Product</del> HList</h2>
+<div class="notes">
+<p>The name <code>Product</code> is already taken by the standard library, so shapeless uses the name <code>HList</code> instead, short for “heterogeneous list”.</p>
+<p>This is basically exactly the same data structure as a normal list, except each element type can be different and both the types of the elements and the size of the list are known at compile time.</p>
+<p>Here we have an instance of an <code>HList</code> with <code>String</code>, <code>Int</code> and <code>Boolean</code> elements, which has type <code>String :: Int :: Boolean :: HNil</code>. You’ll note that the type signature is extremely verbose, but contains everything that you’d want. The syntax for constructing the instance is almost identical to a normal <code>List</code>.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="st">&quot;hello&quot;</span> :: <span class="dv">13</span> :: <span class="kw">true</span> :: HNil
+                              : String :: Int :: Boolean :: HNil</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>We can have more complex data structures. Let’s say we have a data structure that is more like this, using the labelled values from the previous slide.</p>
+<p>This is now starting to look more like the contents of a case class, right?</p>
+<p>It’s also a subtype of the unlabelled <code>HList</code> above.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">(&#39;a -&gt;&gt; <span class="st">&quot;hello&quot;</span>) :: (&#39;b -&gt;&gt; <span class="dv">13</span>) :: (&#39;c -&gt;&gt; <span class="kw">true</span>) :: HNil
+                              : FieldType[Symbol(&#39;a), String] ::
+                                FieldType[Symbol(&#39;b), Int] ::
+                                FieldType[Symbol(&#39;c), Boolean] ::
+                                HNil
+                          <span class="co">// &lt;: String :: Int :: Boolean :: HNil</span></code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>Our <code>HList</code> is the water that becomes the teapot…</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Teapot</span>(a: String, b: Int, c: Boolean)</code></pre></div>
+<hr />
+<div class="notes">
+<p>Let’s do something useful. Let’s write a <code>spray-json</code> marshaller for <strong>all</strong> <code>HLists</code> of <code>FieldType</code>. Completely independent of shape, the <code>HList</code> is our teapot and we are becoming the teapot.</p>
+<p>We’ll start with the empty HList, <code>HNil</code>, because we’ll need it later. Let’s make it implicit so that we don’t need to pass it explicitly when needed.</p>
+<p>We could do some validation here if we wanted, to make sure that the <code>JsValue</code> is empty, but here we’re deciding that we’re ignoring irrelevant information.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">object</span> HNilFormat <span class="kw">extends</span> JsonFormat[HNil] {
+  <span class="kw">def</span> <span class="fu">read</span>(j: JsValue) = HNil
+  <span class="kw">def</span> <span class="fu">write</span>(n: HNil) = <span class="fu">JsObject</span>()
+}</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>This is starting to look scary. So lets break it down. We’ll start with the type parameters, we’re defining three types here: <code>Key</code> is the singleton symbol part of the head of the <code>HList</code> with corresponding <code>Value</code>. The <code>Remaining</code> type is an <code>HList</code> for the tail.</p>
+<p>In the implicit parameter list we’re saying that we’d like the compiler to provide us with the key (a witness is a mechanism to resolve singletons, i.e. this exact symbol), the <code>JsonFormat</code> for the head value, and a <code>JsonFormat</code> for the tail.</p>
+<p>We then declare that we can return a <code>JsonFormat</code> for the full <code>HList</code>.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">def</span> hListFormat[Key &lt;: Symbol, Value, Remaining &lt;: HList](
+  <span class="kw">implicit</span>
+  key: Witness[Key],
+  jfh: JsonFormat[Value],
+  jft: JsonFormat[Remaining]
+): JsonFormat[FieldType[Key, Value] :: Remaining] = <span class="kw">new</span> JsonFormat {</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>The rest is just simple machinery, but I hope you’ll forgive me for some shortcuts in dealing with error conditions to keep the code simple.</p>
+<p>Firstly, we use the <code>JsonFormat</code> for the tail on the tail, expecting a <code>JsObject</code>. Then we simply append the key’s name and the rendered value.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">def</span> <span class="fu">write</span>(hlist: FieldType[Key, Value] :: Remaining) =
+    jft.<span class="fu">write</span>(hlist.<span class="fu">tail</span>).<span class="fu">asJsObject</span> :+
+      (key.<span class="fu">value</span>.<span class="fu">name</span> -&gt; jfh.<span class="fu">write</span>(hlist.<span class="fu">head</span>))</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>The reader is equally simple, we start by rendering the tail of the <code>HList</code> by simply passing through the entire <code>JsValue</code>. Then we use the key to get the value out of the JSON, and render it.</p>
+<p>We have to return an <code>HList</code> so we simply cat this <code>FieldType</code> onto the existing <code>HList</code> using this <code>field</code> syntax which takes the singleton <code>Key</code> type as a type parameter.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">def</span> <span class="fu">read</span>(json: JsValue) = {
+     <span class="kw">val</span> fields = json.<span class="fu">asJsObject</span>.<span class="fu">fields</span>
+     <span class="kw">val</span> head = jfh.<span class="fu">read</span>(<span class="fu">fields</span>(key.<span class="fu">value</span>.<span class="fu">name</span>))
+     <span class="kw">val</span> tail = jft.<span class="fu">read</span>(json)
+     field[Key](head) :: tail
+  }
+}</code></pre></div>
+<hr />
+<div class="notes">
+<p>That’s it! We’ve done it. We’ve written a <code>JsonFormat</code> for <strong>all</strong> <code>HLists</code> of <code>FieldType</code>.</p>
+<p>Let’s take a look at an example, our teapot had this type, and we can now just <code>implicitly</code> derive a <code>JsonFormat</code>.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> f = implicitly[JsonFormat[
+          FieldType[Symbol(&#39;a), String] ::
+          FieldType[Symbol(&#39;b), Int] ::
+          FieldType[Symbol(&#39;c), Boolean] ::
+          HNil]]
+
+<span class="kw">val</span> teapot = (&#39;a -&gt;&gt; <span class="st">&quot;hello&quot;</span>) :: (&#39;b -&gt;&gt; <span class="dv">13</span>) :: (&#39;c -&gt;&gt; <span class="kw">true</span>) :: HNil
+<span class="kw">val</span> expected = <span class="st">&quot;{&#39;a&#39;: &#39;hello&#39;, &#39;b&#39;: 13, &#39;c&#39;: true}&quot;</span>.<span class="fu">parseJson</span>
+
+f.<span class="fu">write</span>(teapot) shouldBe expected
+f.<span class="fu">read</span>(expected) shouldBe teapot </code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>So how does implicit resolution work?</p>
+<p>When you ask for the implicit <code>JsonFormat</code> of the teapot’s <code>HList</code>.</p>
+<p>The typeclass for <code>String</code> is obtained, and the typeclass for the tail of the <code>HList</code>.</p>
+<p>Then the typeclass for <code>Int</code> is obtained, along with the increasingly smaller tail.</p>
+<p>Then finally the <code>Boolean</code> typeclass and the list terminator, <code>HNil</code>.</p>
+<p>So to build the typeclass for the entire teapot, 6 other typeclasses are derived and their references stored in the resulting object.</p>
+</div>
+<pre><code>=&gt; JsonFormat[String]
+ + JsonFormat[FieldType[Symbol(&#39;b), Int] ::
+              FieldType[Symbol(&#39;c), Boolean] ::
+              HNil]
+=&gt; JsonFormat[Int]
+ + JsonFormat[FieldType[Symbol(&#39;c), Boolean] ::
+              HNil]
+=&gt; JsonFormat[Boolean]
+ + JsonFormat[HNil]
+</code></pre>
+<h2 id="labelledgeneric">LabelledGeneric</h2>
+<div class="notes">
+<p>Well, that’s great if you rewrite your application to use <code>HList</code> everywhere, but in the real world people use <code>case class</code> a lot.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> hlist = (&#39;a -&gt;&gt; <span class="st">&quot;hello&quot;</span>) :: (&#39;b -&gt;&gt; <span class="dv">1</span>) :: (&#39;c -&gt;&gt; <span class="kw">true</span>) :: HNil</code></pre></div>
+<p>. . .</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">case</span> <span class="kw">class</span> <span class="fu">Teapot</span>(a: String, b: Int, c: Boolean)
+
+<span class="kw">val</span> teapot = <span class="fu">Teapot</span>(<span class="st">&quot;hello&quot;</span>, <span class="dv">1</span>, <span class="kw">true</span>)</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>Thankfully, those smart chaps at shapeless figured this would be the case and they created <code>LabelledGeneric</code> so that for any <code>case class</code> you can come up with, you can convert between them.</p>
+<p>The generic has a type field called <code>Repr</code> (short for representation) which gives us the equivalent <code>HList</code> type that we should now be familiar with.</p>
+<p>Remember that the type information is erased at runtime, so when you convert the <code>case class</code> into an <code>HList</code>, at runtime it will not have the labels… the labels are a purely compile time thing and are accessed via witnesses, like we seen earlier.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> generic = LabelledGeneric[Teapot]
+
+generic.<span class="fu">Repr</span> : FieldType[Symbol(&#39;a), String] ::
+               FieldType[Symbol(&#39;b), Int] ::
+               FieldType[Symbol(&#39;c), Boolean] ::
+               HNil
+
+generic.<span class="fu">from</span>(hlist) shouldBe teapot
+
+generic.<span class="fu">to</span>(teapot) shouldBe hlist</code></pre></div>
+<hr />
+<div class="notes">
+<p>This means we can trivially turn our <code>HList</code> marshaller into a <code>case class</code> marshaller!</p>
+<p>Just for fun, I’ve introduced another neat feature of shapeless. Even if you don’t use any of this type class derivation, I would encourage you to start using <code>Typeable</code>. It’s a very simple thing, shapeless always makes one available if you ask for it and all it does is give you a way of getting the name of the compile-time type. Here, we’re using it to log out when an instance of the <code>familyFormat</code> is instantiated. This can be useful for help track down what you need to cache for performance.</p>
+<p>All we do in the implementation is go from/to case classes and HLists, passing off to the <code>HList</code> implementation that we wrote earlier.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">def</span> familyFormat[T](
+  <span class="kw">implicit</span>
+  gen: LabelledGeneric[T],
+  sg: JsonFormat[T.<span class="fu">Repr</span>],
+  tpe: Typeable[T]
+): JsonFormat[T] = <span class="kw">new</span> JsonFormat[T] {
+  <span class="kw">if</span> (log.<span class="fu">isTraceEnabled</span>)
+    log.<span class="fu">trace</span>(s<span class="st">&quot;creating ${tpe.describe}&quot;</span>)
+
+  <span class="kw">def</span> <span class="fu">read</span>(j: JsValue): T = gen.<span class="fu">from</span>(sg.<span class="fu">read</span>(j))
+  <span class="kw">def</span> <span class="fu">write</span>(t: T): JsValue = sg.<span class="fu">write</span>(gen.<span class="fu">to</span>(t))
+}</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>And speaking of caching, we can use another little shapeless feature called <code>cachedImplicit</code> to obtain and cache an implicit value, thereby avoiding needless object creation. Otherwise, this method is called, and all its dependencies calculated afresh, every time it is invoked.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">val</span> TeapotJsonFormat: JsonFormat[Teapot] = cachedImplicit
+
+teapot.<span class="fu">toJson</span> <span class="co">// {&quot;a&quot;: &quot;hello&quot;, &quot;b&quot;: 1, &quot;c&quot;: true}</span></code></pre></div>
+<h2 id="cohlist-coproduct">​ <del>CoHList</del> Coproduct</h2>
+<div class="notes">
+<p>But that’s not all that <code>LabelledGeneric</code> can do, it also works for sealed traits…</p>
+<p>Here we create a simple sealed trait with two implementations. Remember that sealing a trait means that all the implementations are known at compile time.</p>
+<p>And if we ask for the <code>LabelledGeneric</code> for the sealed trait, we get this new thing that we’ve not seen before.</p>
+<p>Instead of being an <code>HList</code> this is a <code>Coproduct</code>, with the terminating element being <code>CNil</code> and the cons operator of <code>:+:</code>.</p>
+<p>Coproducts are mutually exclusive, only one of the elements is going to be present at runtime. It’s basically a generalised <code>Either</code>.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> Receptacle
+<span class="kw">case</span> <span class="kw">class</span> <span class="fu">Glass</span>(a: String) <span class="kw">extends</span> Receptacle
+<span class="kw">case</span> <span class="kw">class</span> <span class="fu">Bottle</span>(a: Int) <span class="kw">extends</span> Receptacle
+<span class="kw">case</span> <span class="kw">class</span> <span class="fu">Teapot</span>(a: Boolean) <span class="kw">extends</span> Receptacle
+
+<span class="kw">val</span> generic = LabelledGeneric[Receptacle]
+generic.<span class="fu">Repr</span>: FieldType[Symbol(&#39;Glass),   Glass] :+:
+              FieldType[Symbol(&#39;Bottle), Bottle] :+:
+              FieldType[Symbol(&#39;Teapot), Teapot] :+:
+              CNil</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>The way <code>Coproduct</code> is implemented is like this, we have the terminating <code>CNil</code> and then the cons cells which either contain a value or don’t, instead deferring to their tail.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> Coproduct
+<span class="kw">sealed</span> <span class="kw">trait</span> CNil <span class="kw">extends</span> Coproduct
+<span class="kw">sealed</span> <span class="kw">trait</span> :+:[+H, +T &lt;: Coproduct] <span class="kw">extends</span> Coproduct
+<span class="kw">final</span> <span class="kw">case</span> <span class="kw">class</span> Inl[+H, +T &lt;: Coproduct](head : H) <span class="kw">extends</span> :+:[H, T]
+<span class="kw">final</span> <span class="kw">case</span> <span class="kw">class</span> Inr[+H, +T &lt;: Coproduct](tail : T) <span class="kw">extends</span> :+:[H, T]</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>You wouldn’t typically explicitly create a <code>Coproduct</code> yourself, you would have some instance of a sealed trait and then you would convert it into the generic form. Once in the generic form, we can then pattern match each cell.</p>
+<p>Note that as soon as you hit a <code>head</code> element, that’s it… there is nothing else to do. In fact, this is how uniqueness is guaranteed (although there is no type guarantee that there is an <code>Inl</code>, just that there is not more than one).</p>
+<p>Here we define a simple method that prints out any <code>Coproduct</code> as an S-Expression.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">show</span>(o: Coproduct): String = o <span class="kw">match</span> {
+  <span class="kw">case</span> <span class="fu">Inl</span>(head) =&gt; <span class="st">&quot;</span><span class="ch">\&quot;</span><span class="st">&quot;</span> + head + <span class="st">&quot;</span><span class="ch">\&quot;</span><span class="st">&quot;</span>
+  <span class="kw">case</span> <span class="fu">Inr</span>(tail) =&gt; <span class="st">&quot;(nil . &quot;</span> + <span class="fu">show</span>(tail) + <span class="st">&quot;)&quot;</span>
+}
+
+<span class="fu">show</span>(generic.<span class="fu">to</span>(<span class="fu">Glass</span>(<span class="st">&quot;foo&quot;</span>))) <span class="co">// &quot;Glass(foo)&quot;</span>
+<span class="fu">show</span>(generic.<span class="fu">to</span>(<span class="fu">Bottle</span>(<span class="dv">99</span>)))   <span class="co">// (nil . &quot;Bottle(99)&quot;)</span>
+<span class="fu">show</span>(generic.<span class="fu">to</span>(<span class="fu">Teapot</span>(<span class="kw">true</span>))) <span class="co">// (nil . (nil . &quot;Teapot(true)&quot;))</span></code></pre></div>
+<hr />
+<div class="notes">
+<p>So lets get back to business and extend our JSON marshaller so that it can handle sealed traits! Bizarrely we have to start with something that is never called, which is the <code>CNil</code> terminator.</p>
+<p>The reason this is never called is because we never actually get to the end of non-empty <code>Coproducts</code>, it’ll always terminate somewhere. However, the definition of the types certainly makes it look like its needed, so we have to provide one.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">object</span> CNilFormat <span class="kw">extends</span> JsonFormat[CNil] {
+  <span class="kw">def</span> <span class="fu">read</span>(j: JsValue) = <span class="kw">throw</span> <span class="kw">new</span> GuruMeditationFailure
+  <span class="kw">def</span> <span class="fu">write</span>(n: CNil)   = <span class="kw">throw</span> <span class="kw">new</span> GuruMeditationFailure
+}</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>Again, we’ll go through this bit at a time, starting with the scary type signature.</p>
+<p>The most important thing here is that we’re returning a <code>JsonFormat</code> for the coproduct of the Head, which has a head that is a FieldType, so it has value Head and key Name (a singleton type). We require the formatter for the head instance, and also one for the tail (which will be provided by another call to this method but with different type parameters).</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">def</span> coproductFormat[Name &lt;: Symbol, Head, Tail &lt;: Coproduct](
+  <span class="kw">implicit</span>
+  key: Witness[Name],
+  jfh: JsonFormat[Head],
+  jft: JsonFormat[Tail]
+): JsonFormat[FieldType[Name, Head] :+: Tail] = <span class="kw">new</span> JsonFormat {</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>For reading, we first turn the JSON object into a key/value map and get the value in the “type” field. If it matches the instance that we’re creating, then we unmarshal in as an <code>Head</code>, otherwise we pass it through to the next formatter.</p>
+<p>This is kind of weird, we’re not reading the type from the JSON and immediately deciding what to do with it, we’re letting one of the many Coproduct implementations to declare “I can handle this!”.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">def</span> <span class="fu">read</span>(j: JsValue) =
+    <span class="kw">if</span> (j.<span class="fu">asJsObject</span>.<span class="fu">fields</span>(<span class="st">&quot;type&quot;</span>) == <span class="fu">JsString</span>(key.<span class="fu">value</span>.<span class="fu">name</span>))
+      <span class="fu">Inl</span>(field[Name](jfh.<span class="fu">read</span>(j)))
+    <span class="kw">else</span>
+      <span class="fu">Inr</span>(jft.<span class="fu">read</span>(j))</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>And for the writing, we do much the same thing.</p>
+<p>This time we pattern match on <code>Inl</code> vs <code>Inr</code> as we seen earlier, using the head formatter if the instance is an <code>Inl</code>, otherwise passing it off to the tail.</p>
+<p>And that’s it!</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">  <span class="kw">def</span> <span class="fu">write</span>(lr: FieldType[Name, Head] :+: Tail) = lr <span class="kw">match</span> {
+    <span class="kw">case</span> <span class="fu">Inl</span>(found) =&gt;
+      jfh.<span class="fu">write</span>(found).<span class="fu">asJsObject</span> :+ (<span class="st">&quot;type&quot;</span> -&gt; <span class="fu">JsString</span>(key.<span class="fu">value</span>.<span class="fu">name</span>))
+
+    <span class="kw">case</span> <span class="fu">Inr</span>(tail) =&gt;
+      jft.<span class="fu">write</span>(tail)
+  }
+}</code></pre></div>
+<h2 id="shapeless-magic">✨ Shapeless Magic ✨</h2>
+<div class="notes">
+<p>Now we can do this kind of crazy stuff, using shapeless magic…</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="fu">Glass</span>(<span class="st">&quot;foo&quot;</span>).<span class="fu">toJson</span>  <span class="co">// { &quot;a&quot;:&quot;foo&quot; }</span>
+<span class="fu">Bottle</span>(<span class="dv">99</span>).<span class="fu">toJson</span>    <span class="co">// { &quot;a&quot;:99    }</span>
+<span class="fu">Teapot</span>(<span class="kw">true</span>).<span class="fu">toJson</span>  <span class="co">// { &quot;a&quot;:true  }</span>
+
+(<span class="fu">Glass</span>(<span class="st">&quot;foo&quot;</span>):Receptacle).<span class="fu">toJson</span> <span class="co">// { &quot;type&quot;:&quot;Glass&quot;,  &quot;a&quot;:&quot;foo&quot; }</span>
+(<span class="fu">Bottle</span>(<span class="dv">99</span>)  :Receptacle).<span class="fu">toJson</span> <span class="co">// { &quot;type&quot;:&quot;Bottle&quot;, &quot;a&quot;:99    }</span>
+(<span class="fu">Teapot</span>(<span class="kw">true</span>):Receptacle).<span class="fu">toJson</span> <span class="co">// { &quot;type&quot;:&quot;Teapot&quot;, &quot;a&quot;:true  }</span></code></pre></div>
+<h1 id="enter-the-dragon">Enter the Dragon</h1>
+<h2 id="singleton-symbols">Singleton Symbols</h2>
+<script type="text/javascript">
+document.getElementById('enter-the-dragon').setAttribute("data-background-image","./images/dragon.jpg");
+</script>
+
+<div class="notes">
+<p>Now we get to find out the horrible reality of the scala compiler’s limitations.</p>
+<p>First up, I lied to you about singleton types.</p>
+<p>If you type this, you’ll get a compile failure because the entire concept of singleton types is internal compiler detail and is not supported at the language level.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="st">&quot;bar&quot;</span>.<span class="fu">narrow</span> : String(<span class="st">&quot;bar&quot;</span>) <span class="co">// CRASH!</span>
+<span class="fl">42.</span>narrow    : Int(<span class="dv">42</span>)       <span class="co">// BANG!</span>
+<span class="kw">true</span>.<span class="fu">narrow</span>  : Boolean(<span class="kw">true</span>) <span class="co">// POWIE!</span></code></pre></div>
+<p>. . .</p>
+<pre><code>scala&gt; &quot;bar&quot;.narrow
+res0: String(&quot;bar&quot;) = bar
+
+scala&gt; 42.narrow
+res1: Int(42) = 42
+
+scala&gt; true.narrow
+res2: Boolean(true) = true
+</code></pre>
+<p>. . .</p>
+<div class="notes">
+<p>And worse, there isn’t even such a thing as a singleton symbol, they only exist for primitive types</p>
+</div>
+<pre><code>scala&gt; &#39;foo.narrow
+res3: Symbol with Tagged[String(&quot;foo&quot;)] = &#39;foo
+</code></pre>
+<p>. . .</p>
+<div class="notes">
+<p>Importantly, that means you can’t write this sort of thing.</p>
+</div>
+<pre><code>field[Symbol(&#39;a)](&quot;bar&quot;)  // KERPLOP!
+</code></pre>
+<p>. . .</p>
+<div class="notes">
+<p>The workaround is that you can construct the witness from the value, and then use its type and if it is the parameter to a method, you have to take an implicit witness object.</p>
+</div>
+<pre><code>implicit val a = Witness(&#39;a)
+scala&gt; field[a.T](&quot;bar&quot;)
+res4: FieldType[a.T,String] = bar
+</code></pre>
+<h2 id="hipster.aux-si-823">Hipster.Aux (SI-823)</h2>
+<div class="notes">
+<p>Turns out, this doesn’t compile.</p>
+<p>scalac doesn’t allow you to reference types in the same parameter block.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> A { <span class="kw">type</span> T }
+
+<span class="kw">def</span> <span class="fu">f</span>(a: A, t: a.<span class="fu">T</span>) = ...
+<span class="co">// parameter a must appear in a parameter list</span>
+<span class="co">// that precedes dependent parameter type a.T</span></code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>This is how you can fix it.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">f</span>(a: A)(t: a.<span class="fu">T</span>) = ...</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>But this is no use for implicit parameter blocks, because we can’t split them up.</p>
+<p>This is one of the features that Typelevel Scala plans to implement.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">f</span>(<span class="kw">implicit</span> a: A)(<span class="kw">implicit</span> t: a.<span class="fu">T</span>) = ... <span class="co">// THWAPP!</span>
+<span class="co">// TODO https://github.com/typelevel/scala/issues/8</span></code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>So shapeless introduces the <code>Aux</code> pattern to deal with this.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> Hipster[T] { <span class="kw">type</span> Repr }
+<span class="kw">object</span> Hipster {
+  <span class="kw">type</span> Aux[T, Repr0] = Hipster[T] { <span class="kw">type</span> Repr = Repr0 }
+}
+
+<span class="kw">def</span> f[T, Repr](<span class="kw">implicit</span> hip: Hipster.<span class="fu">Aux</span>[T, Repr]) = ...</code></pre></div>
+<hr />
+<div class="notes">
+<p>The implications for our JSON marshaller is that we have to change all the implicit parameters to use the <code>Aux</code> pattern</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">def</span> hListFormat[Key &lt;: Symbol, Value, Remaining &lt;: HList](
+  <span class="kw">implicit</span>
+  key: Witness.<span class="fu">Aux</span>[Key],
+  jfh: JsonFormat[Value],
+  jft: JsonFormat[Remaining]
+): JsonFormat[FieldType[Key, Value] :: Remaining] = ...</code></pre></div>
+<p>. . .</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">def</span> coproductFormat[Name &lt;: Symbol, Head, Tail &lt;: Coproduct](
+  <span class="kw">implicit</span>
+  key: Witness.<span class="fu">Aux</span>[Name],
+  jfh: JsonFormat[Head],
+  jft: JsonFormat[Tail]
+): JsonFormat[FieldType[Name, Head] :+: Tail] = ...</code></pre></div>
+<p>. . .</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">def</span> familyFormat[T, Repr](
+  <span class="kw">implicit</span>
+  gen: LabelledGeneric.<span class="fu">Aux</span>[T, Repr],
+  sg: JsonFormat[Repr],
+  tpe: Typeable[T]
+): JsonFormat[T] = ...</code></pre></div>
+<hr />
+<p>Hipster??</p>
+<div class="notes">
+<p>And where does the Hipster come from?</p>
+<p>Somebody posted this lovely code on livejournal, for which it was mocked thoroughly. It has since become an inside joke, of which I hope you are all now a part of.</p>
+<p>I have no idea what this code is doing, maybe my beard is not long enough.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> validate[F[_], G, H, V &lt;: HList, I &lt;: HList, M &lt;: HList, A &lt;: HList, R]
+  (g: G)(v: V)(<span class="kw">implicit</span>
+  hlG: FnHListerAux[G, A =&gt; R],
+  zip: ZipApplyAux[V, I, M],
+  mapped: MappedAux[A, F, M],
+  unH: FnUnHListerAux[I =&gt; F[R], H],
+  folder: LeftFolderAux[M, F[A =&gt; R], applier.<span class="fu">type</span>, F[HNil =&gt; R]],
+  appl: Applicative[F]
+) = <span class="fu">unH</span>((in: I) =&gt; <span class="fu">folder</span>(<span class="fu">zip</span>(v, in), <span class="fu">hlG</span>(g).<span class="fu">point</span>[F]).<span class="fu">map</span>(<span class="fu">_</span>(HNil)))</code></pre></div>
+<p><img src="./images/hipsteraux.png" alt="" /></p>
+<h2 id="higher-order-unification-si-2712">Higher Order Unification (SI-2712)</h2>
+<div class="notes">
+<p>The stock implementation of <code>JsonFormat</code> from Collection types is hand written and quite verbose. We can do better with shapeless.</p>
+<p>We’d ideally want to start writing the code like this. But we can’t because scala doesn’t have higher order unification.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">def</span> getTraversableformat[E, T &lt;: GenTraversable[E]]( <span class="co">// WHAMMM!!!</span>
+  <span class="kw">implicit</span>
+  cbf: CanBuildFrom[T, E, T],
+  ef:  JsonFormat[E]
+): JsonFormat[T] = ...</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>The “kindedness” of a type parameter restricts what it can be equated to. A no-param type such as <code>T</code> cannot be equated to a one-param type such as <code>T[E]</code>, etc.</p>
+</div>
+<ul>
+<li><code>T</code> has kind <code>★</code></li>
+<li><code>GenTraversable[E]</code> has kind <code>★→★</code></li>
+<li><code>scalac</code> can’t equate <code>★</code> to a <code>★→★</code></li>
+</ul>
+<p>. . .</p>
+<div class="notes">
+<p>There are several workarounds, all tedious. The most popular one involves a trick known as providing “evidence” and using the <code>&lt;:&lt;</code> infix type, which will be implicitly available if the left is a subtype of the right.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">import</span> scala.<span class="fu">language</span>.<span class="fu">higherKinds</span>
+
+<span class="kw">implicit</span> <span class="kw">def</span> genTraversableFormat[T[_], E](
+  <span class="kw">implicit</span>
+  evidence: T[E] &lt;:&lt; GenTraversable[E], <span class="co">// both of kind *-&gt;*</span>
+  cbf: CanBuildFrom[T[E], E, T[E]],
+  ef: JsonFormat[E]
+): JsonFormat[T[E]] = ...</code></pre></div>
+<hr />
+<div class="notes">
+<p>Just to let you know how much this impacts people, the ticket was accidentally closed and this was the response:</p>
+</div>
+<p><img src="./images/unification.png" alt="" /></p>
+<h2 id="implicit-resolution-recursion">Implicit Resolution: Recursion</h2>
+<div class="notes">
+<p>This simple data structure is recursive, in that the types of the parameters of a <code>Product</code> type (i.e. case classes) refers to <code>Coproduct</code> types (i.e. the sealed trait).</p>
+<p>Thinking from a purely type point of view, this data structure is potentially infinite.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> Tree
+<span class="kw">case</span> <span class="kw">class</span> <span class="fu">Branch</span>(left: Tree, right: Tree) <span class="kw">extends</span> Tree
+<span class="kw">case</span> <span class="kw">object</span> Leaf <span class="kw">extends</span> Tree</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>Lets create a toy typeclass, <code>Smell</code> and handcraft implementations. The recursion is now really obvious because <code>branchSmell</code> requires the output of <code>treeSmell</code> which requires the output of <code>branchSmell</code>.</p>
+<p>Basically, the implicit resolver just gives up because it decides not to investigate the infinite rabbit hole.</p>
+<p>The weird thing is that the rules for when the compiler “gives up” are not defined, its defined by the implementation of the scala compiler, so it’s hard to know exactly when you need to workaround this.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> Smell[T]
+
+<span class="kw">implicit</span> <span class="kw">def</span> leafSmell: Smell[Leaf] = ???
+
+<span class="co">// recursive</span>
+<span class="kw">implicit</span> <span class="kw">def</span> <span class="fu">treeSmell</span>(<span class="kw">implicit</span>
+  branch: Smell[Branch],
+  leaf: Smell[Leaf]): Smell[Tree] = ...
+<span class="kw">implicit</span> <span class="kw">def</span> <span class="fu">branchSmell</span>(<span class="kw">implicit</span>
+  tree: Smell[Tree]): Smell[Branch] = ...</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>The workaround is to introduce <code>Lazy</code> which effectively tells the compiler to try a little harder and is lazily loaded, so can be used recursively.</p>
+<p>To obtain the contents of a <code>Lazy</code> wrapped parameter, just call <code>value</code> on it.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">def</span> <span class="fu">treeSmell</span>(<span class="kw">implicit</span>
+  lazyBranch: Lazy[Smell[Branch]],
+  leaf: Smell[Leaf]): Smell[Tree] = {
+  <span class="kw">val</span> branch = lazyBranch.<span class="fu">value</span>
+  ...
+}
+<span class="kw">implicit</span> <span class="kw">def</span> <span class="fu">branchSmell</span>(<span class="kw">implicit</span>
+  lazyTree: Lazy[Smell[Tree]]): Smell[Branch] = {
+  <span class="kw">val</span> tree = lazyTree.<span class="fu">value</span>
+  ...
+}</code></pre></div>
+<hr />
+<div class="notes">
+<p>So how does this affect our implementation?</p>
+<p>Well everywhere there could be a recursive call, we have to use <code>Lazy</code></p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">def</span> hListFormat[Key &lt;: Symbol, Value, Remaining &lt;: HList](
+  <span class="kw">implicit</span>
+  key: Witness.<span class="fu">Aux</span>[Key],
+  lazyJfh: Lazy[JsonFormat[Value]],
+  lazyJft: Lazy[JsonFormat[Remaining]]
+): JsonFormat[FieldType[Key, Value] :: Remaining] = <span class="kw">new</span> JsonFormat {
+  <span class="kw">val</span> jfh = lazyJfh.<span class="fu">value</span>
+  <span class="kw">val</span> jft = lazyJft.<span class="fu">value</span>
+  ...
+}</code></pre></div>
+<p>. . .</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">def</span> coproductFormat[Name &lt;: Symbol, Head, Tail &lt;: Coproduct](
+  <span class="kw">implicit</span>
+  key: Witness.<span class="fu">Aux</span>[Name],
+  lazyJfh: Lazy[JsonFormat[Head]],
+  lazyJft: Lazy[JsonFormat[Tail]]
+): JsonFormat[FieldType[Name, Head] :+: Tail] = <span class="kw">new</span> JsonFormat {
+  <span class="kw">val</span> jfh = lazyJfh.<span class="fu">value</span>
+  <span class="kw">val</span> jft = lazyJft.<span class="fu">value</span>
+  ...
+}</code></pre></div>
+<p>. . .</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">def</span> familyFormat[T, Repr](
+  <span class="kw">implicit</span>
+  gen: LabelledGeneric.<span class="fu">Aux</span>[T, Repr],
+  lazySg: Lazy[JsonFormat[Repr]],
+  tpe: Typeable[T]
+): JsonFormat[T] = <span class="kw">new</span> JsonFormat {
+  <span class="kw">val</span> sg = lazySg.<span class="fu">value</span>
+}</code></pre></div>
+<hr />
+<div class="notes">
+<p>Also when asking for an implicit implementation of a <code>JsonFormat</code> we sometimes have to use <code>Lazy</code></p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="co">// a convenience for implicitly[Lazy[JsonFormat[T]]].value</span>
+<span class="co">// but also consider using shapeless&#39; cachedImplicit</span>
+<span class="kw">object</span> JsonFormat {
+  <span class="kw">def</span> apply[T](<span class="kw">implicit</span> f: Lazy[JsonFormat[T]]): JsonFormat[T] = f.<span class="fu">value</span>
+}</code></pre></div>
+<p>. . .</p>
+<p>Watch out for <code>Strict</code> by <code>@alxarchambault</code> (shapeless 3.0).</p>
+<h2 id="implicit-resolution-cycles">Implicit Resolution: Cycles</h2>
+<div class="notes">
+<p>Sometimes the implicit resolution just stops working, for no reason.</p>
+<p>The only way to fix it is by separating out your code into packages and never calling the derived code from a parent package.</p>
+</div>
+<p><strong>Always</strong></p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">package</span> com.<span class="fu">domain</span>.<span class="fu">api</span>
+<span class="kw">package</span> com.<span class="fu">domain</span>.<span class="fu">formats</span>
+<span class="kw">package</span> com.<span class="fu">domain</span>.<span class="fu">app</span></code></pre></div>
+<p><strong>Never</strong></p>
+<p>Use <code>com.domain.formats</code> from <code>com.domain</code></p>
+<h2 id="implicit-resolution-priority">Implicit Resolution: Priority</h2>
+<div class="notes">
+<p>The scala compiler is supposed to search for implicits using the following rules:</p>
+</div>
+<p>How it’s <strong>supposed</strong> to work:</p>
+<ul>
+<li><strong>Normal Scope</strong>
+<ul>
+<li>Local / outer / ancestors / package object / imports</li>
+</ul></li>
+<li><strong>Implicit Scope</strong>
+<ul>
+<li>Given parameter type</li>
+<li>Expected parameter type</li>
+<li>Type parameter (if there is one)</li>
+</ul></li>
+</ul>
+<hr />
+<p><strong>IMPLICIT RESOLUTION</strong></p>
+<p>How it <strong>actually</strong> works:</p>
+<p>. . .</p>
+<div class="notes">
+<p>Yup, basically the scalac code is the definition of how it works and sometimes it works the way you expect and sometimes it doesn’t.</p>
+<p>Apparently <code>dotty</code> is going to be far more rigorous.</p>
+</div>
+<p><img src="./images/bender.png" alt="" /></p>
+<hr />
+<div class="notes">
+<p>If we try our best to stick to these rules, it means we’ll put our <code>familyFormat</code> code into an object with this structure to try and make our family formats have lower priority than the ones in spray-json itself:</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> FamilyFormats <span class="kw">extends</span> LowPriorityFamilyFormats {
+  <span class="kw">this</span>: StandardFormats =&gt;
+}
+<span class="kw">object</span> FamilyFormats <span class="kw">extends</span> DefaultJsonProtocol <span class="kw">with</span> FamilyFormats
+
+<span class="kw">private</span>[sjs] <span class="kw">trait</span> LowPriorityFamilyFormats {
+  <span class="kw">this</span>: StandardFormats <span class="kw">with</span> FamilyFormats =&gt;
+  ...
+}</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>However, even though we’ve obliged the scala compiler’s rules, if we try to ask for the format for something like <code>Symbol</code> or <code>Either</code> we end up getting the shapeless magic version instead of the higher priority one defined by spray-json.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala">implicitly[JsonFormat[Symbol]]            <span class="co">// =&gt; familyFormat</span>
+implicitly[JsonFormat[Left[String, Int]]] <span class="co">// =&gt; familyFormat</span></code></pre></div>
+<hr />
+<div class="notes">
+<p>The workaround is for the end-user to have to override the spray-json implementation in their format code. I’ve tried to put this into the <code>FamilyFormats</code> object before, but it doesn’t work for some weird reason.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">package</span> brucelee.<span class="fu">api</span> {
+  <span class="kw">sealed</span> <span class="kw">trait</span> Receptacle
+  <span class="kw">case</span> <span class="kw">class</span> <span class="fu">Glass</span>(a: String) <span class="kw">extends</span> Receptacle
+  <span class="kw">case</span> <span class="kw">class</span> <span class="fu">Bottle</span>(a: Int) <span class="kw">extends</span> Receptacle
+  <span class="kw">case</span> <span class="kw">class</span> <span class="fu">Teapot</span>(a: Boolean) <span class="kw">extends</span> Receptacle
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">package</span> brucelee<span class="fu">.format</span> {
+  <span class="kw">object</span> MyFormats <span class="kw">extends</span> FamilyFormats {
+    <span class="kw">implicit</span> <span class="kw">override</span> <span class="kw">def</span> eitherFormat[A, B](<span class="kw">implicit</span>
+      a: JsonFormat[A],
+      b: JsonFormat[B]) = <span class="kw">super</span>.<span class="fu">eitherFormat</span>[A, B]
+    <span class="kw">implicit</span> <span class="kw">val</span> symbolFormat = SymbolJsonFormat
+
+    <span class="kw">implicit</span> <span class="kw">val</span> ReceptacleF: JsonFormat[Receptacle] = cachedImplicit
+  }
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">package</span> brucelee.<span class="fu">app</span> {
+  <span class="kw">import</span> spray.<span class="fu">json</span>.<span class="fu">_</span>
+  <span class="kw">import</span> brucelee<span class="fu">.format</span>.MyFormats.ReceptacleF
+
+  <span class="fu">Glass</span>(<span class="st">&quot;half&quot;</span>).<span class="fu">toJson</span>
+}</code></pre></div>
+<h2 id="crappy-errors">Crappy Errors</h2>
+<div class="notes">
+<p>Lets say we have a domain model like this</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">sealed</span> <span class="kw">trait</span> Dragon
+<span class="kw">case</span> <span class="kw">object</span> Chinese <span class="kw">extends</span> Dragon
+<span class="kw">case</span> <span class="kw">object</span> Japanese <span class="kw">extends</span> Dragon
+<span class="kw">case</span> <span class="kw">class</span> <span class="fu">Khmer</span>(heads: Seq[Head]) <span class="kw">extends</span> Dragon
+
+<span class="kw">class</span> Head</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">implicit</span> <span class="kw">val</span> DragonF: JsonFormat[Dragon] = cachedImplicit</code></pre></div>
+<p>. . .</p>
+<p>We want…</p>
+<pre><code>cannot find implicit for JsonFormat[Head]
+</code></pre>
+<p>. . .</p>
+<p>We get…</p>
+<pre><code>cannot find implicit for JsonFormat[Dragon]
+</code></pre>
+<h1 id="your-turn">Your Turn!</h1>
+<h2 id="practicalities">Practicalities</h2>
+<div class="notes">
+<p>Now we’re going to have the exercise part of the workshop, so you’ll either need to get your laptop out or pair with somebody who has a laptop.</p>
+<p>The exercises are in the <code>shapeless-for-mortals</code> repository but you also find it instructive to clone the <code>ensime-server</code> and <code>spray-json-shapeless</code> repositories.</p>
+</div>
+<ul>
+<li><a href="https://github.com/fommil/shapeless-for-mortals/" class="uri">https://github.com/fommil/shapeless-for-mortals/</a></li>
+<li><a href="https://github.com/ensime/ensime-server/" class="uri">https://github.com/ensime/ensime-server/</a></li>
+<li><a href="https://github.com/fommil/spray-json-shapeless/" class="uri">https://github.com/fommil/spray-json-shapeless/</a></li>
+</ul>
+<h2 id="stringy-map-for-big-data">Stringy Map for Big Data</h2>
+<div class="notes">
+<p>We’ve all seen this data structure before, it somehow manages to find its way into every large project and is almost impossible to remove.</p>
+<p>We’re going to try to add some type safety around it with shapeless.</p>
+</div>
+<p><code>java.util.HashMap[String, AnyRef]</code></p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">type</span> StringyMap = java.<span class="fu">util</span>.<span class="fu">HashMap</span>[String, AnyRef]
+<span class="kw">type</span> BigResult[T] = Either[String, T]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> BigDataFormat[T] {
+  <span class="kw">def</span> label: String
+  <span class="kw">def</span> <span class="fu">toProperties</span>(t: T): StringyMap
+  <span class="kw">def</span> <span class="fu">fromProperties</span>(m: StringyMap): BigResult[T]
+}</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>And just to make it really exciting, you can’t <strong>really</strong> put anything in the value of the stringy map, your values should only have typeclasses like this, which can turn them into java types that are really supported by the thing that consumes <code>Stringy Maps</code>.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> SPrimitive[V] {
+  <span class="co">// e.g. Int =&gt; java.lang.Integer</span>
+  <span class="kw">def</span> <span class="fu">toValue</span>(v: V): AnyRef
+  <span class="kw">def</span> <span class="fu">fromValue</span>(v: AnyRef): V
+}</code></pre></div>
+<ul>
+<li>Exercise 1.1: derive <code>BigDataFormat</code> for sealed traits.</li>
+</ul>
+<hr />
+<div class="notes">
+<p>A follow up exercise is to support the concept of identity for the implementations of the sealed traits.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">trait</span> BigDataFormatId[T, P] {
+  <span class="kw">def</span> key: String
+  <span class="kw">def</span> <span class="fu">value</span>(t: T): P
+}</code></pre></div>
+<ul>
+<li>Exercise 1.2: define identity constraints using singleton types.</li>
+</ul>
+<h2 id="customise-jsonformat">Customise <code>JsonFormat</code></h2>
+<div class="notes">
+<p>So far we’ve developed a simple JSON format deriver, but in reality people want to have much more control over it. So, starting with what we’ve covered in this presentation, add the following features:</p>
+</div>
+<ul>
+<li>Exercise 3.1: customise product field names</li>
+<li>Exercise 3.2: customise coproduct (flat vs nested)</li>
+<li>Exercise 3.3: customise handling of <code>null</code> and <code>Option</code></li>
+<li>Exercise 3.4: handle default values on products</li>
+</ul>
+<h2 id="go">Go!</h2>
+<script type="text/javascript">
+document.getElementById('go').setAttribute("data-background-image", "./images/brucelee-kick.jpg");
+</script>
+
+<h1 id="more-goodies">More Goodies</h1>
+<h2 id="everywhere">everywhere</h2>
+<div class="notes">
+<p>Before we wrap up, I wanted to talk about a couple of things that I use all the time. The first is the application of polymorphic functions.</p>
+<p>A polymorphic function is one that can act on a polymorphic type, like a collection.</p>
+<p>This standard example shows a function that takes Sets and returns Options, regardless of what the contained type is:</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">import</span> poly.<span class="fu">_</span>
+
+<span class="kw">object</span> choose <span class="kw">extends</span> (Set ~&gt; Option) {
+  <span class="kw">def</span> apply[T](s : Set[T]) = s.<span class="fu">headOption</span>
+}</code></pre></div>
+<p>. . .</p>
+<pre><code>scala&gt; choose(Set(1, 2, 3))
+res0: Option[Int] = Some(1)
+
+scala&gt; choose(Set(&#39;a&#39;, &#39;b&#39;, &#39;c&#39;))
+res1: Option[Char] = Some(a)
+</code></pre>
+<p>. . .</p>
+<div class="notes">
+<p>For the example we’ve just seen, there are probably other ways of doing it so lets look at something that we can’t do easily otherwise.</p>
+<p>In ENSIME, we have to canonicalize [sic] all the <code>File</code> instances that we receive over the wire, or the scala compiler can get confused.</p>
+<p>We achieved this by defining a polymorphic function that acts on <code>File</code> (and its subtypes).</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">object</span> Canon <span class="kw">extends</span> Poly1 {
+  <span class="kw">implicit</span> <span class="kw">def</span> caseFile[F &lt;: File] = at[F](_.<span class="fu">getCanonicalFile</span>)
+}</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>The crazy thing is that this then works on case classes and sealed traits which contain <code>File</code> fields…</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="fu">everywhere</span>(Canon)(List(<span class="kw">new</span> File(<span class="st">&quot;..&quot;</span>))) <span class="co">// List(File(&quot;/home&quot;))</span></code></pre></div>
+<h2 id="a-better-enum">A better enum</h2>
+<div class="notes">
+<p>Another thing I’ve used a lot is the typesafe enum pattern.</p>
+<p>Contrast to the scala standard library approach:</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="co">// the old way!</span>
+<span class="kw">object</span> WeekDay <span class="kw">extends</span> Enumeration {
+  <span class="kw">type</span> WeekDay = Value
+  <span class="kw">val</span> Mon, Tue, Wed, Thu, Fri, Sat, Sun = Value
+}
+
+<span class="kw">def</span> <span class="fu">isWeekend</span>(d: WeekDay) = d <span class="kw">match</span> {
+  <span class="kw">case</span> Sat | Sun =&gt; <span class="kw">true</span>
+  <span class="co">// Oops! Missing case ... still compiles</span>
+}</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>We can get all value implementations of a sealed trait via this <code>values</code> method which passes out to the shapeless magic of <code>Values</code> if we use variations on this pattern.</p>
+<p>The big advantage vs alternatives is that the compiler knows about the instances and will ensure that we’ve captured everything when we do pattern matches.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="co">// the new way!</span>
+<span class="kw">sealed</span> <span class="kw">trait</span> WeekDay
+<span class="kw">object</span> WeekDay {
+  <span class="kw">val</span> Mon, Tue, Wed, Thu, Fri, Sat, Sun = <span class="kw">new</span> WeekDay {}
+  <span class="kw">val</span> values: Set[WeekDay] = Values
+}
+
+<span class="kw">def</span> <span class="fu">isWeekend</span>(d: WeekDay) = d <span class="kw">match</span> {
+  <span class="kw">case</span> Sat | Sun =&gt; <span class="kw">true</span>
+  <span class="kw">case</span> _         =&gt; <span class="kw">false</span> <span class="co">// compiler checks for this</span>
+}</code></pre></div>
+<p>. . .</p>
+<p><code>Values</code> is in <code>shapeless/examples/enum.scala</code></p>
+<h2 id="tags">Tags</h2>
+<div class="notes">
+<p>This last thing I’m going to show is something very simple that helps me out when dealing with legacy codebases that are full of Stringly typed methods.</p>
+<p>We only need to import a very minimal amount of shapeless functionality and we define <code>traits</code> and then <code>tag</code> them to variables of the same name.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">import</span> shapeless.<span class="fu">tag</span>, tag.@@
+
+<span class="kw">trait</span> First
+<span class="kw">val</span> First = tag[First]
+
+<span class="kw">trait</span> Last
+<span class="kw">val</span> Last = tag[Last]</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>Now we can use this “tagging” notation on solid parameter types.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">def</span> <span class="fu">hello</span>(first: String @@ First, last: String @@ Last) = {
+  <span class="fu">println</span>(s<span class="st">&quot;hello $first $last&quot;</span>)
+  <span class="fu">println</span>(s<span class="st">&quot;${first.getClass} ${first.getClass}&quot;</span>)
+}</code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>which means we’ll get a compile time failure if don’t use the correct types.</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="fu">hello</span>(<span class="st">&quot;Bruce&quot;</span>, <span class="st">&quot;Lee&quot;</span>) <span class="co">// ZZZZZWAP!</span></code></pre></div>
+<p>. . .</p>
+<div class="notes">
+<p>this is how we create tagged <code>String</code> instances, it looks just like we’re instantiating value classes, but this is purely compile time.</p>
+<p>At runtime, the types are <code>String</code>!</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">val</span> first = <span class="fu">First</span>(<span class="st">&quot;Bruce&quot;</span>)
+<span class="kw">val</span> last = <span class="fu">Last</span>(<span class="st">&quot;Lee&quot;</span>)
+
+<span class="fu">hello</span>(first, last)
+<span class="co">// hello Bruce Lee</span>
+<span class="co">// class java.lang.String class java.lang.String</span></code></pre></div>
+<h2 id="more">More…</h2>
+<p><a href="https://github.com/milessabin/shapeless/tree/shapeless-2.2.5/examples/" class="uri">https://github.com/milessabin/shapeless/tree/shapeless-2.2.5/examples/</a></p>
+<h1 id="thank-you">Thank you!</h1>
+<h2 id="bottle">Bottle</h2>
+<div class="notes">
+<p>What was that about fitting into a bottle?</p>
+</div>
+<script type="text/javascript">
+document.getElementById('bottle').setAttribute("data-background-image", "./images/bottles.jpg");
+</script>
+  <script src="http://code.jquery.com/jquery-1.11.1.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    $("div").hide();
+    $("ul").hide();
+    $("ol").hide();
+    $("span").hide();
+    $("pre").hide();
+    $("code").hide();
+    $("table").hide();
+    $("video").hide();
+    $("img").hide();
+    $("a").hide();
+    $("p").hide();
+    $("#ensime_youtube").hide();
+
+    $(".notes").show();
+    $(".notes").find("*").show();
+  </script>
+</body>
+</html>

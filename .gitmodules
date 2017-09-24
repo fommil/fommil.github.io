@@ -4,3 +4,6 @@
 [submodule "scalax14/MathJax"]
 	path = scalax14/MathJax
 	url = https://github.com/mathjax/MathJax.git
+[submodule "scalax15/reveal.js"]
+	path = scalax15/reveal.js
+	url = https://github.com/hakimel/reveal.js

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+INPUT=scalax-shapeless-mortals.org
+TALK=scalax-shapeless-mortals-talk.html
+NOTES=scalax-shapeless-mortals-notes.html
+
+echo "creating $TALK"
+pandoc --standalone \
+       --smart \
+       --parse-raw \
+       --write=revealjs \
+       --slide-level=2 \
+       --incremental \
+       --variable theme:beige \
+       --variable width:1024 \
+       --variable height:768 \
+       --css overrides.css \
+       --from org \
+       --highlight-style=kate \
+       --output $TALK \
+       $INPUT
+
+# add this above to disable centering when space is a premium
+#        --variable center:false \
+
+echo "creating $NOTES"
+pandoc --standalone \
+       --smart \
+       --write=html \
+       --from org \
+       --highlight-style=kate \
+       --include-after-body=speaker-notes.js \
+       --output $NOTES \
+       $INPUT

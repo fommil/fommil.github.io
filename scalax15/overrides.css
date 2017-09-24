@@ -1,0 +1,51 @@
+/* https://groups.google.com/forum/#!topic/pandoc-discuss/W-Rjzonp8NU  */
+/* https://github.com/hakimel/reveal.js/issues/1237 */
+.reveal h1 {
+    font-size: 1.4em;
+    text-shadow: 2px 2px 8px white;
+}
+.reveal h2 { font-size: 1.2em; }
+.reveal h3 { font-size: 1.1em; }
+.reveal table {
+    font-size: large; /* reveal.js uses xx-large */
+    line-height:normal;
+    margin: 0px auto;
+}
+.reveal section img {
+    margin: 0px 0px;
+    border: 0px;
+    box-shadow: none;
+}
+.reveal blockquote {
+    text-align: justify;
+    box-shadow: none;
+    background: none;
+}
+.reveal pre code {
+    /** Annoyingly reveal.js sets these explicitly, overriding our pandoc theme */
+    background: white;
+    color: black;
+    min-width: 0px;
+}
+
+ol li {
+    /** This is just showing off. */
+    /*list-style-type: lower-greek;*/
+}
+
+ol li ul li {
+    list-style-type: none;
+}
+
+ul li ul li {
+    list-style-type: none;
+}
+
+#shapeless {
+    text-align: right;
+    text-shadow: 2px 2px 8px white;
+}
+
+#thank-you {
+    text-color: red;
+}
