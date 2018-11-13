@@ -1,0 +1,30 @@
+#!/bin/bash
+
+INPUT=scalaz-deriving.org
+TALK=index.html
+NOTES=notes.html
+
+echo "creating $TALK"
+pandoc --standalone \
+       --write=revealjs \
+       --incremental \
+       --slide-level=2 \
+       --include-before-body=copyright.html \
+       --variable revealjs-url:http://lab.hakim.se/reveal-js/ \
+       --variable theme:white \
+       --variable width:1024 \
+       --variable height:768 \
+       --css overrides.css \
+       --from org \
+       --highlight-style=kate \
+       --output $TALK \
+       $INPUT
+
+echo "creating $NOTES"
+pandoc --standalone \
+       --write=html \
+       --from org \
+       --highlight-style=kate \
+       --include-after-body=speaker-notes.js \
+       --output $NOTES \
+       $INPUT

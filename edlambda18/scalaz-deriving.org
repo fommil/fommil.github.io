@@ -1,0 +1,21 @@
+#+TITLE: Divide, conquer, choose, ap and alt... et Empera
+#+AUTHOR: Sam Halliday
+#+DATE: EdLambda 2018
+
+#+TODO: TODO | RESEARCH | NOTES | CHART | DIAGRAM | DRAWING | CODE | VIDEO
+
+* Introduction
+** Sam Halliday =@fommil=
+
+- Chartered Mathematician
+  - DSP, optimisation, quantum, machine learning, etc
+- Libre Education and Software
+  - 5mil textbooks in South Africa (Siyavula)
+  - FSF Fellow (they fight for BSD / Apache too!)
+  - Scala -> Haskell
+
+** Language Poll
+
+- Scala
+- Haskell
+- Other
