@@ -243,13 +243,10 @@ implicit def numericComplex[T: Numeric]: Numeric[Complex[T]] =
   - compiles go from 1 second to 1 minute
   - the most confusing code, ever
 
-** =scalaz-deriving=
-
-[[file:images/scalaz-deriving-base.png]]
-
+* =scalaz-deriving=
 -----
 
-[[file:images/scalaz-core-tree.png]]
+[[file:images/scalaz-deriving-base.png]]
 
 -----
 
