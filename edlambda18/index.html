@@ -356,93 +356,103 @@ code span.wa { color: #bf0303; } /* Warning */
 
 <div class="sourceCode" id="cb24"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">instance</span> <span class="dt">Contravariant</span> <span class="dt">Eq</span> <span class="kw">where</span></a>
 <a class="sourceLine" id="cb24-2" data-line-number="2"><span class="ot">  contramap ::</span> forall a b <span class="fu">.</span> (<span class="dt">Eq</span> a) <span class="ot">=&gt;</span> (b <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Eq</span> b</a></code></pre></div>
+</section><section id="with-a-language-extension" class="slide level2">
+<h2>with a language extension?</h2>
+<div class="sourceCode" id="cb25"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="ot">{-# LANGUAGE MoreConstraintKindsCowbell #-}</span></a>
+<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="ot">{-# LANGUAGE DerivingScalaz #-}</span></a>
+<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="ot">{-# LANGUAGE DerivingStrategies #-}</span></a>
+<a class="sourceLine" id="cb25-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb25-5" data-line-number="5"><span class="kw">instance</span> <span class="dt">Contravariant</span> <span class="dt">Eq</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb25-6" data-line-number="6"><span class="ot">  contramap ::</span> forall a b <span class="fu">.</span> (<span class="dt">Eq</span> a) <span class="ot">=&gt;</span> (b <span class="ot">-&gt;</span> a) <span class="ot">=&gt;</span> <span class="dt">Eq</span> b</a>
+<a class="sourceLine" id="cb25-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb25-8" data-line-number="8"><span class="kw">data</span> <span class="dt">Foo</span> <span class="fu">=</span> <span class="dt">Foo</span> <span class="dt">String</span> <span class="kw">deriving</span> scalaz (<span class="dt">Eq</span>)</a></code></pre></div>
 </section><section class="slide level2">
 
-<div class="sourceCode" id="cb25"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">trait</span> Default[A] { ... }</a>
-<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="kw">object</span> Default {</a>
-<a class="sourceLine" id="cb25-3" data-line-number="3">  <span class="kw">implicit</span> <span class="kw">val</span> functor: Functor[Default] = <span class="kw">new</span> Functor[Default] {</a>
-<a class="sourceLine" id="cb25-4" data-line-number="4">    <span class="kw">def</span> map[A, B](fa: Default[A])(f: A =&gt; B): Default[B] =</a>
-<a class="sourceLine" id="cb25-5" data-line-number="5">      <span class="kw">new</span> Default[A] { <span class="kw">def</span> default = fa.<span class="fu">default</span>.<span class="fu">map</span>(f) }</a>
-<a class="sourceLine" id="cb25-6" data-line-number="6">  }</a>
-<a class="sourceLine" id="cb25-7" data-line-number="7">  ...</a>
-<a class="sourceLine" id="cb25-8" data-line-number="8">}</a></code></pre></div>
-<div class="sourceCode" id="cb26"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">implicit</span> <span class="kw">val</span> default: Default[Foo] = Default[String].<span class="fu">map</span>(<span class="fu">Foo</span>(_))</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">trait</span> Default[A] { ... }</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="kw">object</span> Default {</a>
+<a class="sourceLine" id="cb26-3" data-line-number="3">  <span class="kw">implicit</span> <span class="kw">val</span> functor: Functor[Default] = <span class="kw">new</span> Functor[Default] {</a>
+<a class="sourceLine" id="cb26-4" data-line-number="4">    <span class="kw">def</span> map[A, B](fa: Default[A])(f: A =&gt; B): Default[B] =</a>
+<a class="sourceLine" id="cb26-5" data-line-number="5">      <span class="kw">new</span> Default[A] { <span class="kw">def</span> default = fa.<span class="fu">default</span>.<span class="fu">map</span>(f) }</a>
+<a class="sourceLine" id="cb26-6" data-line-number="6">  }</a>
+<a class="sourceLine" id="cb26-7" data-line-number="7">  ...</a>
+<a class="sourceLine" id="cb26-8" data-line-number="8">}</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw">implicit</span> <span class="kw">val</span> default: Default[Foo] = Default[String].<span class="fu">map</span>(<span class="fu">Foo</span>(_))</a></code></pre></div>
 </section><section class="slide level2">
 
-<div class="sourceCode" id="cb27"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw">trait</span> Semigroup[A] { ... }</a>
-<a class="sourceLine" id="cb27-2" data-line-number="2"><span class="kw">object</span> Semigroup {</a>
-<a class="sourceLine" id="cb27-3" data-line-number="3">  <span class="kw">implicit</span> <span class="kw">val</span> invariant = <span class="kw">new</span> InvariantFunctor[Semigroup] {</a>
-<a class="sourceLine" id="cb27-4" data-line-number="4">    <span class="kw">def</span> xmap[A, B](ma: Semigroup[A], f: A =&gt; B, g: B =&gt; A) =</a>
-<a class="sourceLine" id="cb27-5" data-line-number="5">      <span class="kw">new</span> Semigroup[B] {</a>
-<a class="sourceLine" id="cb27-6" data-line-number="6">        <span class="kw">def</span> <span class="fu">append</span>(x: B, y: =&gt;B): B = <span class="fu">f</span>(ma.<span class="fu">append</span>(<span class="fu">g</span>(x), <span class="fu">g</span>(y)))</a>
-<a class="sourceLine" id="cb27-7" data-line-number="7">      }</a>
-<a class="sourceLine" id="cb27-8" data-line-number="8">  }</a>
-<a class="sourceLine" id="cb27-9" data-line-number="9">  ...</a>
-<a class="sourceLine" id="cb27-10" data-line-number="10">}</a></code></pre></div>
-<div class="sourceCode" id="cb28"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">implicit</span> <span class="kw">val</span> semigroup: Semigroup[Foo] = Semigroup[String].<span class="fu">xmap</span>(<span class="fu">Foo</span>(_), _.<span class="fu">s</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">trait</span> Semigroup[A] { ... }</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="kw">object</span> Semigroup {</a>
+<a class="sourceLine" id="cb28-3" data-line-number="3">  <span class="kw">implicit</span> <span class="kw">val</span> invariant = <span class="kw">new</span> InvariantFunctor[Semigroup] {</a>
+<a class="sourceLine" id="cb28-4" data-line-number="4">    <span class="kw">def</span> xmap[A, B](ma: Semigroup[A], f: A =&gt; B, g: B =&gt; A) =</a>
+<a class="sourceLine" id="cb28-5" data-line-number="5">      <span class="kw">new</span> Semigroup[B] {</a>
+<a class="sourceLine" id="cb28-6" data-line-number="6">        <span class="kw">def</span> <span class="fu">append</span>(x: B, y: =&gt;B): B = <span class="fu">f</span>(ma.<span class="fu">append</span>(<span class="fu">g</span>(x), <span class="fu">g</span>(y)))</a>
+<a class="sourceLine" id="cb28-7" data-line-number="7">      }</a>
+<a class="sourceLine" id="cb28-8" data-line-number="8">  }</a>
+<a class="sourceLine" id="cb28-9" data-line-number="9">  ...</a>
+<a class="sourceLine" id="cb28-10" data-line-number="10">}</a></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw">implicit</span> <span class="kw">val</span> semigroup: Semigroup[Foo] = Semigroup[String].<span class="fu">xmap</span>(<span class="fu">Foo</span>(_), _.<span class="fu">s</span>)</a></code></pre></div>
 </section><section class="slide level2">
 
-<div class="sourceCode" id="cb29"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw">final</span> <span class="kw">case</span> <span class="kw">class</span> <span class="fu">Foo</span>(s: String)</a>
-<a class="sourceLine" id="cb29-2" data-line-number="2"><span class="kw">object</span> Foo {</a>
-<a class="sourceLine" id="cb29-3" data-line-number="3">  <span class="kw">implicit</span> <span class="kw">val</span> equal: Equal[Foo] =</a>
-<a class="sourceLine" id="cb29-4" data-line-number="4">    Equal[String].<span class="fu">xmap</span>(<span class="fu">Foo</span>(_), _.<span class="fu">s</span>)</a>
-<a class="sourceLine" id="cb29-5" data-line-number="5">  <span class="kw">implicit</span> <span class="kw">val</span> default: Default[Foo] =</a>
-<a class="sourceLine" id="cb29-6" data-line-number="6">    Default[String].<span class="fu">xmap</span>(<span class="fu">Foo</span>(_), _.<span class="fu">s</span>)</a>
-<a class="sourceLine" id="cb29-7" data-line-number="7">  <span class="kw">implicit</span> <span class="kw">val</span> semigroup: Semigroup[Foo] =</a>
-<a class="sourceLine" id="cb29-8" data-line-number="8">    Semigroup[String].<span class="fu">xmap</span>(<span class="fu">Foo</span>(_), _.<span class="fu">s</span>)</a>
-<a class="sourceLine" id="cb29-9" data-line-number="9">}</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">final</span> <span class="kw">case</span> <span class="kw">class</span> <span class="fu">Foo</span>(s: String)</a>
+<a class="sourceLine" id="cb30-2" data-line-number="2"><span class="kw">object</span> Foo {</a>
+<a class="sourceLine" id="cb30-3" data-line-number="3">  <span class="kw">implicit</span> <span class="kw">val</span> equal: Equal[Foo] =</a>
+<a class="sourceLine" id="cb30-4" data-line-number="4">    Equal[String].<span class="fu">xmap</span>(<span class="fu">Foo</span>(_), _.<span class="fu">s</span>)</a>
+<a class="sourceLine" id="cb30-5" data-line-number="5">  <span class="kw">implicit</span> <span class="kw">val</span> default: Default[Foo] =</a>
+<a class="sourceLine" id="cb30-6" data-line-number="6">    Default[String].<span class="fu">xmap</span>(<span class="fu">Foo</span>(_), _.<span class="fu">s</span>)</a>
+<a class="sourceLine" id="cb30-7" data-line-number="7">  <span class="kw">implicit</span> <span class="kw">val</span> semigroup: Semigroup[Foo] =</a>
+<a class="sourceLine" id="cb30-8" data-line-number="8">    Semigroup[String].<span class="fu">xmap</span>(<span class="fu">Foo</span>(_), _.<span class="fu">s</span>)</a>
+<a class="sourceLine" id="cb30-9" data-line-number="9">}</a></code></pre></div>
 </section><section class="slide level2">
 
-<div class="sourceCode" id="cb30"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">trait</span> Divisible[F[_]] <span class="kw">extends</span> Contravariant[F] {</a>
-<a class="sourceLine" id="cb30-2" data-line-number="2">  <span class="kw">def</span> conquer[A]: F[A]</a>
-<a class="sourceLine" id="cb30-3" data-line-number="3">  <span class="kw">def</span> divide2[A, B, C](fa: F[A], fb: F[B])(f: C =&gt; (A, B)): F[C]</a>
-<a class="sourceLine" id="cb30-4" data-line-number="4">  ...</a>
-<a class="sourceLine" id="cb30-5" data-line-number="5">  <span class="kw">def</span> divide22[...] = ...</a>
-<a class="sourceLine" id="cb30-6" data-line-number="6">}</a></code></pre></div>
-<div class="sourceCode" id="cb31"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="kw">trait</span> Applicative[F[_]] <span class="kw">extends</span> Functor[F] {</a>
-<a class="sourceLine" id="cb31-2" data-line-number="2">  <span class="kw">def</span> point[A](a: =&gt;A): F[A]</a>
-<a class="sourceLine" id="cb31-3" data-line-number="3">  <span class="kw">def</span> apply2[A,B,C](fa: =&gt;F[A], fb: =&gt;F[B])(f: (A, B) =&gt; C): F[C] = ...</a>
+<div class="sourceCode" id="cb31"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="kw">trait</span> Divisible[F[_]] <span class="kw">extends</span> Contravariant[F] {</a>
+<a class="sourceLine" id="cb31-2" data-line-number="2">  <span class="kw">def</span> conquer[A]: F[A]</a>
+<a class="sourceLine" id="cb31-3" data-line-number="3">  <span class="kw">def</span> divide2[A, B, C](fa: F[A], fb: F[B])(f: C =&gt; (A, B)): F[C]</a>
 <a class="sourceLine" id="cb31-4" data-line-number="4">  ...</a>
-<a class="sourceLine" id="cb31-5" data-line-number="5">  <span class="kw">def</span> apply12[...]</a>
+<a class="sourceLine" id="cb31-5" data-line-number="5">  <span class="kw">def</span> divide22[...] = ...</a>
 <a class="sourceLine" id="cb31-6" data-line-number="6">}</a></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw">trait</span> Applicative[F[_]] <span class="kw">extends</span> Functor[F] {</a>
+<a class="sourceLine" id="cb32-2" data-line-number="2">  <span class="kw">def</span> point[A](a: =&gt;A): F[A]</a>
+<a class="sourceLine" id="cb32-3" data-line-number="3">  <span class="kw">def</span> apply2[A,B,C](fa: =&gt;F[A], fb: =&gt;F[B])(f: (A, B) =&gt; C): F[C] = ...</a>
+<a class="sourceLine" id="cb32-4" data-line-number="4">  ...</a>
+<a class="sourceLine" id="cb32-5" data-line-number="5">  <span class="kw">def</span> apply12[...]</a>
+<a class="sourceLine" id="cb32-6" data-line-number="6">}</a></code></pre></div>
 </section><section class="slide level2">
 
-<div class="sourceCode" id="cb32"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="ot">conquer ::</span> f a</a>
-<a class="sourceLine" id="cb32-2" data-line-number="2"><span class="ot">divide2 ::</span> (c <span class="ot">-&gt;</span> (a, b)) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b <span class="ot">-&gt;</span> f c</a>
-<a class="sourceLine" id="cb32-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb32-4" data-line-number="4"><span class="ot">point   ::</span> a <span class="ot">-&gt;</span> f a</a>
-<a class="sourceLine" id="cb32-5" data-line-number="5"><span class="ot">apply2  ::</span> (a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b <span class="ot">-&gt;</span> f c</a></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="ot">conquer ::</span> f a</a>
+<a class="sourceLine" id="cb33-2" data-line-number="2"><span class="ot">divide2 ::</span> (c <span class="ot">-&gt;</span> (a, b)) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b <span class="ot">-&gt;</span> f c</a>
+<a class="sourceLine" id="cb33-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb33-4" data-line-number="4"><span class="ot">point   ::</span> a <span class="ot">-&gt;</span> f a</a>
+<a class="sourceLine" id="cb33-5" data-line-number="5"><span class="ot">apply2  ::</span> (a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b <span class="ot">-&gt;</span> f c</a></code></pre></div>
 </section><section class="slide level2">
 
 <p>TODO</p>
 </section><section class="slide level2">
 
-<div class="sourceCode" id="cb33"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="kw">trait</span> Monad[F[_]] <span class="kw">extends</span> Functor[F] {</a>
-<a class="sourceLine" id="cb33-2" data-line-number="2">  <span class="kw">def</span> bind[A, B](fa: F[A])(f: A =&gt; F[B]): F[B]</a>
-<a class="sourceLine" id="cb33-3" data-line-number="3">}</a></code></pre></div>
-<div class="sourceCode" id="cb34"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="kw">trait</span> MonadError[F[_], E] <span class="kw">extends</span> Monad[F] {</a>
-<a class="sourceLine" id="cb34-2" data-line-number="2">  <span class="kw">def</span> raiseError[A](e: E): F[A]</a>
-<a class="sourceLine" id="cb34-3" data-line-number="3">  <span class="kw">def</span> emap[A, B](fa: F[A])(f: A =&gt; S \/ B): F[B] = ...</a>
-<a class="sourceLine" id="cb34-4" data-line-number="4">  ...</a>
-<a class="sourceLine" id="cb34-5" data-line-number="5">}</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="kw">trait</span> Monad[F[_]] <span class="kw">extends</span> Functor[F] {</a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">  <span class="kw">def</span> bind[A, B](fa: F[A])(f: A =&gt; F[B]): F[B]</a>
+<a class="sourceLine" id="cb34-3" data-line-number="3">}</a></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="kw">trait</span> MonadError[F[_], E] <span class="kw">extends</span> Monad[F] {</a>
+<a class="sourceLine" id="cb35-2" data-line-number="2">  <span class="kw">def</span> raiseError[A](e: E): F[A]</a>
+<a class="sourceLine" id="cb35-3" data-line-number="3">  <span class="kw">def</span> emap[A, B](fa: F[A])(f: A =&gt; S \/ B): F[B] = ...</a>
+<a class="sourceLine" id="cb35-4" data-line-number="4">  ...</a>
+<a class="sourceLine" id="cb35-5" data-line-number="5">}</a></code></pre></div>
 </section><section class="slide level2">
 
-<div class="sourceCode" id="cb35"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="kw">trait</span> Decidable[F[_]] <span class="kw">extends</span> Divisible[F] <span class="kw">with</span> InvariantAlt[F] {</a>
-<a class="sourceLine" id="cb35-2" data-line-number="2">  <span class="kw">def</span> choose1[Z, A1](a1: =&gt;F[A1])(f: Z =&gt; A1): F[Z] = ...</a>
-<a class="sourceLine" id="cb35-3" data-line-number="3">  <span class="kw">def</span> choose2[Z, A1, A2](a1: =&gt;F[A1], a2: =&gt;F[A2])(f: Z =&gt; A1 \/ A2): F[Z] = ...</a>
-<a class="sourceLine" id="cb35-4" data-line-number="4">  <span class="kw">def</span> choose3 ...</a>
-<a class="sourceLine" id="cb35-5" data-line-number="5">  <span class="kw">def</span> choose4 ...</a>
-<a class="sourceLine" id="cb35-6" data-line-number="6">  ...</a>
-<a class="sourceLine" id="cb35-7" data-line-number="7">}</a></code></pre></div>
-<div class="sourceCode" id="cb36"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw">trait</span> Alt[F[_]] <span class="kw">extends</span> Applicative[F] <span class="kw">with</span> InvariantAlt[F] {</a>
-<a class="sourceLine" id="cb36-2" data-line-number="2">  <span class="kw">def</span> alt[A](a1: =&gt;F[A], a2: =&gt;F[A]): F[A]</a>
-<a class="sourceLine" id="cb36-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb36-4" data-line-number="4">  <span class="kw">def</span> altly1[Z, A1](a1: =&gt;F[A1])(f: A1 =&gt; Z): F[Z] = ...</a>
-<a class="sourceLine" id="cb36-5" data-line-number="5">  <span class="kw">def</span> altly2[Z, A1, A2](a1: =&gt;F[A1], a2: =&gt;F[A2])(f: A1 \/ A2 =&gt; Z): F[Z] = ...</a>
-<a class="sourceLine" id="cb36-6" data-line-number="6">  <span class="kw">def</span> altly3 ...</a>
-<a class="sourceLine" id="cb36-7" data-line-number="7">  <span class="kw">def</span> altly4 ...</a>
-<a class="sourceLine" id="cb36-8" data-line-number="8">  ...</a>
-<a class="sourceLine" id="cb36-9" data-line-number="9">}</a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw">trait</span> Decidable[F[_]] <span class="kw">extends</span> Divisible[F] <span class="kw">with</span> InvariantAlt[F] {</a>
+<a class="sourceLine" id="cb36-2" data-line-number="2">  <span class="kw">def</span> choose1[Z, A1](a1: =&gt;F[A1])(f: Z =&gt; A1): F[Z] = ...</a>
+<a class="sourceLine" id="cb36-3" data-line-number="3">  <span class="kw">def</span> choose2[Z, A1, A2](a1: =&gt;F[A1], a2: =&gt;F[A2])(f: Z =&gt; A1 \/ A2): F[Z] = ...</a>
+<a class="sourceLine" id="cb36-4" data-line-number="4">  <span class="kw">def</span> choose3 ...</a>
+<a class="sourceLine" id="cb36-5" data-line-number="5">  <span class="kw">def</span> choose4 ...</a>
+<a class="sourceLine" id="cb36-6" data-line-number="6">  ...</a>
+<a class="sourceLine" id="cb36-7" data-line-number="7">}</a></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode scala"><code class="sourceCode scala"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="kw">trait</span> Alt[F[_]] <span class="kw">extends</span> Applicative[F] <span class="kw">with</span> InvariantAlt[F] {</a>
+<a class="sourceLine" id="cb37-2" data-line-number="2">  <span class="kw">def</span> alt[A](a1: =&gt;F[A], a2: =&gt;F[A]): F[A]</a>
+<a class="sourceLine" id="cb37-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb37-4" data-line-number="4">  <span class="kw">def</span> altly1[Z, A1](a1: =&gt;F[A1])(f: A1 =&gt; Z): F[Z] = ...</a>
+<a class="sourceLine" id="cb37-5" data-line-number="5">  <span class="kw">def</span> altly2[Z, A1, A2](a1: =&gt;F[A1], a2: =&gt;F[A2])(f: A1 \/ A2 =&gt; Z): F[Z] = ...</a>
+<a class="sourceLine" id="cb37-6" data-line-number="6">  <span class="kw">def</span> altly3 ...</a>
+<a class="sourceLine" id="cb37-7" data-line-number="7">  <span class="kw">def</span> altly4 ...</a>
+<a class="sourceLine" id="cb37-8" data-line-number="8">  ...</a>
+<a class="sourceLine" id="cb37-9" data-line-number="9">}</a></code></pre></div>
 </section><section class="slide level2">
 
 <table>

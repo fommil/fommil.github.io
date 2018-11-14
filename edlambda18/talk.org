@@ -314,6 +314,19 @@ instance Contravariant Eq where
   contramap :: forall a b . (Eq a) => (b -> a) -> Eq b
 #+END_SRC
 
+** with a language extension?
+
+#+BEGIN_SRC haskell
+{-# LANGUAGE MoreConstraintKindsCowbell #-}
+{-# LANGUAGE DerivingScalaz #-}
+{-# LANGUAGE DerivingStrategies #-}
+
+instance Contravariant Eq where
+  contramap :: forall a b . (Eq a) => (b -> a) => Eq b
+
+data Foo = Foo String deriving scalaz (Eq)
+#+END_SRC
+
 -----
 
 #+BEGIN_SRC scala
