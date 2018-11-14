@@ -377,6 +377,7 @@ object Foo {
 }
 #+END_SRC
 
+* The Good Bits
 -----
 
 #+BEGIN_SRC scala
@@ -460,7 +461,8 @@ trait Alt[F[_]] extends Applicative[F] with InvariantAlt[F] {
 | ~Divisible~   | ~divide2~ | ~F[A1], F[A2]~ | ~Z => (A1, A2)~   | ~F[Z]~  |
 | ~Decidable~   | ~choose2~ | ~F[A1], F[A2]~ | ~Z => (A1 \/ A2)~ | ~F[Z]~  |
 
-** Thank you!
+* Thank you!
+------
 
 [[file:images/fpmortals.png]]
 
