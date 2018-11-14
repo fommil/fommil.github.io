@@ -1,0 +1,466 @@
+#+TITLE: Divide, conquer, choose, ap and alt... et Empera
+#+AUTHOR: Sam Halliday
+#+DATE: EdLambda 2018
+
+#+TODO: TODO | RESEARCH | NOTES | CHART | DIAGRAM | DRAWING | CODE | VIDEO
+
+* Introduction
+** Who knows?
+
+- Java / C#
+- Scala / F# / OCaml
+- Haskell / Eta / Purescript
+
+** =#fpmortals=
+
+[[file:images/fpmortals.png]]
+
+** Why Scala?
+
+- I'm so sorry
+- Please *do not use Scala*
+- We need typeclasses of typeclasses
+- one day, a Haskell port...
+
+* Scala
+** Dependencies
+
+#+BEGIN_SRC scala
+scalaVersion in ThisBuild := "2.12.7"
+scalacOptions in ThisBuild += "-Ypartial-unification"
+libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.27"
+#+END_SRC
+
+#+BEGIN_SRC scala
+import scalaz._, Scalaz._
+#+END_SRC
+
+** Typeclasses
+
+#+BEGIN_SRC scala
+package scala.math
+
+trait Ordering[T] {
+  def compare(x: T, y: T): Int
+
+  def lt(x: T, y: T): Boolean = compare(x, y) < 0
+  def gt(x: T, y: T): Boolean = compare(x, y) > 0
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+trait Numeric[T] extends Ordering[T] {
+  def plus(x: T, y: T): T
+  def times(x: T, y: T): T
+  def negate(x: T): T
+  def zero: T
+
+  def abs(x: T): T = if (lt(x, zero)) negate(x) else x
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+def signOfTheTimes[T](t: T)(implicit N: Numeric[T]): T = {
+  N.times(N.negate(N.abs(t)), t)
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+import simulacrum._
+
+@typeclass trait Ordering[T] {
+  def compare(x: T, y: T): Int
+  @op("<") def lt(x: T, y: T): Boolean = ...
+  @op(">") def gt(x: T, y: T): Boolean = ...
+}
+
+@typeclass trait Numeric[T] extends Ordering[T] {
+  @op("+") def plus(x: T, y: T): T
+  @op("*") def times(x: T, y: T): T
+  @op("unary_-") def negate(x: T): T
+  ...
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+import Numeric.ops._
+
+def signOfTheTimes[T: Numeric](t: T): T = -(t.abs) * t
+#+END_SRC
+
+** ADTs
+
+- =case class= --- /products/
+- =sealed trait= --- /coproducts/
+- =object=, =Int=, =String= (etc) --- /values/
+
+-----
+
+#+BEGIN_SRC scala
+   case class Value(text: String, value: Int)
+
+   case class Elements(distance: Value, duration: Value, status: String)
+
+   case class Rows(elements: List[Elements])
+
+   case class DistanceMatrix(
+    destination_addresses: List[String],
+    origin_addresses: List[String],
+    rows: List[Rows],
+    status: String
+  )
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+  sealed trait Geometry
+  case class Point(coordinates: (Double, Double)) extends Geometry
+  case class MultiPoint(coordinates: List[(Double, Double)]) extends Geometry
+  case class LineString(coordinates: List[(Double, Double)]) extends Geometry
+  case class MultiLineString(coordinates: List[List[(Double, Double)]]) extends Geometry
+  case class Polygon(coordinates: List[List[(Double, Double)]]) extends Geometry
+  case class MultiPolygon(coordinates: List[List[List[(Double, Double)]]]) extends Geometry
+  case class GeometryCollection(geometries: List[Geometry]) extends Geometry
+
+  sealed trait GeoJSON
+  case class Feature(properties: Map[String, String], geometry: Geometry) extends GeoJSON
+  case class FeatureCollection(features: List[GeoJSON]) extends GeoJSON
+#+END_SRC
+
+** Instances
+
+#+BEGIN_SRC scala
+implicit val NumericDouble: Numeric[Double] =
+  new Numeric[Double] {
+    def plus(x: Double, y: Double): Double = x + y
+    def times(x: Double, y: Double): Double = x * y
+    def negate(x: Double): Double = -x
+    def zero: Double = 0.0
+    def compare(x: Double, y: Double): Int = Double.compare(x, y)
+
+    // optimised
+    override def lt(x: Double, y: Double): Boolean = x < y
+    override def gt(x: Double, y: Double): Boolean = x > y
+    override def abs(x: Double): Double = Math.abs(x)
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class ComplexDouble(r: Double, i: Double)
+#+END_SRC
+
+#+BEGIN_SRC scala
+object ComplexDouble {
+  implicit val numeric: Numeric[ComplexDouble] =
+    new Numeric[ComplexDouble] {
+      def plus(x: ComplexDouble, y: ComplexDouble): ComplexDouble = ...
+      def times(x: ComplexDouble, y: ComplexDouble): ComplexDouble = ...
+      def negate(x: ComplexDouble): ComplexDouble = ...
+      def zero: ComplexDouble = ...
+      def compare(x: ComplexDouble, y: ComplexDouble): Int = ...
+    }
+#+END_SRC
+
+** Typeclass Derivation
+
+#+BEGIN_SRC scala
+final case class Complex[T](r: T, i: T)
+#+END_SRC
+
+#+BEGIN_SRC scala
+implicit def numericComplex[T: Numeric]: Numeric[Complex[T]] =
+  new Numeric[Complex[T]] {
+    def plus(x: Complex[T], y: Complex[T]): Complex[T] = ...
+    def times(x: Complex[T], y: Complex[T]): Complex[T] = ...
+    def negate(x: Complex[T]): Complex[T] = ...
+    def zero: Complex[T] = ...
+    def compare(x: Complex[T], y: Complex[T]): Int = ...
+  }
+#+END_SRC
+
+** Real World™ Scala
+
+- Typeclasses are not idiomatic
+- Idiomatic:
+  - mixing classes and data
+  - legacy Java APIs
+  - mutation
+  - runtime casting
+  - =null= ... exceptions everywhere
+- *Do not use Scala*
+
+* Scalaz
+-----
+
+[[file:images/scalaz-core-tree.png]]
+
+-----
+
+[[file:images/scalaz-core-cliques.png]]
+
+-----
+
+#+BEGIN_SRC scala
+  trait Equal[A]  {
+    def equal(a1: A, a2: A): Boolean
+  }
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+  trait Default[A] {
+    def default: String \/ A
+  }
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+  trait Semigroup[A] {
+    def append(x: A, y: =>A): A
+  }
+#+END_SRC
+
+** Typeclass Derivation
+
+1. Manual Instances
+  - boilerplate / mistakes
+2. Macros or [[https://propensive.com/opensource/magnolia/][Magnolia]]
+  - scary compiler internals
+3. Generic Programming ([[https://github.com/milessabin/shapeless][shapeless]])
+  - compiles go from 1 second to 1 minute
+  - the most confusing code, ever
+
+** =scalaz-deriving=
+
+[[file:images/scalaz-deriving-base.png]]
+
+-----
+
+[[file:images/scalaz-core-tree.png]]
+
+-----
+
+#+BEGIN_SRC scala
+trait InvariantFunctor[F[_]] {
+  def xmap[A, B](fa: F[A], f: A => B, g: B => A): F[B]
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Contravariant[F[_]] extends InvariantFunctor[F] {
+  def contramap[A, B](fa: F[A])(f: B => A): F[B]
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Functor[F[_]] extends InvariantFunctor[F] {
+  def map[A, B](fa: F[A])(f: A => B): F[B]
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC haskell
+contramap :: (b -> a) -> f a -> f b
+map       :: (a -> b) -> f a -> f b
+xmap      :: (a -> b) -> (b -> a) -> f a -> f b
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+final case class Foo(s: String)
+object Foo {
+  implicit val equal: Equal[Foo] = Equal[String].contramap(_.s)
+}
+
+scala> Foo("hello") === Foo("world")
+false
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+trait Equal[A] { ... }
+object Equal {
+  implicit val contravariant = new Contravariant[Equal] {
+    def contramap[A, B](fa: Equal[A])(f: B => A): Equal[B] =
+      new Equal[B] {
+        def equal(b1: B, b2: B) = fa.equal(f(b1), f(b2))
+      }
+  }
+  ...
+}
+#+END_SRC
+
+** Not in Haskell
+
+[[file:images/sad.gif]]
+
+-----
+
+#+BEGIN_SRC haskell
+instance Contravariant Eq where
+  contramap :: forall a b . (Eq a) => (b -> a) -> Eq b
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+trait Default[A] { ... }
+object Default {
+  implicit val functor: Functor[Default] = new Functor[Default] {
+    def map[A, B](fa: Default[A])(f: A => B): Default[B] =
+      new Default[A] { def default = fa.default.map(f) }
+  }
+  ...
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+  implicit val default: Default[Foo] = Default[String].map(Foo(_))
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+trait Semigroup[A] { ... }
+object Semigroup {
+  implicit val invariant = new InvariantFunctor[Semigroup] {
+    def xmap[A, B](ma: Semigroup[A], f: A => B, g: B => A) =
+      new Semigroup[B] {
+        def append(x: B, y: =>B): B = f(ma.append(g(x), g(y)))
+      }
+  }
+  ...
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+  implicit val semigroup: Semigroup[Foo] = Semigroup[String].xmap(Foo(_), _.s)
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+final case class Foo(s: String)
+object Foo {
+  implicit val equal: Equal[Foo] =
+    Equal[String].xmap(Foo(_), _.s)
+  implicit val default: Default[Foo] =
+    Default[String].xmap(Foo(_), _.s)
+  implicit val semigroup: Semigroup[Foo] =
+    Semigroup[String].xmap(Foo(_), _.s)
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+trait Divisible[F[_]] extends Contravariant[F] {
+  def conquer[A]: F[A]
+  def divide2[A, B, C](fa: F[A], fb: F[B])(f: C => (A, B)): F[C]
+  ...
+  def divide22[...] = ...
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Applicative[F[_]] extends Functor[F] {
+  def point[A](a: =>A): F[A]
+  def apply2[A,B,C](fa: =>F[A], fb: =>F[B])(f: (A, B) => C): F[C] = ...
+  ...
+  def apply12[...]
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC haskell
+conquer :: f a
+divide2 :: (c -> (a, b)) -> f a -> f b -> f c
+
+point   :: a -> f a
+apply2  :: (a -> b -> c) -> f a -> f b -> f c
+#+END_SRC
+
+-----
+
+TODO
+
+-----
+
+#+BEGIN_SRC scala
+trait Monad[F[_]] extends Functor[F] {
+  def bind[A, B](fa: F[A])(f: A => F[B]): F[B]
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait MonadError[F[_], E] extends Monad[F] {
+  def raiseError[A](e: E): F[A]
+  def emap[A, B](fa: F[A])(f: A => S \/ B): F[B] = ...
+  ...
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+trait Decidable[F[_]] extends Divisible[F] with InvariantAlt[F] {
+  def choose1[Z, A1](a1: =>F[A1])(f: Z => A1): F[Z] = ...
+  def choose2[Z, A1, A2](a1: =>F[A1], a2: =>F[A2])(f: Z => A1 \/ A2): F[Z] = ...
+  def choose3 ...
+  def choose4 ...
+  ...
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Alt[F[_]] extends Applicative[F] with InvariantAlt[F] {
+  def alt[A](a1: =>F[A], a2: =>F[A]): F[A]
+
+  def altly1[Z, A1](a1: =>F[A1])(f: A1 => Z): F[Z] = ...
+  def altly2[Z, A1, A2](a1: =>F[A1], a2: =>F[A2])(f: A1 \/ A2 => Z): F[Z] = ...
+  def altly3 ...
+  def altly4 ...
+  ...
+}
+#+END_SRC
+
+-----
+
+| Typeclass     | method    | given          | signature         | returns |
+|---------------+-----------+----------------+-------------------+---------|
+| ~Applicative~ | ~apply2~  | ~F[A1], F[A2]~ | ~(A1, A2) => Z~   | ~F[Z]~  |
+| ~Alt~         | ~altly2~  | ~F[A1], F[A2]~ | ~(A1 \/ A2) => Z~ | ~F[Z]~  |
+| ~Divisible~   | ~divide2~ | ~F[A1], F[A2]~ | ~Z => (A1, A2)~   | ~F[Z]~  |
+| ~Decidable~   | ~choose2~ | ~F[A1], F[A2]~ | ~Z => (A1 \/ A2)~ | ~F[Z]~  |
+
+** Thank you!
+
+[[file:images/fpmortals.png]]
+
+# Local Variables:
+# compile-command: "pandoc --standalone --write=revealjs --incremental \
+#                  --slide-level=2 \
+#                  --include-before-body=copyright.html \
+#                  --variable revealjs-url:http://lab.hakim.se/reveal-js/ \
+#                  --variable theme:white \
+#                  --variable width:1024 --variable height:768 --css overrides.css \
+#                  --from org --highlight-style=kate --output index.html \
+#                  talk.org"
+# End:

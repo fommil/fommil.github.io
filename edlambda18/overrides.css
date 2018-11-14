@@ -52,6 +52,10 @@
     min-width: 0px;
 }
 
+.reveal pre {
+    width: 99%;
+}
+
 /*
 ol li ul li {
     list-style-type: none;
