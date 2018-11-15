@@ -32,6 +32,11 @@ libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.27"
 #+END_SRC
 
 #+BEGIN_SRC scala
+libraryDependencies += "com.github.mpilquist" %% "simulacrum" % "0.13.0"
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
+#+END_SRC
+
+#+BEGIN_SRC scala
 import scalaz._, Scalaz._
 #+END_SRC
 
@@ -314,7 +319,7 @@ instance Contravariant Eq where
   contramap :: forall a b . (Eq a) => (b -> a) -> Eq b
 #+END_SRC
 
-** with a language extension?
+** ... Extension?
 
 #+BEGIN_SRC haskell
 {-# LANGUAGE MoreConstraintKindsCowbell #-}
@@ -360,7 +365,8 @@ object Semigroup {
 #+END_SRC
 
 #+BEGIN_SRC scala
-  implicit val semigroup: Semigroup[Foo] = Semigroup[String].xmap(Foo(_), _.s)
+  implicit val semigroup: Semigroup[Foo] =
+    Semigroup[String].xmap(Foo(_), _.s)
 #+END_SRC
 
 -----
@@ -377,7 +383,7 @@ object Foo {
 }
 #+END_SRC
 
-* The Good Bits
+* The Good Bit
 -----
 
 #+BEGIN_SRC scala
@@ -410,7 +416,21 @@ apply2  :: (a -> b -> c) -> f a -> f b -> f c
 
 -----
 
-TODO
+#+BEGIN_SRC scala
+final case class Bar(s: String, i: Int)
+#+END_SRC
+
+#+BEGIN_SRC scala
+object Bar {
+  implicit val equal: Equal[Bar] =
+    Divisible[Equal].divide2(implicitly, implicitly)(b => (b.s, b.i))
+#+END_SRC
+
+#+BEGIN_SRC scala
+  implicit val default: Default[Bar] =
+    Applicative[Default].apply2(implicitly, implicitly)(Bar(_, _))
+}
+#+END_SRC
 
 -----
 
@@ -422,10 +442,58 @@ trait Monad[F[_]] extends Functor[F] {
 
 #+BEGIN_SRC scala
 trait MonadError[F[_], E] extends Monad[F] {
-  def raiseError[A](e: E): F[A]
-  def emap[A, B](fa: F[A])(f: A => S \/ B): F[B] = ...
+  def emap[A, B](fa: F[A])(f: A => E \/ B): F[B] = ...
   ...
 }
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC haskell
+bind :: (a -> f b) -> f a -> f b
+emap :: (a -> Either e b) -> f a -> f b
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+  implicit val monad = new MonadError[Default, String] {
+    def point[A](a: =>A): Default[A] =
+      instance(a.right)
+    def bind[A, B](fa: Default[A])(f: A => Default[B]): Default[B] =
+      instance((fa >>= f).default)
+    def handleError[A](fa: Default[A])(f: String => Default[A]): Default[A] =
+      instance(fa.default.handleError(e => f(e).default))
+    def raiseError[A](e: String): Default[A] =
+      instance(e.left)
+  }
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+  import eu.timepit.refined._, api._, collection._
+
+  implicit val nes: Default[String Refined NonEmpty] =
+    Default[String].emap(refineV[NonEmpty](_).disjunction)
+#+END_SRC
+
+#+BEGIN_SRC scala
+  implicit def refined[A: Default, P](
+    implicit V: Validate[A, P]
+  ): Default[A Refined P] = Default[A].emap(refineV[P](_).disjunction)
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+  private type Sig[a] = Unit => String \/ a
+  private val iso = Kleisli.iso(
+    λ[Sig ~> Default](s => instance(s(()))),
+    λ[Default ~> Sig](d => _ => d.default)
+  )
+  implicit val monad: MonadError[Default, String] =
+    MonadError.fromIso(iso)
 #+END_SRC
 
 -----
@@ -454,12 +522,127 @@ trait Alt[F[_]] extends Applicative[F] with InvariantAlt[F] {
 
 -----
 
+#+BEGIN_SRC haskell
+choose2 :: (c -> Either a b) -> f a -> f b -> f c
+altly2  :: (Either a b -> c) -> f a -> f b -> f c
+#+END_SRC
+
+
+-----
+
 | Typeclass     | method    | given          | signature         | returns |
 |---------------+-----------+----------------+-------------------+---------|
 | ~Applicative~ | ~apply2~  | ~F[A1], F[A2]~ | ~(A1, A2) => Z~   | ~F[Z]~  |
 | ~Alt~         | ~altly2~  | ~F[A1], F[A2]~ | ~(A1 \/ A2) => Z~ | ~F[Z]~  |
 | ~Divisible~   | ~divide2~ | ~F[A1], F[A2]~ | ~Z => (A1, A2)~   | ~F[Z]~  |
 | ~Decidable~   | ~choose2~ | ~F[A1], F[A2]~ | ~Z => (A1 \/ A2)~ | ~F[Z]~  |
+
+-----
+
+#+BEGIN_SRC scala
+  implicit val decidable = new Decidable[Equal] {
+    ...
+    def choose2[Z, A1, A2](a1: =>Equal[A1], a2: =>Equal[A2])(
+      f: Z => A1 \/ A2
+    ): Equal[Z] = new Equal[Z] {
+      def equal(z1: Z, z2: Z): Boolean =
+        (f(z1), f(z2)) match {
+          case (-\/(s), -\/(t)) => a1.equal(s, t)
+          case (\/-(s), \/-(t)) => a2.equal(s, t)
+          case _ => false
+        }
+    }
+  }
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+private type K[a] = Kleisli[String \/ ?, Unit, a]
+implicit val monad = new IsomorphismMonadError[Default, K, String]
+   with Alt[Default] {
+     override val G = MonadError[K, String]
+     override val iso = ...
+
+     def alt[A](a1: =>Default[A], a2: =>Default[A]): Default[A] =
+       instance(a1.default)
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+sealed abstract class Darth
+final case class Vader(s: String, i: Int)  extends Darth
+final case class JarJar(i: Int, s: String) extends Darth
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+object Vader {
+  private val g: Vader => (String, Int) = d => (d.s, d.i)
+  implicit val equal: Equal[Vader] =
+    Divisible[Equal].divide2(Equal[String], Equal[Int])(g)
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+object JarJar {
+  private val g: JarJar => (Int, String) = d => (d.i, d.s)
+  implicit val equal: Equal[JarJar] =
+    Divisible[Equal].divide2(Equal[Int], Equal[String])(g)
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+object Darth {
+  private def g(t: Darth): Vader \/ JarJar = t match {
+    case p @ Vader(_, _)  => -\/(p)
+    case p @ JarJar(_, _) => \/-(p)
+  }
+  implicit val equal: Equal[Darth] =
+    Decidable[Equal].choose2(Equal[Vader], Equal[JarJar])(g)
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+object Darth {
+  ...
+  private def f(e: Vader \/ JarJar): Darth = e.merge
+  implicit val default: Default[Darth] =
+    Alt[Default].altly2(Default[Vader], Default[JarJar])(f)
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+object Vader {
+  ...
+  private val f: (String, Int) => Vader = Vader(_, _)
+  implicit val default: Default[Vader] =
+    Alt[Default].apply2(Default[String], Default[Int])(f)
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+object JarJar {
+  ...
+  private val f: (Int, String) => JarJar = JarJar(_, _)
+  implicit val default: Default[JarJar] =
+    Alt[Default].apply2(Default[Int], Default[String])(f)
+}
+#+END_SRC
+
+** =@deriving=
+
+#+BEGIN_SRC scala
+@deriving(Equal, Default)
+sealed abstract class Darth
+final case class Vader(s: String, i: Int)  extends Darth
+final case class JarJar(i: Int, s: String) extends Darth
+#+END_SRC
 
 * Thank you!
 ------
