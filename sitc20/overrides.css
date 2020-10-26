@@ -1,0 +1,102 @@
+.reveal {
+  /* Disable "Source Sans Pro" */
+  font-family: Helvetica, sans-serif;
+}
+
+.reveal h6 {
+  /* Disable "Source Sans Pro" */
+  font-family: Helvetica, sans-serif;
+}
+
+.reveal .backgrounds {
+  background-image: url(images/z-flat.png);
+  background-position: right top;
+  background-position: 95% 5%;
+  background-size: 5%;
+  background-repeat: no-repeat;
+}
+
+.reveal img {
+  max-height: 500px;
+}
+
+.reveal h1 {
+    font-size: 1.4em;
+    text-shadow: 2px 2px 8px white;
+}
+.reveal h2 { font-size: 1.2em; }
+.reveal h3 { font-size: 1.1em; }
+.reveal table {
+    font-size: large; /* reveal.js uses xx-large */
+    line-height:normal;
+    margin: 0px auto;
+}
+.reveal section img {
+    margin: 0px 0px;
+    border: 0px;
+    box-shadow: none;
+}
+.reveal blockquote {
+    text-align: justify;
+    box-shadow: none;
+    background: none;
+}
+.reveal pre code {
+    font-family: Hack, Inconsolata, Consolas;
+    font-size: 0.9em;
+
+    /** Annoyingly reveal.js sets these explicitly, overriding our pandoc theme */
+    background: white;
+    color: black;
+    min-width: 0px;
+}
+
+.reveal pre {
+    width: 99%;
+}
+
+/*
+ol li ul li {
+    list-style-type: none;
+}
+
+ul li ul li {
+    list-style-type: none;
+}
+*/
+
+#compiling h1 {
+    color: transparent;
+    text-shadow: none;
+}
+
+#mun h1 {
+    color: transparent;
+    text-shadow: none;
+}
+
+#website h1 {
+    color: transparent;
+    text-shadow: none;
+}
+
+#presentation-copyright {
+    font-family: Helvetica;
+    position: fixed;
+    font-size: small;
+    bottom: 5%;
+    left: 5%;
+    z-index: 1000;
+}
+#presentation-copyright a {
+    font-weight: bold;
+    color: inherit;
+    text-decoration: none;
+}
+#presentation-copyright a:hover, a:focus {
+    text-decoration: underline;
+}
+
+.NOTES {
+    display: none;
+}

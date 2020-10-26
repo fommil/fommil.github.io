@@ -1,0 +1,605 @@
+#+TITLE: Divide, conquer, apply, choose, and altly... et Empera
+#+AUTHOR: Sam Halliday (=@fommil=)
+#+DATE: Scala in the City 2020, [[http://fommil.com/sitc20][=fommil.com/sitc20=]] ([[https://www.youtube.com/watch?v=JmOFKdpuF9g][Recording Available]])
+* Introduction
+
+** Who knows?
+
+- what a typeclass is?
+- the Haskell, Scalaz or Cats hierarchy?
+- shapeless or magnolia?
+- Emacs?
+- everybody raise your hand
+
+** =http://leanpub.com/fpmortals=
+
+[[file:images/fpmortals.png]]
+
+* Scala
+** Typeclasses
+
+#+BEGIN_SRC scala
+package scala.math
+
+trait Ordering[T] {
+  def compare(x: T, y: T): Int
+
+  def lt(x: T, y: T): Boolean = compare(x, y) < 0
+  def gt(x: T, y: T): Boolean = compare(x, y) > 0
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+package scala.math
+
+trait Numeric[T] extends Ordering[T] {
+  def plus(x: T, y: T): T
+  def times(x: T, y: T): T
+  def negate(x: T): T
+  def zero: T
+
+  def abs(x: T): T = if (lt(x, zero)) negate(x) else x
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+def signOfTheTimes[T](t: T)(implicit N: Numeric[T]): T = {
+  N.times(N.negate(N.abs(t)), t)
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+def signOfTheTimes[T: Numeric](t: T): T = -(t.abs) * t
+#+END_SRC
+
+** ADTs
+
+- =case class= --- /products/
+- =sealed trait= --- /coproducts/
+- =object=, =Int=, =String= (etc) --- /values/
+
+-----
+
+#+BEGIN_SRC scala
+   case class Value(text: String, value: Int)
+
+   case class Elements(distance: Value, duration: Value, status: String)
+
+   case class Rows(elements: List[Elements])
+
+   case class DistanceMatrix(
+    destination_addresses: List[String],
+    origin_addresses: List[String],
+    rows: List[Rows],
+    status: String
+  )
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+sealed trait Geometry
+case class Point(vs: (Double, Double)) extends Geometry
+case class MultiPoint(vs: List[(Double, Double)]) extends Geometry
+case class LineString(vs: List[(Double, Double)]) extends Geometry
+case class MultiLineString(vs: List[List[(Double, Double)]]) extends Geometry
+case class Polygon(vs: List[List[(Double, Double)]]) extends Geometry
+case class MultiPolygon(vs: List[List[List[(Double, Double)]]]) extends Geometry
+case class GeometryCollection(geometries: List[Geometry]) extends Geometry
+
+sealed trait GeoJSON
+case class Feature(props: Map[String, String], geo: Geometry) extends GeoJSON
+case class FeatureCollection(features: List[GeoJSON]) extends GeoJSON
+#+END_SRC
+
+** Instances
+
+#+BEGIN_SRC scala
+implicit val NumericDouble: Numeric[Double] =
+  new Numeric[Double] {
+    def plus(x: Double, y: Double): Double = x + y
+    def times(x: Double, y: Double): Double = x * y
+    def negate(x: Double): Double = -x
+    def zero: Double = 0.0
+    def compare(x: Double, y: Double): Int = Double.compare(x, y)
+
+    // optimised
+    override def lt(x: Double, y: Double): Boolean = x < y
+    override def gt(x: Double, y: Double): Boolean = x > y
+    override def abs(x: Double): Double = Math.abs(x)
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class ComplexDouble(r: Double, i: Double)
+#+END_SRC
+
+#+BEGIN_SRC scala
+object ComplexDouble {
+  implicit val numeric: Numeric[ComplexDouble] =
+    new Numeric[ComplexDouble] {
+      def plus(x: ComplexDouble, y: ComplexDouble): ComplexDouble = ...
+      def times(x: ComplexDouble, y: ComplexDouble): ComplexDouble = ...
+      def negate(x: ComplexDouble): ComplexDouble = ...
+      def zero: ComplexDouble = ...
+      def compare(x: ComplexDouble, y: ComplexDouble): Int = ...
+    }
+#+END_SRC
+
+** Typeclass Derivation
+
+#+BEGIN_SRC scala
+case class Complex[T](r: T, i: T)
+#+END_SRC
+
+#+BEGIN_SRC scala
+implicit def numericComplex[T: Numeric]: Numeric[Complex[T]] =
+  new Numeric[Complex[T]] {
+    def plus(x: Complex[T], y: Complex[T]): Complex[T] = ...
+    def times(x: Complex[T], y: Complex[T]): Complex[T] = ...
+    def negate(x: Complex[T]): Complex[T] = ...
+    def zero: Complex[T] = ...
+    def compare(x: Complex[T], y: Complex[T]): Int = ...
+  }
+#+END_SRC
+
+* Scalaz
+-----
+
+[[file:images/scalaz-core-tree.png]]
+
+-----
+
+[[file:images/scalaz-core-cliques.png]]
+
+-----
+
+#+BEGIN_SRC scala
+  package scalaz
+
+  trait Equal[A]  {
+    def equal(a1: A, a2: A): Boolean
+  }
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+  trait Default[A] {
+    def default: Either[String, A]
+  }
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+  package scalaz
+
+  trait Semigroup[A] {
+    def append(x: A, y: A): A
+  }
+#+END_SRC
+
+** Typeclass Derivation
+
+1. Manual Instances
+  - boilerplate / mistakes
+2. Macros or [[https://propensive.com/opensource/magnolia/][Magnolia]]
+  - scary compiler internals
+3. Generic Programming ([[https://github.com/milessabin/shapeless][shapeless]])
+  - compiles go from 1 second to 1 minute
+  - very difficult to maintain
+
+* =scalaz-deriving=
+-----
+
+[[file:images/scalaz-deriving-base.png]]
+
+-----
+
+#+BEGIN_SRC scala
+package scalaz
+
+trait InvariantFunctor[F[_]] {
+  def xmap[A, B](fa: F[A], f: A => B, g: B => A): F[B]
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Contravariant[F[_]] extends InvariantFunctor[F] {
+  def contramap[A, B](fa: F[A])(f: B => A): F[B]
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Functor[F[_]] extends InvariantFunctor[F] {
+  def map[A, B](fa: F[A])(f: A => B): F[B]
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class Foo(s: String)
+object Foo {
+  implicit val equal: Equal[Foo] = Equal[String].contramap(_.s)
+}
+
+scala> Foo("hello") === Foo("world")
+false
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+package scalaz
+
+trait Equal[A] { ... }
+object Equal {
+  implicit val contravariant = new Contravariant[Equal] {
+    def contramap[A, B](fa: Equal[A])(f: B => A): Equal[B] =
+      new Equal[B] {
+        def equal(b1: B, b2: B) = fa.equal(f(b1), f(b2))
+      }
+  }
+  ...
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+trait Default[A] { ... }
+object Default {
+  implicit val functor: Functor[Default] = new Functor[Default] {
+    def map[A, B](fa: Default[A])(f: A => B): Default[B] =
+      new Default[A] { def default = fa.default.map(f) }
+  }
+  ...
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+  implicit val default: Default[Foo] = Default[String].map(Foo(_))
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+package scalaz
+
+trait Semigroup[A] { ... }
+object Semigroup {
+  implicit val invariant = new InvariantFunctor[Semigroup] {
+    def xmap[A, B](ma: Semigroup[A], f: A => B, g: B => A) =
+      new Semigroup[B] {
+        def append(x: B, y: B): B = f(ma.append(g(x), g(y)))
+      }
+  }
+  ...
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+  implicit val semigroup: Semigroup[Foo] =
+    Semigroup[String].xmap(Foo(_), _.s)
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class Foo(s: String)
+object Foo {
+  implicit val equal: Equal[Foo] =
+    Equal[String].xmap(Foo(_), _.s)
+  implicit val default: Default[Foo] =
+    Default[String].xmap(Foo(_), _.s)
+  implicit val semigroup: Semigroup[Foo] =
+    Semigroup[String].xmap(Foo(_), _.s)
+}
+#+END_SRC
+
+* The Cool Bit
+
+** Divide and Conquer
+
+#+BEGIN_SRC scala
+package scalaz
+
+trait Divisible[F[_]] extends Contravariant[F] {
+  def conquer[A]: F[A]
+  def divide2[A, B, C](fa: F[A], fb: F[B])(f: C => (A, B)): F[C]
+  ...
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Applicative[F[_]] extends Functor[F] {
+  def point[A](a: A): F[A]
+  def apply2[A,B,C](fa: F[A], fb: F[B])(f: (A, B) => C): F[C] = ...
+  ...
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class Bar(s: String, i: Int)
+#+END_SRC
+
+#+BEGIN_SRC scala
+object Bar {
+  implicit val equal: Equal[Bar] =
+    Divisible[Equal].divide2(implicitly, implicitly)(b => (b.s, b.i))
+#+END_SRC
+
+#+BEGIN_SRC scala
+  implicit val default: Default[Bar] =
+    Applicative[Default].apply2(implicitly, implicitly)(Bar(_, _))
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+package scalaz
+
+trait Monad[F[_]] extends Functor[F] {
+  def bind[A, B](fa: F[A])(f: A => F[B]): F[B]
+  ...
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait MonadError[F[_], E] extends Monad[F] {
+  def emap[A, B](fa: F[A])(f: A => Either[E, B]): F[B] = ...
+  ...
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+  implicit val monad = new MonadError[Default, String] {
+    def emap[A, B](fa: Default[A])(f: A => Either[String, B]): Default[B] =
+      new Default[B] {
+        def default: Either[String, B] = fa.default.bind(f)
+      }
+    ...
+  }
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class Person private(name: String)
+object Person {
+  def apply(name: String): Either[String, Person] = ...
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class Person private(name: String)
+object Person {
+  def apply(name: String): Either[String, Person] = ...
+
+  implicit val default: Default[Person] = Default[String].emap(apply)
+}
+#+END_SRC
+
+** Code Reuse
+
+#+BEGIN_SRC scala
+package scalaz
+
+trait IsoFunctor[F[_], G[_]] {
+  def to[A](f: F[A]): G[A]
+  def from[A](g: G[A]): F[A]
+  ...
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+object MonadError {
+  def fromIso[F[_], G[_], E](I: IsoFunctor[F, G])(implicit G: MonadError[G, E])
+    : MonadError[F, E] = ...
+  ...
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+package scalaz
+
+case class Kleisli[F[_], A, B](run: A => F[B])
+object Kleisli {
+  implicit def monad[F[_], E, A](implicit F: MonadError[F, E])
+    : MonadError[Kleisli[F, A, ?], E] = ...
+  ...
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class Kleisli[F[_], A, B](run: A => F[B])
+
+                  trait Default[B] {
+                    def default: Either[String, B]
+                  }
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class Kleisli[F[_], A, B](run: A => F[B])
+
+                  trait Default[B] {
+                    def default: Unit => Either[String, B]
+                  }
+
+                  A = Unit
+                  F[a] = Either[String, a]
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+  val iso = Kleisli.iso(s => instance(s(())), d => _ => d.default)
+#+END_SRC
+
+#+BEGIN_SRC scala
+  implicit val monad: MonadError[Default, String] = MonadError.fromIso(iso)
+#+END_SRC
+
+** =Decidable= and =Alt=
+
+#+BEGIN_SRC scala
+trait Decidable[F[_]] extends Divisible[F] with InvariantAlt[F] {
+  def choose2[Z, A1, A2](a1: F[A1], a2: F[A2])(f: Z => A1 \/ A2): F[Z] = ...
+  ...
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Alt[F[_]] extends Applicative[F] with InvariantAlt[F] {
+  def altly2[Z, A1, A2](a1: F[A1], a2: F[A2])(f: A1 \/ A2 => Z): F[Z] = ...
+  ...
+}
+#+END_SRC
+
+-----
+
+| Typeclass     | method    | given          | signature         | returns |
+|---------------+-----------+----------------+-------------------+---------|
+| ~Applicative~ | ~apply2~  | ~F[A1], F[A2]~ | ~(A1, A2) => Z~   | ~F[Z]~  |
+| ~Alt~         | ~altly2~  | ~F[A1], F[A2]~ | ~(A1 \/ A2) => Z~ | ~F[Z]~  |
+| ~Divisible~   | ~divide2~ | ~F[A1], F[A2]~ | ~Z => (A1, A2)~   | ~F[Z]~  |
+| ~Decidable~   | ~choose2~ | ~F[A1], F[A2]~ | ~Z => (A1 \/ A2)~ | ~F[Z]~  |
+
+-----
+
+#+BEGIN_SRC scala
+  implicit val decidable = new Decidable[Equal] {
+    ...
+    def choose2[Z, A1, A2](a1: Equal[A1], a2: Equal[A2])(
+      f: Z => A1 \/ A2
+    ): Equal[Z] = new Equal[Z] {
+      def equal(z1: Z, z2: Z): Boolean =
+        (f(z1), f(z2)) match {
+          case (-\/(s), -\/(t)) => a1.equal(s, t)
+          case (\/-(s), \/-(t)) => a2.equal(s, t)
+          case _ => false
+        }
+    }
+  }
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+type K[a] = Kleisli[String \/ ?, Unit, a]
+implicit val monad = new MonadError[Default, K, String] with Alt[Default] {
+  def alt[A](a1: Default[A], a2: Default[A]): Default[A] = instance(a1.default)
+  ...
+}
+#+END_SRC
+
+** Examples
+
+#+BEGIN_SRC scala
+sealed abstract class Darth
+case class Vader(s: String, i: Int)  extends Darth
+case class JarJar(i: Int, s: String) extends Darth
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+object Vader {
+  private val g: Vader => (String, Int) = d => (d.s, d.i)
+  implicit val equal: Equal[Vader] =
+    Divisible[Equal].divide2(Equal[String], Equal[Int])(g)
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+object JarJar {
+  private val g: JarJar => (Int, String) = d => (d.i, d.s)
+  implicit val equal: Equal[JarJar] =
+    Divisible[Equal].divide2(Equal[Int], Equal[String])(g)
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+object Darth {
+  private def g(t: Darth): Vader \/ JarJar = t match {
+    case p @ Vader(_, _)  => -\/(p)
+    case p @ JarJar(_, _) => \/-(p)
+  }
+  implicit val equal: Equal[Darth] =
+    Decidable[Equal].choose2(Equal[Vader], Equal[JarJar])(g)
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+object Darth {
+  ...
+  private def f(e: Vader \/ JarJar): Darth = e.merge
+  implicit val default: Default[Darth] =
+    Alt[Default].altly2(Default[Vader], Default[JarJar])(f)
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+object Vader {
+  ...
+  private val f: (String, Int) => Vader = Vader(_, _)
+  implicit val default: Default[Vader] =
+    Alt[Default].apply2(Default[String], Default[Int])(f)
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+object JarJar {
+  ...
+  private val f: (Int, String) => JarJar = JarJar(_, _)
+  implicit val default: Default[JarJar] =
+    Alt[Default].apply2(Default[Int], Default[String])(f)
+}
+#+END_SRC
+
+** =@deriving=
+
+#+BEGIN_SRC scala
+@deriving(Equal, Default)
+sealed abstract class Darth
+case class Vader(s: String, i: Int)  extends Darth
+case class JarJar(i: Int, s: String) extends Darth
+#+END_SRC
+
+* Fin
+
+# https://github.com/hakimel/reveal.js/releases/tag/4.1.0
+# Local Variables:
+# compile-command: "pandoc --standalone --write=revealjs --incremental \
+#                  --include-before-body=copyright.html \
+#                  --variable revealjs-url=./reveal.js \
+#                  --variable theme:white \
+#                  --variable width:1024 --variable height:768 --css overrides.css \
+#                  --from org --highlight-style=kate --output index.html \
+#                  talk.org"
+# End:

@@ -1,0 +1,64 @@
+.reveal pre code {
+    font-family: Hack, Inconsolata, Consolas, monospace;
+    max-height: 600px;
+}
+.reveal code {
+    font-family: Hack, Inconsolata, Consolas, monospace;
+}
+
+.reveal img {
+  max-height: 500px;
+}
+
+.sourceCode {
+    margin-left: 100px;
+}
+
+.reveal h2 { font-size: 1.2em; }
+
+.reveal pre {
+    box-shadow: none;
+}
+
+#presentation-copyright {
+    position: fixed;
+    bottom: 5%;
+    left: 5%;
+    z-index: 1000;
+    font-size: x-large;
+    color: gray;
+}
+#presentation-copyright a {
+    font-weight: bold;
+    color: inherit;
+    text-decoration: none;
+}
+#presentation-copyright a:hover, a:focus {
+    text-decoration: underline;
+}
+
+code span.kw {
+    color: inherit;
+}
+code span.fu {
+    color: inherit;
+}
+code span.ot {
+    color: inherit;
+}
+code span.dt {
+    color: inherit;
+}
+code span.st {
+    color: #40a070;
+}
+code span.ch {
+    color: #40a070;
+}
+code span.er {
+    color: #444444;
+}
+
+.NOTES {
+    display: none;
+}

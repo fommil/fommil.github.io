@@ -1,0 +1,432 @@
+#+TITLE: JSON Denial of Service
+#+AUTHOR: Sam Halliday
+#+DATE: Functional Scala 2020, [[http://fommil.com/sitc20][=fommil.com/fs2020=]]
+* Intro
+** =http://leanpub.com/fpmortals=
+
+[[file:images/fpmortals.png]]
+
+* Refresher
+** "Typeclass"
+
+#+BEGIN_SRC scala
+package jzon
+
+trait Decoder[A] {
+  def decode(s: Json): Either[String, A]
+}
+
+trait Encoder[A] {
+  def encode(a: A): Json
+}
+#+END_SRC
+
+** ADT
+
+- =case class= --- /products/
+- =sealed trait= --- /coproducts/
+- =object=, =Int=, =String= (etc) --- /values/
+
+** JSON AST
+
+#+BEGIN_SRC scala
+sealed trait Value
+object Value {
+  case class Obj(fields: Map[String, Value]) extends Value
+  case class Arr(elements: List[Value])      extends Value
+  case class Bool(value: Boolean)            extends Value
+  case class Str(value: String)              extends Value
+  case class Num(value: BigDecimal)          extends Value
+  case object Null                           extends Value
+}
+#+END_SRC
+
+-----
+
+# https://github.com/scala/slip/pull/28
+
+[[file:images/screenshot-ast.png]]
+
+-----
+
+[[file:images/screenshot-scalaz.png]]
+
+-----
+
+[[file:images/screenshot-stupid.png]]
+
+-----
+
+[[file:images/screenshot-neverdies.png]]
+
+** There is no AST
+
+[[file:images/spoon.jpg]]
+
+* Denial of Service
+** Not Like This
+
+[[file:images/screenshot-blocked.png]]
+
+** Like This
+
+=https://github.com/scala-steward=
+
+[[file:images/github-unicorn.png]]
+
+** DOS Attack
+
+*cyber-attack* where an *adversary* makes a resource *unavailable* to its intended users by *disrupting services*.
+
+-----
+
+JSON servers written in Scala are vulnerable.
+
+* Attacks
+
+** Baseline
+
+#+BEGIN_SRC json
+{
+  "destination_addresses" : [ "New York, NY, USA" ],
+  "origin_addresses" : [ "Phoenix, AZ, USA", "Dallas, TX, USA" ],
+  "rows" : [
+    { "elements" : [
+        { "distance" : { "text" : "1 m"  , "value" : 0 },
+          "duration" : { "text" : "1 min", "value" : 0 },
+          "status" : "OK"
+        }]
+    }],
+  "status" : "OK"
+}
+#+END_SRC
+
+** Whitespace
+
+- JSON allows whitespace anywhere
+- add 1GB of whitespace to a valid payload
+- each request now costs the server 1GB of heap
+- OOM
+- mitigate with a message size limit
+
+** Redundant Data
+
+- find an =object= in the valid JSON
+- add a new key and a big value
+- or modify an unimportant =string=
+
+-----
+
+#+BEGIN_SRC json
+{
+  "destination_addresses" : [ "New York, NY, USA" ],
+  "redundant" : "This is a big string value containing redundant
+data that is designed to DOS the JSON frameworks that use it by
+forcing them to parse it and possibly store the value in a string.
+We use some unicode text in here so that the JVM can't even use a
+more efficient ASCII encoding, say hello to my friend the unicode
+monkey 🐵.",
+  "origin_addresses" : [ "Phoenix, AZ, USA", "Dallas, TX, USA" ],
+  ...
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC json
+{
+  "destination_addresses" : [ "New York, NY, USA" ],
+  "redundant" : "This is a big string value containing redundant
+data that is designed to DOS the JSON frameworks that use it by
+forcing them to parse it and possibly store the value in a string.
+We use some unicode text in here so that the JVM can't even use a
+more efficient ASCII encoding, say hello to my friend the unicode
+monkey 🐵.
+                 This is a big string value containing redundant
+...
+",
+  "origin_addresses" : [ "Phoenix, AZ, USA", "Dallas, TX, USA" ],
+  ...
+}
+#+END_SRC
+
+** Hash Code Collisions
+
+- find an =object= in the valid JSON
+- add lots of hashcode-colliding keys
+
+-----
+
+#+BEGIN_SRC json
+{
+  "!!sjyfIedestination_addresses": null,
+  "destination_addresses" : [ "New York, NY, USA" ],
+  "!!sjyfIeorigin_addresses":null,"!!sjyej'origin_addresses":null,
+  "origin_addresses" : [ "Phoenix, AZ, USA", "Dallas, TX, USA" ],
+  "rows" : [
+    { "!!sjyfIeelements":null,"!!sjyej'elements":null,
+      "elements" : [
+        { "!!sjyfIedistance":null,"!!sjyej'distance":null,
+          "distance" : { "text" : "1 m"  , "value" : 0 },
+          "!!sjyfIeduration":null,"!!sjyej'duration":null,
+          "duration" : { "text" : "1 min", "value" : 0 },
+        }]}], ...
+}
+#+END_SRC
+
+** =String=
+
+/(pseudocode, older JDKs)/
+# https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/lang/String.java#L1531
+# https://github.com/openjdk/jdk/commit/89a267ca46d6252e745fe8f2f1a9cb618af5f83f#diff-f8131d8a48caf7cfc908417fad241393c2ef55408172e9a28dcaa14b1d73e1fb
+
+#+BEGIN_SRC scala
+final class String(private val chars: Array[Char]) {
+  ...
+  private var hashCode_ : Int = 0
+  override def hashCode: Int =
+   if (hashCode_ != 0) hashCode_
+   else {
+     hashCode_ = veryWeakHashingAlgo(chars)
+     hashCode_
+   }
+}
+#+END_SRC
+
+-----
+
+/(pseudocode, newer JDKs)/
+
+#+BEGIN_SRC scala
+final class String(private val chars: Array[Char]) {
+  ...
+  private var hashIsZero : Boolean = false
+  private var hashCode_ : Int = 0
+  override def hashCode: Int =
+   if (hashCode_ != 0 || hashIsZero) hashCode_
+   else {
+     val tmp = veryWeakHashingAlgo(chars)
+     if (tmp == 0) hashIsZero = true
+     else hashCode_ = tmp
+     hashCode_
+   }
+}
+#+END_SRC
+
+-----
+
+/(pseudocode)/
+
+# https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/lang/StringLatin1.java#L194
+
+#+BEGIN_SRC scala
+def veryWeakHashingAlgo(chars: Array[Char]): Int = {
+  var h = 0
+  for { c <- chars } { h = 31 * h + (c & 0xff) }
+  h
+}
+#+END_SRC
+
+** =HashMap=
+
+/(pseudocode, bugs and memory leaks)/
+# most notable bug is when adding a dupe key, memory leaks
+
+#+BEGIN_SRC scala
+class HashMap[K, V](
+  private val buckets: Array[List[(K, V)]],
+  private val estimate: Int
+) {
+  def +(k: K, v: V): HashMap[K, V] = {
+    val h = k.hashCode % buckets.length
+    if (buckets(h).contains((k, v)) this
+    else if (estimate >= buckets.length * 8)
+      expensiveGrow(k, v)
+    else {
+      val buckets_ = buckets.copy
+      buckets_(h) = (k, v) :: buckets_(h)
+      new HashMap(buckets_, estimate + 1)
+    }
+}
+#+END_SRC
+
+** Audience Participation
+
+#+BEGIN_SRC scala
+scala> new java.math.BigDecimal("1e214748364").toBigInteger
+#+END_SRC
+
+-----
+
+[[file:images/trollface.png]]
+** Floating Point
+
+#+BEGIN_SRC
+(SIGN FRACTION) x 2^EXPONENT
+#+END_SRC
+
+[[file:images/ieee.png]]
+
+** Arbitrary Precision
+
+/(pseudocode)/
+
+#+BEGIN_SRC scala
+final class BigInteger(sign: Int, magnitude: Array[Int])
+#+END_SRC
+
+- Max =Array.length= is 2,147,483,647
+- Each entry is 32 bits
+- largest number is ~64GB
+
+#+BEGIN_SRC scala
+final class BigDecimal(fraction: BigInteger, exponent: Int) {
+  def toBigInteger: BigInteger = fraction << exponent
+}
+#+END_SRC
+
+# spray-json is susceptible
+# https://github.com/spray/spray-json/pull/283
+
+** Death by a Thousand Zeros
+
+(like /Redundant Data/ but more stealthy)
+
+#+BEGIN_SRC json
+{
+  "destination_addresses" : [ "New York, NY, USA" ],
+  "origin_addresses" : [ "Phoenix, AZ, USA", "Dallas, TX, USA" ],
+  "rows" : [
+    { "elements" : [
+        { "distance" : { "text" : "1 m"  , "value" : 0.000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000
+... },
+          "duration" : { "text" : "1 min", "value" : 0 },
+          "status" : "OK"
+        }]
+    }],
+  "status" : "OK"
+}
+#+END_SRC
+
+* Mitigations
+** No AST
+
+#+BEGIN_SRC scala
+package jzon
+
+trait Decoder[A] {
+  final def decode(s: String): Either[String, A] = ...
+
+  def unsafeDecode(trace: List[String], in: java.io.Reader): A
+}
+
+trait Encoder[A] {
+  final def encode(a: A): String = ...
+
+  def unsafeEncode(a: A, out: java.io.Writer): Unit
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+  implicit val boolean: Decoder[Boolean] = new Decoder[Boolean] {
+    def unsafeDecode(trace: List[String], in: java.io.Reader) =
+      (in.nextNonWhitespace(): @switch) match {
+        case 't' =>
+          readChars(trace, in, "rue")
+          true
+        case 'f' =>
+          readChars(trace, in, "alse")
+          false
+        case c =>
+          throw Unsafe(s"expected 'true' or 'false' got $c" :: trace)
+      }
+    }
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class Banana(curvature: Double)
+
+object Banana {
+  implicit val decoder: Decoder[Banana] = MagnoliaDecoder.gen
+  implicit val encoder: Encoder[Banana] = MagnoliaEncoder.gen
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+@deriving(jzon.Decoder, jzon.Encoder)
+case class Banana(curvature: Double)
+#+END_SRC
+
+#+BEGIN_SRC scala
+scala> Banana(0.5).toJson
+val res: String = {"curvature":0.5}
+
+scala> parser.decode[Banana]("""{"curvature": womp}""")
+val res: Either[String, Banana] = Left(.curvature("expected a number, got w"))
+#+END_SRC
+
+** Moar Performance
+
+- =string= values are not materialised by default
+  - available as =java.io.Reader= for nesting (e.g. CSV, base64)
+- =object= keys are never materialised
+  - optimised bitset keeps track of matches
+- unexpected keys may (optionally) trigger an instant failure
+- =number= strings are never materialised
+  - from-scratch number parser, faster than the stdlib
+- compile times are really fast, thanks Magnolia (no shapeless)
+- Java Loom means avoiding any unnecessary heap allocations
+
+* Open Source
+** Finding Maintainers
+
+- package and release for scalajs, scala-native
+- cross build for 4 different versions of Scala
+- rewrite it for Scala 3
+- add integrations for all HTTP frameworks
+- logos and microsites
+- 10 gitter badges
+- agree on formatting rules
+- welcoming and inclusive community
+
+-----
+
+[[file:images/screenshot-blocked.png]]
+
+- maybe if I ask in a deleted tweet...
+
+-----
+
+[[file:images/zio.png]]
+
+* Fin
+
+** Thanks
+
+=github.com/plokhotnyuk/jsoniter-scala=
+
+(Andriy Plokhotnyuk)
+
+# https://github.com/hakimel/reveal.js/releases/tag/4.1.0
+#
+# Local Variables:
+# compile-command: "pandoc --standalone --write=revealjs --incremental \
+#                  --include-before-body=copyright.html \
+#                  --variable revealjs-url=./reveal.js \
+#                  --variable theme:blood \
+#                  --variable width:1280 --variable height:720 --css overrides.css \
+#                  --from org --output index.html \
+#                  talk.org"
+# End:
