@@ -1,6 +1,6 @@
 #+TITLE: JSON Denial of Service
 #+AUTHOR: Sam Halliday
-#+DATE: Functional Scala 2020, [[http://fommil.com/sitc20][=fommil.com/fs2020=]]
+#+DATE: Functional Scala 2020 [[https://www.youtube.com/watch?v=3Cz6D8JLSSA][(Recording Available)]]
 * Intro
 ** =http://leanpub.com/fpmortals=
 
