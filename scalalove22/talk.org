@@ -1,0 +1,684 @@
+#+TITLE: Shapely
+#+AUTHOR: Sam Halliday
+#+DATE: Scala Love 2022
+* Introduction
+
+** =http://leanpub.com/fpmortals=
+
+[[file:images/fpmortals.png]]
+
+** Disney Streaming
+
+[[file:images/mickey_heart.png]]
+
+- heavily invested in Scala 2 and AWS
+  - teams have technical freedom
+- =disneytech.com=
+- =sam.halliday@disneystreaming.com=
+- Diversity & Inclusion
+
+** Table of Contents
+
+- what is a Typeclass?
+- what is Typeclass Derivation?
+- a new way to do it: Shapely
+
+* Typeclasses
+
+-----
+
+#+BEGIN_SRC scala
+package scala.math
+
+trait Ordering[T] {
+  def compare(x: T, y: T): Int
+
+  def lt(x: T, y: T): Boolean = compare(x, y) < 0
+  def gt(x: T, y: T): Boolean = compare(x, y) > 0
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+package scala.math
+
+trait Numeric[T] extends Ordering[T] {
+  def plus(x: T, y: T): T
+  def times(x: T, y: T): T
+  def negate(x: T): T
+  def zero: T
+
+  def abs(x: T): T = if (lt(x, zero)) negate(x) else x
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+def signOfTheTimes[T](t: T)(implicit N: Numeric[T]): T = {
+  N.times(N.negate(N.abs(t)), t)
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+object Numeric {
+  object ops {
+    implicit class NumericOps[T](t: T)(implicit N: Numeric[T]) {
+      def +(o: T): T = N.plus(t, o)
+      def *(o: T): T = N.times(t, o)
+      def unary_-: T = N.negate(t)
+      def abs: T = N.abs(t)
+    }
+  }
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+def signOfTheTimes[T: Numeric](t: T): T = -(t.abs) * t
+#+END_SRC
+
+** ADTs
+
+- =case class= --- /products/
+- =sealed trait= --- /coproducts/
+- =object=, =Int=, =String= (etc) --- /values/
+
+-----
+
+#+BEGIN_SRC scala
+sealed trait Geometry
+case class Point(vs: (Double, Double)) extends Geometry
+case class MultiPoint(vs: List[(Double, Double)]) extends Geometry
+case class LineString(vs: List[(Double, Double)]) extends Geometry
+case class MultiLineString(vs: List[List[(Double, Double)]]) extends Geometry
+case class Polygon(vs: List[List[(Double, Double)]]) extends Geometry
+case class MultiPolygon(vs: List[List[List[(Double, Double)]]]) extends Geometry
+case class GeometryCollection(geometries: List[Geometry]) extends Geometry
+
+sealed trait GeoJSON
+case class Feature(props: Map[String, String], geo: Geometry) extends GeoJSON
+case class FeatureCollection(features: List[GeoJSON]) extends GeoJSON
+#+END_SRC
+
+** Instances
+
+#+BEGIN_SRC scala
+implicit val OrderingDouble: Ordering[Double] = new Ordering[Double] {
+  def compare(x: Double, y: Double): Int = java.lang.Double.compare(x, y)
+  override def lt(x: Double, y: Double): Boolean = x < y
+  override def gt(x: Double, y: Double): Boolean = x > y
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class ComplexDouble(r: Double, i: Double)
+#+END_SRC
+
+#+BEGIN_SRC scala
+object ComplexDouble {
+  implicit val ordering: Ordering[ComplexDouble] =
+    new Ordering[ComplexDouble] {
+      def compare(x: ComplexDouble, y: ComplexDouble) = ...
+    }
+}
+#+END_SRC
+
+** Typeclass Derivation
+
+#+BEGIN_SRC scala
+implicit def seqOrdering[CC[X] <: Seq[X], T: Ordering]: Ordering[CC[T]] = ...
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class Complex[A](r: A, i: A)
+#+END_SRC
+
+#+BEGIN_SRC scala
+object Complex {
+  implicit def ordering[A: Ordering]: Ordering[Complex[A]] = new Ordering[Complex[A]] {
+    def compare(x: Complex[A], y: Complex[A]): Int = ...
+  }
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+object Geometry {
+  implicit val ordering: Ordering[Geometry] = 😱
+}
+#+END_SRC
+
+* Shapely
+
+** Shapely
+
+- super simple typeclass derivation
+- =gitlab.com/fommil/shapely=
+- Design goals
+  - *compatibility*: Scala 2 and 3
+  - *simple*: minimal macros, avoid fancy types
+  - *fast compilations*: never slower than hand-written
+  - *fast runtime*: on-par with hand-written
+
+** Divide and Conquer
+
+#+BEGIN_SRC scala
+package shapely
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait XFunctor[F[_]] {
+  def xmap[A, B](fa: F[A])(f: A => B, g: B => A): F[B]
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Align[F[_]] {
+  def align[A, B](fa: F[A], fb: F[B]): F[(A, B)]
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Decide[F[_]] {
+  def decide[A, B](fa: F[A], fb: F[B]): F[Either[A, B]]
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+trait Covariant[F[_]] extends XFunctor[F] {
+  def fmap[A, B](fa: F[A])(f: A => B): F[B]
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Contravariant[F[_]] extends XFunctor[F] {
+  def contramap[A, B](fa: F[A])(f: B => A): F[B]
+}
+#+END_SRC
+
+** =Align= =Covariant= 🗲 =Decide= =Contravariant=
+
+[[file:images/hells-bells.png]]
+
+** =AnyVal=
+
+#+BEGIN_SRC scala
+implicit val xfunctor: Contravariant[Ordering] = new Contravariant[Ordering] {
+  def contramap[A, B](fa: Ordering[A])(f: B => A) = new Ordering[B] {
+    def compare(x: B, y: B): Int = fa.compare(f(x), f(y))
+  }
+}
+#+END_SRC
+
+** =case class=
+
+#+BEGIN_SRC scala
+implicit val align: Align[Ordering] = new Align[Ordering] {
+  def align[A, B](fa: Ordering[A], fb: Ordering[B]) = new Ordering[(A, B)] {
+    def compare(x: (A, B), y: (A, B)): Int = {
+      val xs = fa.compare(x._1, y._1)
+      if (xs != 0) xs
+      else fb.compare(x._2, y._2)
+    }
+  }
+}
+#+END_SRC
+
+** =sealed trait=
+
+#+BEGIN_SRC scala
+implicit val decide: Decide[Ordering] = new Decide[Ordering] {
+  def decide[A, B](fa: Ordering[A], fb: Ordering[B]) = new Ordering[Either[A, B]] {
+    def compare(x: Either[A, B], y: Either[A, B]): Int = (x, y) match {
+      case (Left(xa), Left(ya)) => fa.compare(xa, ya)
+      case (Right(xb), Right(yb)) => fb.compare(xb, yb)
+      case (Left(_), Right(_)) => -1
+      case (Right(_), Left(_)) => 1
+    }
+  }
+}
+#+END_SRC
+
+** It Works!
+
+#+BEGIN_SRC scala
+case class Complex[A](r: A, i: A)
+object Complex {
+  implicit def ordering[A: Ordering]: Ordering[Complex[A]] = Ordering.derived
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+case class Complex[A](r: A, i: A) derives Ordering
+#+END_SRC
+
+** More Examples
+
+#+BEGIN_SRC scala
+trait Equal[A]  {
+  // type parameter is in contravariant (parameter) position
+  def equal(a1: A, a2: A): Boolean
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Default[A] {
+  // type parameter is in covariant (return) position
+  def default: Either[String, A]
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Semigroup[A] {
+  // type parameter is in both covariant and contravariant position (invariant)
+  def add(a1: A, a2: A): A
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+object Equal extends Derivable[Equal] { ... }
+#+END_SRC
+
+#+BEGIN_SRC scala
+object Default extends Derivable[Default] { ... }
+#+END_SRC
+
+#+BEGIN_SRC scala
+object Semigroup extends Derivable[Semigroup] { ... }
+#+END_SRC
+
+** Example: =Equal=
+
+#+BEGIN_SRC scala
+implicit val xfunctor: Contravariant[Equal] = new Contravariant[Equal] {
+  override def contramap[A, B](fa: Equal[A])(f: B => A) = new Equal[B] {
+    override def equal(b1: B, b2: B) = fa.equal(f(b1), f(b2))
+  }
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+implicit val align: Align[Equal] = new Align[Equal] {
+  override def align[A, B](fa: Equal[A], fb: Equal[B]) = new Equal[(A, B)] {
+    override def equal(ab1: (A, B), ab2: (A, B)) =
+      fa.equal(ab1._1, ab2._1) && fb.equal(ab1._2, ab2._2)
+  }
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+implicit val decide: Decide[Equal] = new Decide[Equal] {
+  def decide[A, B](fa: Equal[A], fb: Equal[B]) = new Equal[Either[A, B]] {
+    override def equal(ab1: Either[A, B], ab2: Either[A, B]) = (ab1, ab2) match {
+      case (Left(a1), Left(a2)) => fa.equal(a1, a2)
+      case (Right(b1), Right(b2)) => fb.equal(b1, b2)
+      case _ => false
+    }
+  }
+}
+#+END_SRC
+
+** Example: =Default=
+
+#+BEGIN_SRC scala
+implicit val xfunctor: XFunctor[Default] = new Covariant[Default] {
+  override def fmap[A, B](fa: Default[A])(f: A => B) = new Default[B] {
+    override def default = fa.default match {
+      case Left(err) => Left(err)
+      case Right(a) => Right(f(a))
+    }
+  }
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+implicit val align: Align[Default] = new Align[Default] {
+  override def align[A, B](fa: Default[A], fb: Default[B]) = new Default[(A, B)] {
+    override def default = (fa.default, fb.default) match {
+      case (Right(a), Right(b)) => Right((a, b))
+      case (Left(err), _) => Left(err)
+      case (_, Left(err)) => Left(err)
+    }
+  }
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+implicit val decide: Decide[Default] = new Decide[Default] {
+  override def decide[A, B](fa: Default[A], fb: Default[B]) = new Default[Either[A, B]] {
+    override def default = fa.default match {
+      case Left(err) => Left(err)
+      case Right(a) => Right(Left(a))
+    }
+  }
+}
+#+END_SRC
+
+** Example: =Semigroup=
+
+#+BEGIN_SRC scala
+implicit val xfunctor: XFunctor[Semigroup] = new XFunctor[Semigroup] {
+  override def xmap[A, B](fa: Semigroup[A])(f: A => B, g: B => A) = new Semigroup[B] {
+    override def add(b1: B, b2: B) = f(fa.add(g(b1), g(b2)))
+  }
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+implicit val align: Align[Semigroup] = new Align[Semigroup] {
+  override def align[A, B](fa: Semigroup[A], fb: Semigroup[B]) = new Semigroup[(A, B)] {
+    override def add(ab1: (A, B), ab2: (A, B)) = (fa.add(ab1._1, ab2._1), fb.add(ab1._2, ab2._2))
+  }
+}
+#+END_SRC
+
+** =Decide= ?
+
+- =Semigroup= doesn't (typically) work for =sealed trait=
+- =Decide= would produce broken instances!
+
+* How It Works
+
+-----
+
+#+BEGIN_SRC scala
+sealed trait Shape[A]
+sealed trait CaseClass[A] extends Shape[A] { def value(i: Int): Any }
+sealed trait SealedTrait[A] extends Shape[A] { def value: A ; def index: Int }
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+case class CaseClass0[A]() extends CaseClass[A]
+case class CaseClass1[A, A1](_1: A1) extends CaseClass[A]
+case class CaseClass2[A, A1, A2](_1: A1, _2: A2) extends CaseClass[A]
+...
+case class CaseClass64[A, A1, A2, ...](_1: A1, _2: A2, ...) extends CaseClass[A]
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+sealed trait SealedTrait1[A, A1 <: A] extends SealedTrait[A]
+sealed trait SealedTrait2[A, A1 <: A, A2 <: A] extends SealedTrait[A]
+...
+sealed trait SealedTrait64[A, A1 <: A, A2 <: A, ...] extends SealedTrait[A]
+#+END_SRC
+
+#+BEGIN_SRC scala
+object SealedTrait {
+  case class _1[A, ...](value: A1) extends SealedTrait1 ... SealedTrait64[...]
+  case class _2[A, ...](value: A2) extends SealedTrait2 ... SealedTrait64[...]
+  ...
+  case class _64[A, ...](value: A64) extends SealedTrait64[...]
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+trait Shapely[A, B <: Shape[A]] {
+  def to(a: A): B
+  def from(b: B): A
+}
+#+END_SRC
+
+** When to Generate
+
+- typeclass can't be expressed as a lawful AC/DC
+- maximal performance is required
+
+** Example: =Enum=
+
+#+BEGIN_SRC scala
+trait Enum[A] {
+  def values: List[A]
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+implicit def sealedtrait2[A, A1 <: A, A2 <: A](
+  implicit A1: ValueOf[A1], A2: ValueOf[A2]
+) = new Enum[SealedTrait2[A, A1, A2]] {
+  def values = _1(A1.value) :: _2(A2.value) :: Nil
+}
+#+END_SRC
+
+** =project/ExamplesCodeGen.scala=
+
+#+BEGIN_SRC scala
+val enums = (1 to sum_arity).map { i =>
+  val tparams = (1 to i).map(p => s"A$p <: A").mkString(", ")
+  val tparams_ = (1 to i).map(p => s"A$p").mkString(", ")
+  val implicits = (1 to i).map(p => s"A$p: ValueOf[A$p]").mkString(", ")
+  val tycons = s"SealedTrait$i[A, $tparams_]"
+  val work = (1 to i).map { p => s"_$p(A$p.value)" }.mkString("", " :: ", " :: Nil")
+  s"""  implicit def sealedtrait$i[A, $tparams](implicit $implicits) = new Enum[$tycons] {
+     |    def values: List[$tycons] = $work
+     |  }""".stripMargin
+}
+s"""package wheels.enums
+   |
+   |import shapely._
+   |
+   |private[enums] trait GeneratedEnums {
+   |${enums.mkString("\n\n")}
+   |}""".stripMargin
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+val sealedtraits = (1 to 64).map { i =>
+  val tparams = (1 to i).map(p => s"").mkString("")
+  val implicits = (1 to i).map(p => s"").mkString("")
+  s""
+}
+s""
+#+END_SRC
+
+* =Meta=
+
+-----
+
+#+BEGIN_SRC scala
+trait Meta[A] {
+  def name: String
+  def annotations: List[Annotation]
+  def fieldNames: Array[String]
+  def fieldAnnotations: Array[List[Annotation]]
+}
+#+END_SRC
+
+** Example
+
+#+BEGIN_SRC scala
+package zio.json
+
+import scala.annotation._
+
+case class field(name: String) extends Annotation
+
+case class discriminator(name: String) extends Annotation
+
+case class hint(name: String) extends Annotation
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+abstract class CaseClassEncoder[A, CC <: CaseClass[A]](M: Meta[A]) extends Encoder[CC] {
+  val names: Array[String] = M.fieldAnnotations
+    .zip(M.fieldNames)
+    .map {
+      case (a, n) => a.collectFirst { case field(name) => name }.getOrElse(n)
+    }
+    .toArray
+  ...
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+implicit def sealedtrait2[A, A1 <: A, A2 <: A](
+  implicit M: Meta[A], M1: Meta[A1], M2: Meta[A2], A1: Encoder[A1], A2: Encoder[A2]
+): Encoder[SealedTrait2[A, A1, A2]] = {
+  M.annotations.collectFirst { case discriminator(n) => n } match {
+    case None => ...
+    case Some(hintfield) => ...
+  }
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+@discriminator("hint")
+sealed abstract class Parent
+
+case class Child1() extends Parent
+
+@hint("Abel")
+case class Child2(s: Option[String]) extends Parent
+#+END_SRC
+
+* Circular Dependencies
+
+** by-name implicits
+
+#+BEGIN_SRC scala
+def foo(implicit =>bar: Bar): Baz = ...
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+sealed trait ATree
+case class Leaf(value: String) extends ATree
+case class Branch(roots: List[ATree]) extends ATree
+#+END_SRC
+
+#+BEGIN_SRC scala
+object ATree {
+  implicit val equal: Equal[ATree] = Equal.derived
+}
+object Leaf {
+  implicit val equal: Equal[Leaf] = Equal.derived
+}
+object Branch {
+  implicit val equal: Equal[Branch] = Equal.derived
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+object ATree {
+  implicit lazy val equal: Equal[ATree] = Equal.derived
+}
+object Leaf {
+  implicit val equal: Equal[Leaf] = Equal.derived
+}
+object Branch {
+  implicit def equal: Equal[Branch] = Equal.derived
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+object ATree {
+  implicit lazy val equal: Equal[ATree] = {
+    implicit def leaf: Equal[Leaf] = Equal.derived
+    implicit def branch: Equal[Branch] = Equal.derived
+    Equal.derived
+  }
+}
+#+END_SRC
+
+- could be a macro
+- Scala 3 =derives= breaks too, be careful
+
+** =Lazy=
+
+#+BEGIN_SRC scala
+final class Lazy[A] private (private[this] var eval: () => A) {
+  lazy val value: A = {
+    val value0 = eval()
+    eval = null
+    value0
+  }
+}
+object Lazy extends LazyCompat {
+  def apply[A](a: =>A): Lazy[A] = new Lazy[A](() => a)
+}
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+  implicit def sealedtrait2[A, A1 <: A, A2 <: A](
+    implicit M: Meta[A], M1: Meta[A1], M2: Meta[A2],
+             A1: Lazy[Encoder[A1]], A2: Lazy[Encoder[A2]]
+  ) = ...
+#+END_SRC
+
+-----
+
+#+BEGIN_SRC scala
+trait XFunctor[F[_]] {
+  def xmap[A, B](fa: =>F[A])(f: A => B, g: B => A): F[B]
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Align[F[_]] {
+  def align[A, B](fa: =>F[A], fb: =>F[B]): F[(A, B)]
+}
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Decide[F[_]] {
+  def decide[A, B](fa: =>F[A], fb: =>F[B]): F[Either[A, B]]
+}
+#+END_SRC
+
+* Fin
+
+-----
+
+Thank you for listening.
+
+Let's move to the Q&A room.
+
+[[file:images/mickey_wave.png]]
+
+=disneytech.com=
+
+=sam.halliday@disneystreaming.com=

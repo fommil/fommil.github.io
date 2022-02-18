@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css?family=Lobster');
+@import url('https://fonts.googleapis.com/css?family=EB Garamond');
+
+@font-face {
+    font-family: "Hack";
+    src: url("fonts/Hack-Regular.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Hack";
+    src: url("fonts/Hack-Bold.ttf");
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Hack";
+    src: url("fonts/Hack-Italic.ttf");
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face {
+    font-family: "Hack";
+    src: url("fonts/Hack-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
+}
+
+:root {
+  --r-background-color: #FFCCCA;
+  --r-heading-font: Lobster;
+  --r-main-font: "EB Garamond";
+  --r-code-font: Hack;
+  --r-heading2-size: 1.5em;
+  --r-block-margin: 10px;
+}
+
+.reveal .backgrounds {
+  background-image: url(images/scala_love.svg);
+  background-position: right top;
+  background-position: 95% 5%;
+  background-size: 5%;
+  background-repeat: no-repeat;
+}
+
+.reveal pre {
+    box-shadow: none;
+    margin-left: 150px;
+}
+
+.reveal pre code {
+    max-height: 600px;
+}
+
+code span.cf {
+    color: inherit;
+}
+code span.kw {
+    color: inherit;
+}
+code span.fu {
+    color: inherit;
+}
+code span.ot {
+    color: inherit;
+}
+code span.dt {
+    color: inherit;
+}
+code span.dv {
+    color: darkred;
+}
+code span.st {
+    color: darkred;
+}
+code span.ss {
+    color: darkred;
+}
+code span.ch {
+    color: darkred;
+}
+code span.er {
+    color: #666666;
+}
+code span.co {
+    color: #666666;
+}
+
+.NOTES {
+    display: none;
+}
